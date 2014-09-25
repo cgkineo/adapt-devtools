@@ -1,0 +1,4 @@
+adapt-cheat
+================
+
+kcheat extension

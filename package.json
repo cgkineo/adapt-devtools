@@ -1,0 +1,23 @@
+{
+  "name": "adapt-cheat",
+  "version": "0.0.1",
+  "description": "kcheat extension",
+  "main": "",
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cgkineo/adapt-cheat.git"
+  },
+  "author": "Oliver Foster <oliver.foster@kineo.com>",
+  "license": "GPL v3",
+  "bugs": {
+    "url": "https://github.com/cgkineo/adapt-cheat/issues"
+  },
+  "devDependencies": {
+    "karma": "~0.10",
+    "karma-mocha": "*",
+    "karma-expect": "*"
+  }
+}

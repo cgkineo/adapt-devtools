@@ -1,0 +1,14 @@
+{
+  "name": "adapt-cheat",
+  "homepage": "https://github.com/cgkineo/adapt-cheat",
+  "authors": [
+    "Oliver Foster <oliver.foster@kineo.com"
+  ],
+  "description": "%description",
+  "main": "/js/adapt-cheat.js",
+  "keywords": [
+    "adapt-plugin",
+    "adapt-extension"
+  ],
+  "license": "GPLv3"
+}
