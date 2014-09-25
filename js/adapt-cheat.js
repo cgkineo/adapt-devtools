@@ -29,7 +29,10 @@ define(function(require) {
 					var componentModels = currentModel.findDescendants("components");
 					var questions = componentModels.where({ _isQuestionType: true});
 					_.each(questions, function(question) {
-						question.set("_score",1);
+						question.set("_score",0);
+						question.set("_attemptsLeft",question.set("_attempts") - 1);
+						question.set("_attempts",1);
+						question.set("_interactions",1);
 					});
 					componentModels.each(function(item) {
 						item.set("_isCorrect", false);
@@ -49,6 +52,9 @@ define(function(require) {
 					var questions = componentModels.where({ _isQuestionType: true});
 					_.each(questions, function(question) {
 						question.set("_score",1);
+						question.set("_attemptsLeft",question.set("_attempts") - 1);
+						question.set("_attempts",1);
+						question.set("_interactions",1);
 					});
 					componentModels.each(function(item) {
 						item.set("_isCorrect", true);
