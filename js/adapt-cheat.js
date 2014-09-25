@@ -33,6 +33,7 @@ define(function(require) {
 					});
 					componentModels.each(function(item) {
 						item.set("_isComplete", true);
+						item.set("_isInteractionsComplete", true);
 					})
 					break;
 				}
