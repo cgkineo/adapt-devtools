@@ -65,6 +65,38 @@ define(function(require) {
 					break;
 				}
 
+			} else if (buffer.substr( blen - ("kcheathalf").length, ("kcheathalf").length  ) == "kcheathalf") {
+
+				var currentModel = Adapt.findById(Adapt.location._currentId);
+				switch ( Adapt.location._contentType ) {
+				case "page": case "menu":
+					var componentModels = currentModel.findDescendants("components");
+					var questions = componentModels.where({ _isQuestionType: true});
+					var getright = questions.length / 2;
+					var right = 0;
+					_.each(questions, function(question) {
+						if (right < getright) {
+							right++
+							question.set("_score",1);
+							question.set("_attemptsLeft",question.set("_attempts") - 1);
+							question.set("_attempts",1);
+							question.set("_interactions",question.get("_interactions") ? question.get("_interactions") + 1 : 1);
+						} else {
+							question.set("_score",0);
+							question.set("_attemptsLeft",question.set("_attempts") - 1);
+							question.set("_attempts",1);
+							question.set("_interactions",question.get("_interactions") ? question.get("_interactions") + 1 : 1);
+						}
+					});
+					componentModels.each(function(item) {
+						item.set("_isCorrect", item.get("_score") == 1);
+						item.set("_isSubmitted", true);
+						item.set("_isComplete", true);
+						item.set("_isInteractionsComplete", true);
+					})
+					break;
+				}
+
 			}
 		})
 
