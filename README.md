@@ -1,11 +1,11 @@
 adapt-cheat
 ================
 
-Very simple testing tool.
+A very simple testing tool.
 
 ###Usage
-1. Download into src/extensions folder
-2. Add following to config.json
+1. Download into ``src/extensions`` folder
+2. Add following to ``config.json``
 ```
 "_cheat": {
     "_isEnabled": true
