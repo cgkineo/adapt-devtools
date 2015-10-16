@@ -12,6 +12,8 @@ define(function(require) {
 	var buffer = "";
 
 	Adapt.once('app:dataReady', function() {
+		var config = Adapt.config.get("_cheat");
+		if (!config || !config._isEnabled) return;
 
 		$(window).on("keypress", function(e) {
 			buffer+= String.fromCharCode(e.which).toLowerCase();
@@ -30,6 +32,9 @@ define(function(require) {
 		if (buffer.substr( blen - ("kcheatfail").length, ("kcheatfail").length  ) == "kcheatfail") {
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
+
+			Adapt.trigger("cheat");
+			
 			switch ( Adapt.location._contentType ) {
 			case "page": case "menu":
 				var componentModels = currentModel.findDescendants("components");
@@ -44,12 +49,14 @@ define(function(require) {
 					item.set("_isCorrect", false);
 					item.set("_isSubmitted", true);
 					item.set("_isComplete", true);
-					item.set("_isInteractionsComplete", true);
+					item.set("_isInteractionComplete", true);
 				})
 				break;
 			}
 
 		} else if (buffer.substr( blen - ("kcheatpass").length, ("kcheatpass").length  ) == "kcheatpass") {
+
+			Adapt.trigger("cheat");
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 			switch ( Adapt.location._contentType ) {
@@ -66,12 +73,14 @@ define(function(require) {
 					item.set("_isCorrect", true);
 					item.set("_isSubmitted", true);
 					item.set("_isComplete", true);
-					item.set("_isInteractionsComplete", true);
+					item.set("_isInteractionComplete", true);
 				})
 				break;
 			}
 
 		} else if (buffer.substr( blen - ("kcheathalf").length, ("kcheathalf").length  ) == "kcheathalf") {
+
+			Adapt.trigger("cheat");
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 			switch ( Adapt.location._contentType ) {
@@ -98,7 +107,7 @@ define(function(require) {
 					item.set("_isCorrect", item.get("_score") == 1);
 					item.set("_isSubmitted", true);
 					item.set("_isComplete", true);
-					item.set("_isInteractionsComplete", true);
+					item.set("_isInteractionComplete", true);
 				})
 				break;
 			}
