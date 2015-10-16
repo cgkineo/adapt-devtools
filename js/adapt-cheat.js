@@ -33,7 +33,7 @@ define(function(require) {
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 
-			Adapt.trigger("cheat");
+			Adapt.trigger("trickle:kill");
 			
 			switch ( Adapt.location._contentType ) {
 			case "page": case "menu":
@@ -56,7 +56,7 @@ define(function(require) {
 
 		} else if (buffer.substr( blen - ("kcheatpass").length, ("kcheatpass").length  ) == "kcheatpass") {
 
-			Adapt.trigger("cheat");
+			Adapt.trigger("trickle:kill");
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 			switch ( Adapt.location._contentType ) {
@@ -80,7 +80,7 @@ define(function(require) {
 
 		} else if (buffer.substr( blen - ("kcheathalf").length, ("kcheathalf").length  ) == "kcheathalf") {
 
-			Adapt.trigger("cheat");
+			Adapt.trigger("trickle:kill");
 
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 			switch ( Adapt.location._contentType ) {
