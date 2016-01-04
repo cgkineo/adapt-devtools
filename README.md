@@ -12,7 +12,7 @@ Revised developer/testing tool.
     }
 ```
 
-The extension features the following:
+Once installed a button is added to the navigation bar. By default this is a cog icon. Select the button to reveal the following features.
 
 ##Question hinting
 
