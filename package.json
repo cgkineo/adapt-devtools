@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git://github.com/cgkineo/adapt-cheat.git"
   },
-  "author": "Oliver Foster <oliver.foster@kineo.com>",
+  "author": "Oliver Foster <oliver.foster@kineo.com>, Chris Steele <chris.steele@kineo.com>",
   "license": "GPL v3",
   "bugs": {
     "url": "https://github.com/cgkineo/adapt-cheat/issues"
