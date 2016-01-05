@@ -40,11 +40,11 @@ Similar to the original functionality, when selected unanswered question compone
 
 ##Fail
 
-As per the **Pass** functionality, but all unanswered questions wil be answered incorrectly. How the questions are answered incorrectly is random; therefore where applicable questions may be answered partly correctly or incorrectly.
+As per the **Pass** functionality, but all unanswered questions in the page will be answered incorrectly. How the questions are answered incorrectly is random; therefore, where applicable, questions may be answered partly correctly or incorrectly.
 
 ##Half
 
-When selected approximately half of the unanswered questions on the page will be answered correctly, while the other half will be answered incorrectly. The choice of how each are answered is randomised.
+When selected, approximately half of the unanswered questions in the page will be answered correctly, while the other half will be answered incorrectly. The choice of how each are answered is randomised.
 
 ##Developer tools
 
