@@ -32,19 +32,19 @@ Once selected adapt-cheat will attempt to break any form of menu locking, e.g. l
 
 ##Untrickle
 
-This feature appears whenever applicable. As the name implies selecting this will disable trickle and reveal all content on the current page.
+This feature appears whenever applicable. As the name implies selecting this will disable trickle and reveal all content in the current page.
 
 ##Pass
 
-Similar to the original functionality, when selected unanswered question components in the page will be answered correctly. All non-question components will be completed.
+Similar to the original functionality, when selected unanswered question components in the current page will be answered correctly. All non-question components will be completed.
 
 ##Fail
 
-As per the **Pass** functionality, but all unanswered questions in the page will be answered incorrectly. How the questions are answered incorrectly is random; therefore, where applicable, questions may be answered partly correctly or incorrectly.
+As per the **Pass** functionality, but all unanswered questions in the current page will be answered incorrectly. How the questions are answered incorrectly is random; therefore, where applicable, questions may be answered partly correctly or incorrectly.
 
 ##Half
 
-When selected, approximately half of the unanswered questions in the page will be answered correctly, while the other half will be answered incorrectly. The choice of how each are answered is randomised.
+When selected, approximately half of the unanswered questions in the current page will be answered correctly, while the other half will be answered incorrectly. The choice of how each are answered is randomised.
 
 ##Developer tools
 
