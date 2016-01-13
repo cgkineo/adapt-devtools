@@ -25,8 +25,11 @@ define(function(require) {
 			// remove hinting if enabled
 			if (Adapt.cheat.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
 
-			if (e.shiftKey || Adapt.cheat.get('_autoCorrectEnabled')) {
+			if ((e.ctrlKey && !e.shiftKey) || Adapt.cheat.get('_autoCorrectEnabled')) {
 				this.answer(view);
+			}
+			else if (e.ctrlKey && e.shiftKey) {
+				this.answer(view, true);
 			}
 		},
 
