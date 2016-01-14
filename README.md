@@ -14,6 +14,8 @@ Revised developer/testing tool.
 
 Once installed a button is added to the navigation bar. By default this is a cog icon. Select the button to reveal the following features.
 
+**Important:** if using [adapt-contrib-trickle](https://github.com/adaptlearning/adapt-contrib-trickle), please ensure that you are using the latest version.
+
 ##Question hinting
 
 Allows the user to toggle visual indicators which reveal how to answer correctly standard question components (gmcq, mcq, matching, question strip, slider, text input).
