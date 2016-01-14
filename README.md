@@ -22,7 +22,7 @@ Allows the user to toggle visual indicators which reveal how to answer correctly
 
 ##Auto correct
 
-When enabled, automatically provides the correct answer when submit is selected. If not enabled the user can shift-click the submit button to have the correct answer provided. Standard question components will be answered naturally; revealing the correct responses, feedback and marking if applicable. The plugin will not attempt to do this for bespoke questions or questions that do not have correct answers (e.g. confidence slider), but their models will still be modified to indicate that they are complete and correct.
+When enabled, automatically provides the correct answer when submit is selected. If not enabled the user can control-click the submit button to have the correct answer provided. Standard question components will be answered naturally; revealing the correct responses, feedback and marking if applicable. The plugin will not attempt to do this for bespoke questions or questions that do not have correct answers (e.g. confidence slider), but their models will still be modified to indicate that they are complete and correct.
 
 ##Tutor toggle
 
