@@ -5,12 +5,15 @@ A very simple testing tool.
 
 ###Usage
 * Download into ``src/extensions`` folder
+<<<<<<< HEAD
 * Add following to ``config.json``
 ```
     "_cheat": {
         "_isEnabled": true
     }
 ```
+=======
+>>>>>>> master
 * Load the course into a page, click any whitespace in the window
   
 type ``kcheatfail`` to fail  
