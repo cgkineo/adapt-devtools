@@ -1,11 +1,11 @@
 {
   "name": "adapt-cheat",
+  "version": "2.0.0",
+  "framework": "^2.0.0",
   "homepage": "https://github.com/cgkineo/adapt-cheat",
-  "authors": [
-    "Oliver Foster <oliver.foster@kineo.com",
-    "Chris Steele <chris.steele@kineo.com>"
-  ],
-  "description": "%description",
+  "displayName" : "adapt-cheat",
+  "extension" : "cheat",
+  "description": "Tools for developing and testing Adapt courses",
   "main": "/js/adapt-cheat.js",
   "keywords": [
     "adapt-plugin",
