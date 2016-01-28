@@ -1,15 +1,16 @@
 {
-  "name": "adapt-cheat",
-  "version": "2.0.0",
-  "framework": "^2.0.0",
-  "homepage": "https://github.com/cgkineo/adapt-cheat",
-  "displayName" : "adapt-cheat",
-  "extension" : "cheat",
-  "description": "Tools for developing and testing Adapt courses",
-  "main": "/js/adapt-cheat.js",
-  "keywords": [
-    "adapt-plugin",
-    "adapt-extension"
-  ],
-  "license": "GPLv3"
+    "name": "adapt-cheat",
+    "repository": "git://github.com/cgkineo/adapt-cheat",
+    "framework": "^2.0.0",
+    "version": "2.0.0",
+    "homepage": "https://github.com/cgkineo/adapt-cheat",
+    "displayName": "adapt-cheat",
+    "extension": "cheat",
+    "description": "Tools for developing and testing Adapt courses",
+    "main": "/js/adapt-cheat.js",
+    "keywords": [
+        "adapt-plugin",
+        "adapt-extension"
+    ],
+    "license": "GPLv3"
 }
