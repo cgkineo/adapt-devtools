@@ -2,7 +2,8 @@
   "name": "adapt-cheat",
   "homepage": "https://github.com/cgkineo/adapt-cheat",
   "authors": [
-    "Oliver Foster <oliver.foster@kineo.com"
+    "Oliver Foster <oliver.foster@kineo.com",
+    "Chris Steele <chris.steele@kineo.com>"
   ],
   "description": "%description",
   "main": "/js/adapt-cheat.js",
