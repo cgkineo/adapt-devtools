@@ -1,5 +1,7 @@
 # adapt-cheat
 
+![](https://raw.githubusercontent.com/wiki/cgkineo/adapt-cheat/adapt-cheat-preview.gif)
+
 Revised developer/testing tool.
 
 ##Installation
