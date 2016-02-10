@@ -1,0 +1,49 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "required":false,
+  "properties":{
+    "pluginLocations": {
+      "type":"object",
+      "required":true,
+      "properties":{
+        "config": {
+          "type":"object",
+          "properties": {
+            "_cheat": {
+              "type":"object",
+              "required":false,
+              "legend": "Cheat mode",
+              "properties":{
+                "_isEnabled": {
+                  "type":"boolean",
+                  "required":false,
+                  "title": "Enable cheat mode",
+                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "validators": [],
+		  "help": "Set to true to enable 'cheat mode' features. Remember to disable/uninstall before going live!"
+                }
+              }
+            }
+          }
+        },
+        "course": {
+          "type":"object"
+        },
+        "contentobject": {
+          "type":"object"
+        },
+        "article": {
+          "type":"object"
+        },
+        "block": {
+          "type":"object"
+        },
+        "component": {
+          "type":"object"
+        }
+      }
+    }
+  }
+}
