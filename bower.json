@@ -9,6 +9,7 @@
     "extension": "cheat",
     "description": "Tools for developing and testing Adapt courses",
     "main": "/js/adapt-cheat.js",
+    "targetAttribute": "_cheat",
     "keywords": [
         "adapt-plugin",
         "adapt-extension"
