@@ -8,13 +8,14 @@ define([
 	'coreJS/adapt',
 	'./cheat-model',
 	'./pass-half-fail',
+	'./toggle-banking',
 	'./auto-answer',
 	'./dev-tools',
 	'./end-trickle',
 	'./hinting',
 	'./toggle-feedback',
 	'./unlock-menu'
-], function(Adapt, CheatModel, PassHalfFail) {
+], function(Adapt, CheatModel, PassHalfFail, ToggleBanking) {
 
 	var CheatView = Backbone.View.extend({
 
@@ -23,6 +24,7 @@ define([
 		events:{
 			'click .end-trickle':'onEndTrickle',
 			'change .hinting input':'onToggleHinting',
+			'change .banking input':'onToggleBanking',
 			'change .feedback input':'onToggleFeedback',
 			'change .auto-correct input':'onToggleAutoCorrect',
 			'click .menu-unlock':'onMenuUnlock',
@@ -36,6 +38,7 @@ define([
 
 			this._checkMenuUnlockVisibility();
 			this._checkTrickleEndVisibility();
+			this._checkBankingVisibility();
 			this._checkFeedbackVisibility();
 			this._checkHintingVisibility();
 			this._checkAutoCorrectVisibility();
@@ -75,6 +78,33 @@ define([
 		onEndTrickle:function() {
 			Adapt.cheat.set('_trickleEnabled', false);
 			this._checkTrickleEndVisibility();
+		},
+
+		/*************************************************/
+		/*************** QUESTION BANKING ****************/
+		/*************************************************/
+
+		_checkBankingVisibility:function() {
+			if (!Adapt.cheat.get('_toggleFeedbackAvailable')) {
+				this.$('.banking').addClass('display-none');
+				return;
+			}
+
+			var bankedAssessments = ToggleBanking.getBankedAssessmentsInCurrentPage();
+			var isBankingEnabled = function(m) {return m.get('_assessment')._banks._isEnabled;};
+
+			if (bankedAssessments.length > 0) {
+				this.$('.banking').removeClass('display-none');
+				this.$('.banking label').toggleClass('selected', bankedAssessments.some(isBankingEnabled));
+			}
+			else {
+				this.$('.banking').addClass('display-none');
+			}
+		},
+
+		onToggleBanking:function() {
+			ToggleBanking.toggle();
+			this._checkBankingVisibility();
 		},
 
 		/*************************************************/

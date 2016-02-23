@@ -15,7 +15,8 @@ define(function(require) {
 				'_autoCorrectEnabled':false,
 				'_tutorListener':null,
 				'_unlockMenuAvailable':true,
-				'_menuUnlocked':false
+				'_menuUnlocked':false,
+				'_toggleBankingAvailable':true
 			}, Adapt.config.get("_cheat")));
 		},
 
