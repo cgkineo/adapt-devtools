@@ -252,14 +252,16 @@ define([
 	});
 
 	Adapt.once('app:dataReady', function() {
-		var config = Adapt.config.get("_cheat");
+		var exts = Adapt.config.get("_extensions");
+		var config = (exts) ? exts._cheat : Adapt.config.get("_cheat");
 		if (!config || !config._isEnabled) return;
 
 		Adapt.cheat = new CheatModel();
 	});
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var exts = Adapt.config.get("_extensions");
+		var config = (exts) ? exts._cheat : Adapt.config.get("_cheat");
 		if (!config || !config._isEnabled) return;
 		
 		new CheatNavigationView();
