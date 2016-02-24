@@ -2,7 +2,7 @@
     "name": "adapt-cheat",
     "repository": "git://github.com/cgkineo/adapt-cheat",
     "framework": "^2.0.0",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "homepage": "https://github.com/cgkineo/adapt-cheat",
     "issues": "https://github.com/cgkineo/adapt-cheat/issues/",
     "displayName": "Cheat mode",
