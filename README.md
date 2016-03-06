@@ -28,6 +28,10 @@ When enabled, automatically provides the correct answer when submit is selected.
 
 Allows the tutor extension to be hushed, preventing feedback popups when questions are answered by the user. Feedback can still be viewed by manually selecting the **Show Feedback** button if available.
 
+##Toggle question banking
+
+If banking is used in an assessment in the current page this can be toggled on and off. N.B. if the current page has more than one banked assessment then the toggle will be applied to each (when invoked all banked assessments in the page will have banking toggled on or off).
+
 ##Unlock menu
 
 Once selected adapt-cheat will attempt to break any form of menu locking, e.g. linear step-locking, assessment locking etc.
