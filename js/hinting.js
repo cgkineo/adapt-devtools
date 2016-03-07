@@ -137,7 +137,7 @@ define(function(require) {
 		}
 	}, Backbone.Events);
 
-	Adapt.once('adapt:initialize', function() {
+	Adapt.once('adapt:initialize devtools:enable', function() {
 		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
