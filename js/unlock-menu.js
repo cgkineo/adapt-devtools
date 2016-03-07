@@ -4,7 +4,7 @@ define(function(require) {
 	var Router = require('coreJS/router');
 
 	function onMenuUnlocked() {
-		if (Adapt.cheat.get('_menuUnlocked')) {
+		if (Adapt.devtools.get('_menuUnlocked')) {
 			// reload the menu
 			if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
 			else Router.handleId(Adapt.location._currentId);
@@ -12,7 +12,7 @@ define(function(require) {
 	}
 
 	function onMenuPreRender(view) {
-		if (Adapt.cheat.get('_menuUnlocked')) {
+		if (Adapt.devtools.get('_menuUnlocked')) {
 			if (Adapt.location._currentId == view.model.get('_id')) {
 				view.model.once('change:_isReady', _.bind(onMenuReady, view));
 				view.model.getChildren().each(function(item) {
@@ -27,18 +27,18 @@ define(function(require) {
 	}
 
 	function onMenuReady() {
-		if (Adapt.cheat.get('_menuUnlocked')) {
+		if (Adapt.devtools.get('_menuUnlocked')) {
 			// second pass: attempt to enable clickable elements
 			this.$('a, button').prop('disabled', false).css('pointer-events', 'auto');
 		}
 	}
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
-		if (Adapt.cheat.get('_unlockMenuAvailable')) {
-			Adapt.cheat.on('change:_menuUnlocked', onMenuUnlocked);
+		if (Adapt.devtools.get('_unlockMenuAvailable')) {
+			Adapt.devtools.on('change:_menuUnlocked', onMenuUnlocked);
 			Adapt.on('menuView:preRender', onMenuPreRender);
 		}
 	});

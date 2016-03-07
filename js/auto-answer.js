@@ -15,17 +15,17 @@ define(function(require) {
 				if (view.buttonsView) {
 					view.$('.buttons-action').on('mousedown', _.bind(this.onSubmitClicked, this, view));
 				}
-				else if (Adapt.cheat.get('_debug')) {
-					console.warn('adapt-cheat: could not find submit button on '+view.model.get('_id'));
+				else if (Adapt.devtools.get('_debug')) {
+					console.warn('adapt-devtools: could not find submit button on '+view.model.get('_id'));
 				}
 			}
 		},
 
 		onSubmitClicked:function(view, e) {
 			// remove hinting if enabled
-			if (Adapt.cheat.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
+			if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
 
-			if ((e.ctrlKey && !e.shiftKey) || Adapt.cheat.get('_autoCorrectEnabled')) {
+			if ((e.ctrlKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
 				this.answer(view);
 			}
 			else if (e.ctrlKey && e.shiftKey) {
@@ -36,8 +36,8 @@ define(function(require) {
 		answer:function(view, incorrectly) {
 			if (view.model.get('_isSubmitted')) return;
 
-			if (Adapt.cheat.get('_debug')) {
-				console.log('adapt-cheat: answer '+view.model.get('_id')+(incorrectly === true ? ' incorrectly' : ''));
+			if (Adapt.devtools.get('_debug')) {
+				console.log('adapt-devtools: answer '+view.model.get('_id')+(incorrectly === true ? ' incorrectly' : ''));
 			}
 
 			if (incorrectly === true) {
@@ -87,7 +87,7 @@ define(function(require) {
 			var nCorrect = nIncorrect == 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
 
 			if (itemCount == 1 || nSelect == 0) {
-				console.warn('adapt-cheat: not possible to answer '+model.get('_id')+' incorrectly');
+				console.warn('adapt-devtools: not possible to answer '+model.get('_id')+' incorrectly');
 				return;
 			}
 
@@ -256,7 +256,7 @@ define(function(require) {
 	}, Backbone.Events);
 	
 	Adapt.on('app:dataReady', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
 		AutoAnswer.initialize();

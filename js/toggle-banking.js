@@ -37,7 +37,7 @@ define(function(require) {
 	};
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
 		ToggleBanking.initialize();

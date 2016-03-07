@@ -9,7 +9,7 @@ define(function(require) {
 	}
 
 	function hushTutor() {
-		Adapt.cheat.set('_tutorListener', Adapt._events['questionView:showFeedback'].pop());
+		Adapt.devtools.set('_tutorListener', Adapt._events['questionView:showFeedback'].pop());
 		Adapt.on('questionView:showFeedback', onShowFeedback);
 	}
 
@@ -20,11 +20,11 @@ define(function(require) {
 			Adapt._events['questionView:showFeedback'] = [];
 		}
 
-		Adapt._events['questionView:showFeedback'].push(Adapt.cheat.get('_tutorListener'));
+		Adapt._events['questionView:showFeedback'].push(Adapt.devtools.get('_tutorListener'));
 	}
 
 	function onFeedbackToggled() {
-		if (Adapt.cheat.get('_feedbackEnabled')) {
+		if (Adapt.devtools.get('_feedbackEnabled')) {
 			reinstateTutor();
 			$(document).off('mouseup', '.buttons-feedback');
 		}
@@ -46,21 +46,21 @@ define(function(require) {
 			// and hush it again
 			hushTutor();
 		}
-		else console.error('cheat:onFeedbackButtonClicked: malformed component class name');
+		else console.error('devtools:onFeedbackButtonClicked: malformed component class name');
 	}
 	
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
-		if (Adapt.cheat.get('_toggleFeedbackAvailable')) {
+		if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
 			// assume single registrant is adapt-contrib-tutor
 			if (Adapt._events['questionView:showFeedback'].length == 1) {
-				Adapt.cheat.on('change:_feedbackEnabled', onFeedbackToggled);
+				Adapt.devtools.on('change:_feedbackEnabled', onFeedbackToggled);
 			}
 			else {
-				console.warn('cheat: no tutor or multiple registrants of questionView:showFeedback so disabling ability to toggle feedback.');
-				Adapt.cheat.set('_toggleFeedbackAvailable', false);
+				console.warn('devtools: no tutor or multiple registrants of questionView:showFeedback so disabling ability to toggle feedback.');
+				Adapt.devtools.set('_toggleFeedbackAvailable', false);
 			}
 		}
 	});

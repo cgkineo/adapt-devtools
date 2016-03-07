@@ -2,7 +2,7 @@ define(function(require) {
 
 	var Adapt = require('coreJS/adapt');
 
-	var CheatModel = Backbone.Model.extend({
+	var DevtoolsModel = Backbone.Model.extend({
 
 		initialize:function() {
 			this.set(_.extend({
@@ -17,7 +17,7 @@ define(function(require) {
 				'_unlockMenuAvailable':true,
 				'_menuUnlocked':false,
 				'_toggleBankingAvailable':true
-			}, Adapt.config.get("_cheat")));
+			}, Adapt.config.get("_devtools")));
 		},
 
 		toggleFeedback:function() {
@@ -33,5 +33,5 @@ define(function(require) {
 		}
 	});
 
-	return CheatModel;
+	return DevtoolsModel;
 });

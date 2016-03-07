@@ -95,7 +95,7 @@ define(function(require) {
 	}, Backbone.Events);
 
 	Adapt.on('app:dataReady', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
 		PassHalfFail.initialize();

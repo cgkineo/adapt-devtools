@@ -1,25 +1,25 @@
 /*
-* adapt-cheat
+* adapt-devtools
 * License - http://github.com/adaptlearning/adapt_framework/LICENSE
 * Maintainers - Chris Steele <chris.steele@kineo.com>, Oliver Foster <oliver.foster@kineo.com>
 */
 
 define([
 	'coreJS/adapt',
-	'./cheat-model',
+	'./devtools-model',
 	'./pass-half-fail',
 	'./toggle-banking',
 	'./auto-answer',
-	'./dev-tools',
+	'./utils',
 	'./end-trickle',
 	'./hinting',
 	'./toggle-feedback',
 	'./unlock-menu'
-], function(Adapt, CheatModel, PassHalfFail, ToggleBanking) {
+], function(Adapt, DevtoolsModel, PassHalfFail, ToggleBanking) {
 
-	var CheatView = Backbone.View.extend({
+	var DevtoolsView = Backbone.View.extend({
 
-		className:'cheat',
+		className:'devtools',
 
 		events:{
 			'click .end-trickle':'onEndTrickle',
@@ -46,8 +46,8 @@ define([
 		},
 
 		render:function() {
-			var data = Adapt.cheat.toJSON();
-			var template = Handlebars.templates['cheat'];
+			var data = Adapt.devtools.toJSON();
+			var template = Handlebars.templates['devtools'];
             this.$el.html(template(data));
 			return this;
 		},
@@ -58,12 +58,12 @@ define([
 
 		_checkMenuUnlockVisibility:function() {
 			// check if function available and not already activated
-			if (!Adapt.cheat.get('_unlockMenuAvailable') || Adapt.cheat.get('_menuUnlocked')) this.$('.menu-unlock').addClass('display-none');
+			if (!Adapt.devtools.get('_unlockMenuAvailable') || Adapt.devtools.get('_menuUnlocked')) this.$('.menu-unlock').addClass('display-none');
 			else this.$('.menu-unlock').toggleClass('display-none', Adapt.location._contentType != 'menu');
 		},
 
 		onMenuUnlock:function() {
-			Adapt.cheat.set('_menuUnlocked', true);
+			Adapt.devtools.set('_menuUnlocked', true);
 			this._checkMenuUnlockVisibility();
 		},
 
@@ -72,11 +72,11 @@ define([
 		/*************************************************/
 
 		_checkTrickleEndVisibility:function() {
-			this.$('.end-trickle').toggleClass('display-none', !Adapt.cheat.get('_trickleEnabled'));
+			this.$('.end-trickle').toggleClass('display-none', !Adapt.devtools.get('_trickleEnabled'));
 		},
 
 		onEndTrickle:function() {
-			Adapt.cheat.set('_trickleEnabled', false);
+			Adapt.devtools.set('_trickleEnabled', false);
 			this._checkTrickleEndVisibility();
 		},
 
@@ -85,7 +85,7 @@ define([
 		/*************************************************/
 
 		_checkBankingVisibility:function() {
-			if (!Adapt.cheat.get('_toggleFeedbackAvailable')) {
+			if (!Adapt.devtools.get('_toggleFeedbackAvailable')) {
 				this.$('.banking').addClass('display-none');
 				return;
 			}
@@ -112,9 +112,9 @@ define([
 		/*************************************************/
 
 		_checkFeedbackVisibility:function() {
-			if (Adapt.cheat.get('_toggleFeedbackAvailable')) {
+			if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
 				this.$('.feedback').removeClass('display-none');
-				this.$('.feedback label').toggleClass('selected', Adapt.cheat.get('_feedbackEnabled'));
+				this.$('.feedback label').toggleClass('selected', Adapt.devtools.get('_feedbackEnabled'));
 			}
 			else {
 				this.$('.feedback').addClass('display-none');
@@ -122,7 +122,7 @@ define([
 		},
 
 		onToggleFeedback:function() {
-			Adapt.cheat.toggleFeedback();
+			Adapt.devtools.toggleFeedback();
 			this._checkFeedbackVisibility();
 		},
 
@@ -131,9 +131,9 @@ define([
 		/*************************************************/
 
 		_checkHintingVisibility:function() {
-			if (Adapt.cheat.get('_hintingAvailable')) {
+			if (Adapt.devtools.get('_hintingAvailable')) {
 				this.$('.hinting').removeClass('display-none');
-				this.$('.hinting label').toggleClass('selected', Adapt.cheat.get('_hintingEnabled'));
+				this.$('.hinting label').toggleClass('selected', Adapt.devtools.get('_hintingEnabled'));
 			}
 			else {
 				this.$('.hinting').addClass('display-none');
@@ -141,7 +141,7 @@ define([
 		},
 
 		onToggleHinting:function() {
-			Adapt.cheat.toggleHinting();
+			Adapt.devtools.toggleHinting();
 			this._checkHintingVisibility();
 		},
 
@@ -150,10 +150,10 @@ define([
 		/*************************************************/
 
 		_checkAutoCorrectVisibility:function() {
-			if (Adapt.cheat.get('_autoCorrectAvailable')) {
+			if (Adapt.devtools.get('_autoCorrectAvailable')) {
 				this.$('.toggle.auto-correct').removeClass('display-none');
-				this.$('.toggle.auto-correct label').toggleClass('selected', Adapt.cheat.get('_autoCorrectEnabled'));
-				this.$('.tip.auto-correct').toggleClass('display-none', Adapt.cheat.get('_autoCorrectEnabled'));
+				this.$('.toggle.auto-correct label').toggleClass('selected', Adapt.devtools.get('_autoCorrectEnabled'));
+				this.$('.tip.auto-correct').toggleClass('display-none', Adapt.devtools.get('_autoCorrectEnabled'));
 			}
 			else {
 				this.$('.auto-correct').addClass('display-none');
@@ -161,7 +161,7 @@ define([
 		},
 
 		onToggleAutoCorrect:function() {
-			Adapt.cheat.toggleAutoCorrect();
+			Adapt.devtools.toggleAutoCorrect();
 			this._checkAutoCorrectVisibility();
 		},
 
@@ -191,9 +191,9 @@ define([
 			// potentially large operation so show some feedback
 			$('.loading').show();
 
-			var tutorEnabled = Adapt.cheat.get('_feedbackEnabled');
+			var tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
 
-			if (tutorEnabled) Adapt.cheat.set('_feedbackEnabled', false);
+			if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
 
 			if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
 			else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
@@ -205,30 +205,30 @@ define([
 		onPassHalfFailComplete:function(tutorEnabled) {
 			console.log('onPassHalfFailComplete');
 
-			if (tutorEnabled) Adapt.cheat.set('_feedbackEnabled', true);
+			if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
 
 			$('.loading').hide();
 		}
 	});
 
-	var CheatNavigationView = Backbone.View.extend({
+	var DevtoolsNavigationView = Backbone.View.extend({
 
 		initialize:function() {
-			var template = Handlebars.templates.cheatNavigation;
+			var template = Handlebars.templates.devtoolsNavigation;
 
 			this.$el = $(template());
 
-			$('html').addClass('cheat-enabled');
+			$('html').addClass('devtools-enabled');
 
-			if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', _.bind(this.onCheatClicked, this));
-			else this.$el.find('a, button').on('click', _.bind(this.onCheatClicked, this));
+			if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', _.bind(this.onDevtoolsClicked, this));
+			else this.$el.find('a, button').on('click', _.bind(this.onDevtoolsClicked, this));
 
 			// keep drawer item to left of PLP, resources, close button etc
 			this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
 		},
 
 		render:function() {
-			console.log('CheatNavigationView::render');
+			console.log('DevtoolsNavigationView::render');
 			
 	        $('.navigation-inner').append(this.$el);
 			return this;
@@ -245,23 +245,23 @@ define([
 			}
 		},
 
-		onCheatClicked:function(event) {
+		onDevtoolsClicked:function(event) {
 			if(event && event.preventDefault) event.preventDefault();
-            Adapt.drawer.triggerCustomView(new CheatView().$el, false);
+            Adapt.drawer.triggerCustomView(new DevtoolsView().$el, false);
 		}
 	});
 
 	Adapt.once('app:dataReady', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
-		Adapt.cheat = new CheatModel();
+		Adapt.devtools = new DevtoolsModel();
 	});
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 		
-		new CheatNavigationView();
+		new DevtoolsNavigationView();
 	});
 });

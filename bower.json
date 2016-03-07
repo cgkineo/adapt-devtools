@@ -1,15 +1,15 @@
 {
-    "name": "adapt-cheat",
-    "repository": "git://github.com/cgkineo/adapt-cheat",
+    "name": "adapt-devtools",
+    "repository": "git://github.com/cgkineo/adapt-devtools",
     "framework": "^2.0.0",
     "version": "2.0.2",
-    "homepage": "https://github.com/cgkineo/adapt-cheat",
-    "issues": "https://github.com/cgkineo/adapt-cheat/issues/",
-    "displayName": "Cheat mode",
-    "extension": "cheat",
+    "homepage": "https://github.com/cgkineo/adapt-devtools",
+    "issues": "https://github.com/cgkineo/adapt-devtools/issues/",
+    "displayName": "Developer tools",
+    "extension": "devtools",
     "description": "Tools for developing and testing Adapt courses",
-    "main": "/js/adapt-cheat.js",
-    "targetAttribute": "_cheat",
+    "main": "/js/adapt-devtools.js",
+    "targetAttribute": "_devtools",
     "keywords": [
         "adapt-plugin",
         "adapt-extension"

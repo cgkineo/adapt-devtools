@@ -1,13 +1,13 @@
-# adapt-cheat  
+# adapt-devtools  
 Revised developer/testing tool.  
-![](https://raw.githubusercontent.com/wiki/cgkineo/adapt-cheat/adapt-cheat-preview.gif)
+![](https://raw.githubusercontent.com/wiki/cgkineo/adapt-devtools/adapt-cheat-preview.gif)
 
 ##Installation
 
 * Download into ``src/extensions`` folder
 * Add following to ``config.json``
 ```
-    "_cheat": {
+    "_devtools": {
         "_isEnabled": true
     }
 ```
@@ -34,7 +34,7 @@ If banking is used in an assessment in the current page this can be toggled on a
 
 ##Unlock menu
 
-Once selected adapt-cheat will attempt to break any form of menu locking, e.g. linear step-locking, assessment locking etc.
+Once selected adapt-devtools will attempt to break any form of menu locking, e.g. linear step-locking, assessment locking etc.
 
 ##Untrickle
 

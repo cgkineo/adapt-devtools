@@ -15,7 +15,7 @@ define(function(require) {
 				if (model) {
 					id = model.get('_id').replace('-', '');
 					window[id] = model;
-					console.log('cheat: add property window.'+id+':');
+					console.log('devtools: add property window.'+id+':');
 					console.log(model);
 				}
 				return true;
@@ -30,7 +30,7 @@ define(function(require) {
 	}
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
 		$(document).on('click', onDocumentClicked);

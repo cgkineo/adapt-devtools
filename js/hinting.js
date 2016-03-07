@@ -5,7 +5,7 @@ define(function(require) {
 	var Hinting = _.extend({
 
 		initialize:function() {
-			this.listenTo(Adapt.cheat, 'change:_hintingEnabled', this.toggleHints);
+			this.listenTo(Adapt.devtools, 'change:_hintingEnabled', this.toggleHints);
 		},
 
 		toggleHints:function() {
@@ -14,10 +14,10 @@ define(function(require) {
 			var renderedQuestions = components.where({'_isQuestionType':true, '_isReady':true});
 
 			_.each(renderedQuestions, function(model) {
-				this.setHinting($('.'+model.get('_id')), model, Adapt.cheat.get('_hintingEnabled'));
+				this.setHinting($('.'+model.get('_id')), model, Adapt.devtools.get('_hintingEnabled'));
 			}, this);
 
-			if (Adapt.cheat.get('_hintingEnabled')) this.listenTo(Adapt, 'componentView:postRender', this.onComponentRendered);
+			if (Adapt.devtools.get('_hintingEnabled')) this.listenTo(Adapt, 'componentView:postRender', this.onComponentRendered);
 			else this.stopListening(Adapt, 'componentView:postRender');
 		},
 
@@ -138,7 +138,7 @@ define(function(require) {
 	}, Backbone.Events);
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_cheat");
+		var config = Adapt.config.get("_devtools");
 		if (!config || !config._isEnabled) return;
 
 		Hinting.initialize();
