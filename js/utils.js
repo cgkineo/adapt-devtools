@@ -13,7 +13,7 @@ define(function(require) {
 				var id = re.exec($el.attr('class'))[1];
 				var model = id.slice(t.length+1) == Adapt.course.get('_id') ? Adapt.course : Adapt.findById(id);
 				if (model) {
-					id = model.get('_id').replace('-', '');
+					id = model.get('_id').replace(/-/g, '');
 					window[id] = model;
 					console.log('devtools: add property window.'+id+':');
 					console.log(model);

@@ -52,7 +52,7 @@ define(function(require) {
 			e.preventDefault();
 			
 			if (e.ctrlKey && this.el.defaultView) {
-				id = id.replace('-', '');
+				id = id.replace(/-/g, '');
 				this.el.defaultView[id] = model;
 				this.el.defaultView.console.log('devtools: add property window.'+id+':');
 				this.el.defaultView.console.log(model);
