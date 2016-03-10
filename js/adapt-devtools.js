@@ -261,13 +261,12 @@ define([
 		}
 	});
 
-	Adapt.once('app:dataReady', function() {
+	Adapt.once('app:dataLoaded', function() {
 		Adapt.devtools = new DevtoolsModel();
 	});
 
 	Adapt.once('adapt:initialize devtools:enable', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+		if (!Adapt.devtools.get('_isEnabled')) return;
 		
 		new DevtoolsNavigationView();
 	});

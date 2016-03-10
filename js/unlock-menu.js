@@ -34,8 +34,7 @@ define(function(require) {
 	}
 
 	Adapt.once('adapt:initialize devtools:enable', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		if (Adapt.devtools.get('_unlockMenuAvailable')) {
 			Adapt.devtools.on('change:_menuUnlocked', onMenuUnlocked);

@@ -16,13 +16,9 @@ define(function(require) {
 		blen = buffer.length;
 
 		if (buffer.substr( blen - ("kcheat").length, ("kcheat").length  ) == "kcheat") {
-			var config = Adapt.config.get("_devtools");
-
-			if (!config) Adapt.config.set("_devtools", {_isEnabled:false});
-
-			if (!config._isEnabled) {
+			if (!Adapt.devtools.get('_isEnabled')) {
 				removeHooks();
-				config._isEnabled = true;
+				Adapt.devtools.set('_isEnabled', true);
 				Adapt.trigger('devtools:enable');
 
 				// reload the menu/page
@@ -51,8 +47,7 @@ define(function(require) {
 	}
 
 	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_devtools");
-		if (config && config._isEnabled) return;
+		if (Adapt.devtools.get('_isEnabled')) return;
 
 		// some plugins (e.g. bookmarking) will manipulate the router so defer the call
 		_.defer(function () {addHooks();});

@@ -256,8 +256,7 @@ define(function(require) {
 	}, Backbone.Events);
 	
 	Adapt.on('app:dataReady devtools:enable', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		AutoAnswer.initialize();
 	});

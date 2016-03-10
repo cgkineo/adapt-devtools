@@ -15,12 +15,12 @@ define(function(require) {
 		},
 
 		render: function() {
-			var config = Adapt.config.get('_devtools');
+			var config = Adapt.devtools;
             var data = this.model;
             var startTime = new Date().getTime();
 
             var template = Handlebars.templates['devtoolsMap'];
-            this.$('body').addClass(config._theme ? config._theme : 'theme-light');
+            this.$('body').addClass(config.has('_theme') ? config.get('_theme') : 'theme-light');
             this.$('body').html(template(data));
 
             console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
@@ -208,8 +208,7 @@ define(function(require) {
 	}, Backbone.Events);
 
 	Adapt.once('adapt:initialize devtools:enable', function() {
-		var config = Adapt.config.get('_devtools');
-		if (!config || !config._isEnabled) return;
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		Map.initialize();
 	});
