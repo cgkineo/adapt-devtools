@@ -23,7 +23,7 @@ define(function(require) {
             this.$('body').addClass(config.has('_theme') ? config.get('_theme') : 'theme-light');
             this.$('body').html(template(data));
 
-            console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
+            //console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
 		},
 
 		remove: function() {
@@ -65,10 +65,8 @@ define(function(require) {
 					// if already on page ensure trickle is disabled
 					if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
 						Adapt.devtools.set('_trickleEnabled', false);
-
-						if (model.get('_type') == 'component' && model.get('_isVisible') === false) id = model.findAncestor('blocks').get('_id');
-
 						Adapt.scrollTo($('.'+id));
+						checkVisibility();
 					}
 					else {
 						// pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
@@ -78,20 +76,18 @@ define(function(require) {
 						if (!targetModel.has('_trickle')) {
 							targetModel.set('_trickle', {_isEnabled:false});
 							this.listenToOnce(Adapt, 'pageView:ready', function() {
-								targetModel.get('_trickle')._isEnabled = true;
 								_.defer(function() {
-									if (model.get('_type') == 'component' && model.get('_isVisible') === false) id = model.findAncestor('blocks').get('_id');
-									Adapt.scrollTo($('.'+id));
+									targetModel.get('_trickle')._isEnabled = true;
+									checkVisibility();
 								});
 							});
 						}
 						else if (targetModel.get('_trickle')._isEnabled) {
 							targetModel.get('_trickle')._isEnabled = false;
 							this.listenToOnce(Adapt, 'pageView:ready', function() {
-								targetModel.get('_trickle')._isEnabled = true;
 								_.defer(function() {
-									if (model.get('_type') == 'component' && model.get('_isVisible') === false) id = model.findAncestor('blocks').get('_id');
-									Adapt.scrollTo($('.'+id));
+									targetModel.get('_trickle')._isEnabled = true;
+									checkVisibility();
 								});
 							});
 						}
@@ -99,6 +95,17 @@ define(function(require) {
 						Backbone.history.navigate("#/id/"+id, {trigger:true});
 					}
 				}
+			}
+
+			function checkVisibility() {
+				if ($('.'+id).is(':visible') || model == Adapt.course) return;
+
+				while (!$('.'+id).is(':visible') && model != Adapt.course) {
+					model = model.getParent();
+					id = model.get('_id');
+				}
+				console.log('adapt-devtools::checkVisibility scrolling to ancestor '+id);
+				Adapt.scrollTo($('.'+id));
 			}
 		}
 	});
