@@ -1,0 +1,15 @@
+{{#eachChild}}
+	{{#isMenu}}
+		<div class="devtools-map-menu{{#if @last}} last{{/if}}">
+			<a href="#{{getProp "_id"}}" class="devtools-map-menu-title{{#when "_isComplete"}} devtools-map-completed{{/when}}{{#when "_isOptional"}} devtools-map-optional{{/when}}">
+				<span class="devtools-map-abc-id">{{getProp "_id"}}</span>
+	            <span class="devtools-map-abc-label">{{getTitle}}</span>
+			</a>
+			<div class="devtools-map-menu-items">
+				{{> devtoolsMapMenu this}}
+			</div>
+		</div>
+	{{else}}
+		{{> devtoolsMapPage this}}
+	{{/isMenu}}
+{{/eachChild}}

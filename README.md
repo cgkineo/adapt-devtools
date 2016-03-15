@@ -38,7 +38,16 @@ Once selected adapt-devtools will attempt to break any form of menu locking, e.g
 
 ##Untrickle
 
-This feature appears whenever applicable. As the name implies selecting this will disable trickle and reveal all content in the current page.
+This feature appears whenever applicable. As the name implies selecting this will disable [trickle](https://github.com/adaptlearning/adapt-contrib-trickle) and reveal all content in the current page.
+
+##Open course map
+
+Select this button to reveal an interactive diagram of the course structure. The diagram will reveal all structural elements (content objects, articles, blocks and components) arranged in an intuitive way, reflecting both the hierarchical relationship of the elements and the vertical arrangement of content within each page. The map can be used to navigate directly to any element in the course. Performing a control-click will reveal the model of the selected course element in the browser console.
+
+The course map uses the following legend:
++ Green fill: element is complete
++ Red fill: element is incomplete
++ Yellow triangle: element is [trickled](https://github.com/adaptlearning/adapt-contrib-trickle)
 
 ##Pass
 

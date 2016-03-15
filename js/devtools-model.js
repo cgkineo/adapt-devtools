@@ -5,6 +5,7 @@ define(function(require) {
 	var DevtoolsModel = Backbone.Model.extend({
 
 		initialize:function() {
+			var config = Adapt.config.has('_devtools') ? Adapt.config.get('_devtools') : this.getDefaultConfig();
 			this.set(_.extend({
 				'_trickleEnabled':false,
 				'_hintingAvailable':true,
@@ -17,7 +18,14 @@ define(function(require) {
 				'_unlockMenuAvailable':true,
 				'_menuUnlocked':false,
 				'_toggleBankingAvailable':true
-			}, Adapt.config.get("_devtools")));
+			}, config));
+		},
+
+		getDefaultConfig:function() {
+			return {
+				'_isEnabled':false,
+				'_theme':'theme-dark'
+			};
 		},
 
 		toggleFeedback:function() {

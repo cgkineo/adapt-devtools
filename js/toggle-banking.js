@@ -36,9 +36,8 @@ define(function(require) {
 		}
 	};
 
-	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+	Adapt.once('adapt:initialize devtools:enable', function() {
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		ToggleBanking.initialize();
 	});

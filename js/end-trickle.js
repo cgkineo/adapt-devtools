@@ -30,12 +30,11 @@ define(function(require) {
 		}
 	}
 
-	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+	Adapt.once('adapt:initialize devtools:enable', function() {
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
-		Adapt.on('trickle:interactionInitialize', onTrickleBegun);
-		Adapt.on('trickle:kill', onTrickleEnded);
+		Adapt.on('trickle:interactionInitialize trickle:started', onTrickleBegun);
+		Adapt.on('trickle:kill trickle:finished', onTrickleEnded);
 		Adapt.on('remove', remove);
 	});
 });

@@ -9,13 +9,15 @@ define([
 	'./devtools-model',
 	'./pass-half-fail',
 	'./toggle-banking',
+	'./map',
 	'./auto-answer',
 	'./utils',
 	'./end-trickle',
 	'./hinting',
 	'./toggle-feedback',
-	'./unlock-menu'
-], function(Adapt, DevtoolsModel, PassHalfFail, ToggleBanking) {
+	'./unlock-menu',
+	'./enable'
+], function(Adapt, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
 	var DevtoolsView = Backbone.View.extend({
 
@@ -28,6 +30,7 @@ define([
 			'change .feedback input':'onToggleFeedback',
 			'change .auto-correct input':'onToggleAutoCorrect',
 			'click .menu-unlock':'onMenuUnlock',
+			'click .open-map':'onOpenMap',
 			'click .pass':'onPassHalfFail',
 			'click .half':'onPassHalfFail',
 			'click .fail':'onPassHalfFail'
@@ -65,6 +68,15 @@ define([
 		onMenuUnlock:function() {
 			Adapt.devtools.set('_menuUnlocked', true);
 			this._checkMenuUnlockVisibility();
+		},
+
+		/*************************************************/
+		/********************** MAP **********************/
+		/*************************************************/
+
+		onOpenMap:function() {
+			Map.open();
+			Adapt.trigger('drawer:closeDrawer');
 		},
 
 		/*************************************************/
@@ -228,8 +240,6 @@ define([
 		},
 
 		render:function() {
-			console.log('DevtoolsNavigationView::render');
-			
 	        $('.navigation-inner').append(this.$el);
 			return this;
 		},
@@ -251,16 +261,12 @@ define([
 		}
 	});
 
-	Adapt.once('app:dataReady', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
-
+	Adapt.once('app:dataLoaded', function() {
 		Adapt.devtools = new DevtoolsModel();
 	});
 
-	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+	Adapt.once('adapt:initialize devtools:enable', function() {
+		if (!Adapt.devtools.get('_isEnabled')) return;
 		
 		new DevtoolsNavigationView();
 	});

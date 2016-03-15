@@ -49,13 +49,12 @@ define(function(require) {
 		else console.error('devtools:onFeedbackButtonClicked: malformed component class name');
 	}
 	
-	Adapt.once('adapt:initialize', function() {
-		var config = Adapt.config.get("_devtools");
-		if (!config || !config._isEnabled) return;
+	Adapt.once('adapt:initialize devtools:enable', function() {
+		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
 			// assume single registrant is adapt-contrib-tutor
-			if (Adapt._events['questionView:showFeedback'].length == 1) {
+			if (Adapt._events.hasOwnProperty('questionView:showFeedback') && Adapt._events['questionView:showFeedback'].length == 1) {
 				Adapt.devtools.on('change:_feedbackEnabled', onFeedbackToggled);
 			}
 			else {
