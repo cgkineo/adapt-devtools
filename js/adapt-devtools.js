@@ -198,7 +198,7 @@ define([
 		onPassHalfFail:function(e) {
 			var command;
 
-			Adapt.trigger("trickle:kill");
+			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
 			// potentially large operation so show some feedback
 			$('.loading').show();
