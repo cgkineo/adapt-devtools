@@ -11,6 +11,9 @@ define(function(require) {
 			this.$('html').addClass('devtools-map');
 			this._renderIntervalId = setInterval(_.bind(this._checkRenderInterval, this), 500);
 			this.listenTo(Adapt.components, 'change:_isComplete', this.onModelCompletionChanged);
+			this.listenTo(Adapt.blocks, 'change:_isComplete', this.onModelCompletionChanged);
+			this.listenTo(Adapt.articles, 'change:_isComplete', this.onModelCompletionChanged);
+			this.listenTo(Adapt.contentObjects, 'change:_isComplete', this.onModelCompletionChanged);
 			this.render();
 		},
 
