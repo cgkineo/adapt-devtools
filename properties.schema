@@ -19,7 +19,7 @@
                 "_isEnabled": {
                   "type": "boolean",
                   "required": true,
-                  "default": "true",
+                  "default": "false",
                   "title": "Enable dev tools",
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "validators": [],
