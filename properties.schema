@@ -17,8 +17,9 @@
               "legend": "Dev tools",
               "properties":{
                 "_isEnabled": {
-                  "type":"boolean",
-                  "required":false,
+                  "type": "boolean",
+                  "required": true,
+                  "default": "true",
                   "title": "Enable dev tools",
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "validators": [],
