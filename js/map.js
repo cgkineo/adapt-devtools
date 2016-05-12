@@ -1,6 +1,7 @@
 define(function(require) {
 
 	var Adapt = require('coreJS/adapt');
+	var Router = require('coreJS/router');
 
 	var MapView = Backbone.View.extend({
 		events: {
@@ -43,6 +44,42 @@ define(function(require) {
 			}
 		},
 
+		_getConfig:function(pageModel) {
+			if (!pageModel.has('_devtools')) pageModel.set('_devtools', {});
+			return pageModel.get('_devtools');
+		},
+
+		_disablePageIncompletePrompt:function(pageModel) {
+			var config = this._getConfig(pageModel);
+
+			if (pageModel.has('_pageIncompletePrompt')) {
+				config._pageIncompletePromptExists = true;
+				if (pageModel.get('_pageIncompletePrompt').hasOwnProperty('_isEnabled')) {
+					config._pageIncompletePromptEnabled = pageModel.get('_pageIncompletePrompt')._isEnabled;
+				}
+			}
+			else {
+				config._pageIncompletePromptExists = false;
+				pageModel.set('_pageIncompletePrompt', {});
+			}
+
+			pageModel.get('_pageIncompletePrompt')._isEnabled = false;
+		},
+
+		_restorePageIncompletePrompt:function(pageModel) {
+			var config = this._getConfig(pageModel);
+
+			if (config._pageIncompletePromptExists) {
+				if (config.hasOwnProperty('_pageIncompletePromptEnabled')) pageModel.get('_pageIncompletePrompt')._isEnabled = config._pageIncompletePromptEnabled;
+				else delete pageModel.get('_pageIncompletePrompt')._isEnabled;
+			}
+			else {
+				pageModel.unset('_pageIncompletePrompt');
+			}
+			delete config._pageIncompletePromptExists;
+			delete config._pageIncompletePromptEnabled;
+		},
+
 		onModelCompletionChanged:function() {
 			this._invalid = true;
 		},
@@ -60,56 +97,133 @@ define(function(require) {
 				this.el.defaultView.console.log('devtools: add property window.'+id+':');
 				this.el.defaultView.console.log(model);
 			}
+			else if (e.shiftKey) {
+				this.navigateAndDisableTrickle(id);
+			}
 			else {
-				if (model._siblings == 'contentObjects') {
-					Backbone.history.navigate("#/id/"+id, {trigger:true});
-				}
-				else {
-					// if already on page ensure trickle is disabled
-					if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
-						Adapt.devtools.set('_trickleEnabled', false);
-						Adapt.scrollTo($('.'+id));
-						checkVisibility();
+				this.navigateAndDisableTrickleUpTo(id);
+			}
+		},
+
+		/**
+		* Navigate to the element with the given id (or as closely to it as possible). Disable trickle up to the given id.
+		* N.B. because trickle cannot be reliably manipulated in situ we must reload the page. Trickle remains disabled on
+		* affected article(s)|block(s).
+		*/
+		navigateAndDisableTrickleUpTo:function(id) {
+			var model = Adapt.findById(id);
+			var pageModel = Adapt.findById(Adapt.location._currentId);
+
+			// first ensure page incomplete prompt won't activate
+			this._disablePageIncompletePrompt(pageModel);
+
+			// now navigate
+
+			if (model._siblings == 'contentObjects') {
+				Backbone.history.navigate("#/id/"+id, {trigger:true});
+			}
+			else {
+				var level = model.get('_type') == 'component' ? model.getParent() : model;
+				var siblings = level.getParent().getChildren(), sibling = null;
+				// disable trickle on all preceeding article(s)|block(s)
+				for (var i=0, count=siblings.indexOf(level); i < count; i++) {
+					sibling = siblings.at(i);
+					console.log('disabling trickle on '+sibling.get('_id'));
+					if (sibling.has('_trickle')) {
+						sibling.get('_trickle')._isEnabled = false;
 					}
 					else {
-						// pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
-						var targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
-						
-						// if necessary disable trickle (until page is ready)
-						if (!targetModel.has('_trickle')) {
-							targetModel.set('_trickle', {_isEnabled:false});
-							this.listenToOnce(Adapt, 'pageView:ready', function() {
-								_.defer(function() {
-									targetModel.get('_trickle')._isEnabled = true;
-									checkVisibility();
-								});
-							});
-						}
-						else if (targetModel.get('_trickle')._isEnabled) {
-							targetModel.get('_trickle')._isEnabled = false;
-							this.listenToOnce(Adapt, 'pageView:ready', function() {
-								_.defer(function() {
-									targetModel.get('_trickle')._isEnabled = true;
-									checkVisibility();
-								});
-							});
-						}
-
-						Backbone.history.navigate("#/id/"+id, {trigger:true});
+						sibling.set('_trickle', {_isEnabled:false});
 					}
 				}
-			}
-
-			function checkVisibility() {
-				if ($('.'+id).is(':visible') || model == Adapt.course) return;
-
-				while (!$('.'+id).is(':visible') && model != Adapt.course) {
-					model = model.getParent();
-					id = model.get('_id');
+				// check if already on page
+				if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
+					this.listenToOnce(Adapt, 'pageView:ready', function(view) {
+						_.defer(_.bind(function() {
+							Adapt.scrollTo($('.'+id));
+							this.checkVisibility(id);
+						}, this));
+					});
+					if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
+					else Router.handleId(Adapt.location._currentId);
 				}
-				console.log('adapt-devtools::checkVisibility scrolling to ancestor '+id);
-				Adapt.scrollTo($('.'+id));
+				else {
+					this.listenToOnce(Adapt, 'pageView:ready', function() {
+						_.defer(_.bind(function() {
+							this.checkVisibility(id);
+						}, this));
+					});
+					Backbone.history.navigate("#/id/"+id, {trigger:true});
+				}
 			}
+
+			// restore pageIncompletePrompt config
+			this._restorePageIncompletePrompt(pageModel);
+		},
+
+		/**
+		* Navigate to the element with the given id (or as closely to it as possible). Disable trickle on containing
+		* page temporarily.
+		*/
+		navigateAndDisableTrickle:function(id) {
+			var model = Adapt.findById(id);
+			var pageModel = Adapt.findById(Adapt.location._currentId);
+
+			// first ensure page incomplete prompt won't activate
+			this._disablePageIncompletePrompt(pageModel);
+
+			if (model._siblings == 'contentObjects') {
+				Backbone.history.navigate("#/id/"+id, {trigger:true});
+			}
+			else {
+				// if already on page ensure trickle is disabled
+				if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
+					Adapt.devtools.set('_trickleEnabled', false);
+					Adapt.scrollTo($('.'+id));
+					this.checkVisibility(id);
+				}
+				else {
+					// pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
+					var targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
+					
+					// if necessary disable trickle (until page is ready)
+					if (!targetModel.has('_trickle')) {
+						targetModel.set('_trickle', {_isEnabled:false});
+						this.listenToOnce(Adapt, 'pageView:ready', function() {
+							_.defer(_.bind(function() {
+								targetModel.get('_trickle')._isEnabled = true;
+								this.checkVisibility(id);
+							}, this));
+						});
+					}
+					else if (targetModel.get('_trickle')._isEnabled) {
+						targetModel.get('_trickle')._isEnabled = false;
+						this.listenToOnce(Adapt, 'pageView:ready', function() {
+							_.defer(_.bind(function() {
+								targetModel.get('_trickle')._isEnabled = true;
+								this.checkVisibility(id);
+							}, this));
+						});
+					}
+
+					Backbone.history.navigate("#/id/"+id, {trigger:true});
+				}
+			}
+
+			// restore pageIncompletePrompt config
+			this._restorePageIncompletePrompt(pageModel);
+		},
+
+		checkVisibility:function(id) {
+			var model = Adapt.findById(id);
+			if ($('.'+id).is(':visible') || model == Adapt.course) return;
+
+			while (!$('.'+id).is(':visible') && model != Adapt.course) {
+				model = model.getParent();
+				id = model.get('_id');
+			}
+			console.log('adapt-devtools::checkVisibility scrolling to ancestor '+id);
+			Adapt.scrollTo($('.'+id));
 		}
 	});
 
