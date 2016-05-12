@@ -48,6 +48,7 @@ The course map uses the following legend:
 + Green fill: element is complete
 + Red fill: element is incomplete
 + Yellow triangle: element is [trickled](https://github.com/adaptlearning/adapt-contrib-trickle)
++ Grey fill: element is optional (_isOptional:true)
 
 ##Pass
 
