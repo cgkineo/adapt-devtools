@@ -24,7 +24,7 @@ define(function(require) {
 		pass:function(callback) {
 			var i = 0, qs = this._questionViews, len = qs.length;
 
-			this._completeNonQuestions();
+			//this._completeNonQuestions();
 
 			// async to avoid locking up the interface
 			function step() {
@@ -43,7 +43,7 @@ define(function(require) {
 			var qs = _.shuffle(_.filter(this._questionViews, notSubmitted));
 			var i = 0, len = qs.length;
 
-			this._completeNonQuestions();
+			//this._completeNonQuestions();
 
 			// async to avoid locking up the interface
 			function step() {
@@ -60,7 +60,7 @@ define(function(require) {
 		fail:function(callback) {
 			var i = 0, qs = this._questionViews, len = qs.length;
 
-			this._completeNonQuestions();
+			//this._completeNonQuestions();
 
 			// async to avoid locking up the interface
 			function step() {

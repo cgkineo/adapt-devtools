@@ -21,9 +21,12 @@
 		                    </a>
 		                    <div class="devtools-map-block-components">
 			                	{{#eachChild}}
-				                	<a href="#{{getProp "_id"}}" class="devtools-map-component{{#if @last}} last{{/if}} devtools-map-component-{{@index}}{{#when "_isComplete"}} devtools-map-completed{{/when}}{{#when "_isOptional"}} devtools-map-optional{{/when}}">
+				                	<a href="#{{getProp "_id"}}" class="devtools-map-component{{#if @last}} last{{/if}} devtools-map-component-{{@index}}{{#when "_isComplete"}} devtools-map-completed{{/when}}{{#when "_isOptional"}} devtools-map-optional{{/when}} {{#when "_isSubmitted"}}{{#when "_isCorrect"}}correct{{else}}incorrect{{/when}}{{/when}}">
 				                        <span class="devtools-map-abc-id">{{getProp "_id"}}</span>
-				                        <span class="devtools-map-component-type">{{getProp "_component"}}</span>
+				                        <div class="devtools-map-component-info">
+				                        	<span class="devtools-map-component-type">{{getProp "_component"}}</span>
+				                        	<span class="devtools-map-component-mark"></span>
+				                    	</div>
 				                        <span class="devtools-map-component-label">{{getTitle}}</span>
 				                    </a>
 			                    {{/eachChild}}

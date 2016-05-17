@@ -196,22 +196,42 @@
                     left:auto;
                     right:0px;
                 }
-                .devtools-map-component-type {
+                .devtools-map-component-info {
                     left:auto;
                     right:0px;
                 }
             }
-            .devtools-map-component-type {
-                font-family: 'Courier New', Courier, monospace;
-                font-size: 10px;
-                font-style: italic;
-                line-height: normal;
+            &.correct {
+                .devtools-map-component-mark:after {
+                    content: "\e633";
+                }
+            }
+            &.incorrect {
+                .devtools-map-component-mark:after {
+                    content: "\e634";
+                }
+            }
+            
+            .devtools-map-component-info {
                 position: absolute;
                 margin:2px;
                 opacity: 0.5;
                 bottom:0px;
                 left:0px;
+
+                .devtools-map-component-type {
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 10px;
+                    font-style: italic;
+                    line-height: normal;
+                }
+                .devtools-map-component-mark {
+                    font-family: "vanilla";
+                    position: relative;
+                    top: 3px;
+                }
             }
+            
             .devtools-map-component-label {
                 .devtools-map-text;
                 text-align:center;

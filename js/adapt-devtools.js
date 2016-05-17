@@ -31,6 +31,7 @@ define([
 			'change .auto-correct input':'onToggleAutoCorrect',
 			'click .menu-unlock':'onMenuUnlock',
 			'click .open-map':'onOpenMap',
+			'click .complete-page':'onCompletePage',
 			'click .pass':'onPassHalfFail',
 			'click .half':'onPassHalfFail',
 			'click .fail':'onPassHalfFail'
@@ -46,6 +47,7 @@ define([
 			this._checkHintingVisibility();
 			this._checkAutoCorrectVisibility();
 			this._checkPassHalfFailVisibility();
+			this._checkCompletePageVisibility();
 		},
 
 		render:function() {
@@ -177,6 +179,46 @@ define([
 			this._checkAutoCorrectVisibility();
 		},
 
+		/*************************************************/
+		/***************** COMPLETE PAGE *****************/
+		/*************************************************/
+
+		_checkCompletePageVisibility:function() {
+			var currentModel = Adapt.findById(Adapt.location._currentId);
+
+			if (currentModel.get('_type') != 'page') {
+				this.$('.complete-page').addClass('display-none');
+				return;
+			}
+
+			var incomplete = currentModel.findDescendants('components').where({'_isInteractionComplete':false});
+
+			this.$('.complete-page').toggleClass('display-none', incomplete.length == 0);
+
+		},
+
+		onCompletePage:function(e) {
+			var currentModel = Adapt.findById(Adapt.location._currentId);
+
+			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+
+			var incomplete = currentModel.findDescendants('components').where({'_isInteractionComplete':false});
+
+			_.each(incomplete, function(component) {
+				if (component.get('_isQuestionType')) {
+					component.set("_isCorrect", true);
+					component.set("_isSubmitted", true);
+					component.set("_score", 1);
+					component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
+				}
+				
+				component.set("_isComplete", true);
+				component.set("_isInteractionComplete", true);
+			});
+
+			Adapt.trigger('drawer:closeDrawer');
+		},
+
 		/************************************************************/
 		/******* Similar to original adapt-cheat functionality ******/
 		/************************************************************/
@@ -184,20 +226,21 @@ define([
 		_checkPassHalfFailVisibility:function() {
 			var currentModel = Adapt.findById(Adapt.location._currentId);
 
-			if (currentModel.get('_type') != 'page') return;
+			if (currentModel.get('_type') != 'page') {
+				this.$('.pass, .half, .fail').addClass('display-none');
+				return;
+			}
 
 			var unanswered = currentModel.findDescendants('components').where({'_isQuestionType':true, '_isSubmitted':false});
 			
 			if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
-			else this.$('.tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following (other components will be completed):');
+			else this.$('.tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
 
 			this.$('.pass, .half, .fail').toggleClass('display-none', unanswered.length == 0);
 
 		},
 
 		onPassHalfFail:function(e) {
-			var command;
-
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
 			// potentially large operation so show some feedback

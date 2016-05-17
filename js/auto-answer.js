@@ -240,18 +240,14 @@ define(function(require) {
 			var model = view.model;
 
 			model.set({"_isComplete":true, "_isInteractionComplete":true, "_isCorrect":true, "_isSubmitted":true, "_score":1});
-			model.set("_attemptsLeft", model.get("_attempts") - 1);
-			model.set("_attempts", 1);
-			model.set("_interactions", model.get("_interactions") ? model.get("_interactions") + 1 : 1);
+			model.set("_attemptsLeft", Math.max(0, model.get("_attempts") - 1));
 		},
 
 		answerUnsupportedIncorrectly:function(view) {
 			var model = view.model;
 			
 			model.set({"_isComplete":true, "_isInteractionComplete":true, "_isCorrect":false, "_isSubmitted":true, "_score":0});
-			model.set("_attemptsLeft", model.get("_attempts") - 1);
-			model.set("_attempts", 1);
-			model.set("_interactions", model.get("_interactions") ? model.get("_interactions") + 1 : 1);
+			model.set("_attemptsLeft", Math.max(0, model.get("_attempts") - 1));
 		}
 	}, Backbone.Events);
 	

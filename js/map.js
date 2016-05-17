@@ -81,7 +81,7 @@ define(function(require) {
 		},
 
 		onModelCompletionChanged:function() {
-			this._invalid = true;
+			this.invalidate();
 		},
 
 		onLinkClicked:function(e) {
@@ -103,6 +103,10 @@ define(function(require) {
 			else {
 				this.navigateAndDisableTrickleUpTo(id);
 			}
+		},
+
+		invalidate:function() {
+			this._invalid = true;
 		},
 
 		/**
@@ -159,6 +163,8 @@ define(function(require) {
 
 			// restore pageIncompletePrompt config
 			this._restorePageIncompletePrompt(pageModel);
+
+			this.invalidate();
 		},
 
 		/**
@@ -212,6 +218,8 @@ define(function(require) {
 
 			// restore pageIncompletePrompt config
 			this._restorePageIncompletePrompt(pageModel);
+
+			this.invalidate();
 		},
 
 		checkVisibility:function(id) {
