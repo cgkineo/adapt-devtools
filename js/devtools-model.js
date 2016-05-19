@@ -15,8 +15,8 @@ define(function(require) {
 				'_autoCorrectAvailable':true,
 				'_autoCorrectEnabled':false,
 				'_tutorListener':null,
-				'_unlockMenuAvailable':true,
-				'_menuUnlocked':false,
+				'_unlockAvailable':true,
+				'_unlocked':false,
 				'_toggleBankingAvailable':true
 			}, config));
 		},

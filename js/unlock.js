@@ -18,8 +18,8 @@ define(function(require) {
 		}
 	}
 
-	function onMenuUnlocked() {
-		if (Adapt.devtools.get('_menuUnlocked')) {
+	function onUnlocked() {
+		if (Adapt.devtools.get('_unlocked')) {
 			breakCoreLocking();
 			// reload the page/menu
 			if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
@@ -27,9 +27,9 @@ define(function(require) {
 		}
 	}
 
-	// legacy (for courses authored prior to v2.0.9 or which otherwise do not use core locking)
+	// menu unlock legacy (for courses authored prior to v2.0.9 or which otherwise do not use core locking)
 	function onMenuPreRender(view) {
-		if (Adapt.devtools.get('_menuUnlocked')) {
+		if (Adapt.devtools.get('_unlocked')) {
 			if (Adapt.location._currentId == view.model.get('_id')) {
 				view.model.once('change:_isReady', _.bind(onMenuReady, view));
 				view.model.getChildren().each(function(item) {
@@ -43,9 +43,9 @@ define(function(require) {
 		}
 	}
 
-	// legacy (for courses authored prior to v2.0.9 or which otherwise do not use core locking)
+	// menu unlock legacy (for courses authored prior to v2.0.9 or which otherwise do not use core locking)
 	function onMenuReady() {
-		if (Adapt.devtools.get('_menuUnlocked')) {
+		if (Adapt.devtools.get('_unlocked')) {
 			// second pass: attempt to enable clickable elements
 			this.$('a, button').prop('disabled', false).css('pointer-events', 'auto');
 		}
@@ -54,8 +54,8 @@ define(function(require) {
 	Adapt.once('adapt:initialize devtools:enable', function() {
 		if (!Adapt.devtools.get('_isEnabled')) return;
 
-		if (Adapt.devtools.get('_unlockMenuAvailable')) {
-			Adapt.devtools.on('change:_menuUnlocked', onMenuUnlocked);
+		if (Adapt.devtools.get('_unlockAvailable')) {
+			Adapt.devtools.on('change:_unlocked', onUnlocked);
 			Adapt.on('menuView:preRender', onMenuPreRender);
 		}
 	});

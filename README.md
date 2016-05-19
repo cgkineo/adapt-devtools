@@ -32,9 +32,9 @@ Allows the tutor extension to be hushed, preventing feedback popups when questio
 
 If banking is used in an assessment in the current page this can be toggled on and off. N.B. if the current page has more than one banked assessment then the toggle will be applied to each (when invoked all banked assessments in the page will have banking toggled on or off).
 
-##Unlock menu
+##Unlock
 
-Once selected adapt-devtools will attempt to break any form of menu locking, e.g. linear step-locking, assessment locking etc.
+Once selected adapt-devtools will disable Adapt core locking (>=v2.0.9) throughout the course. For courses using older versions of the Adapt framework this feature will only attempt to break locking on menus, e.g. linear step-locking, assessment locking etc.
 
 ##Untrickle
 

@@ -15,7 +15,7 @@ define([
 	'./end-trickle',
 	'./hinting',
 	'./toggle-feedback',
-	'./unlock-menu',
+	'./unlock',
 	'./enable'
 ], function(Adapt, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
@@ -29,7 +29,7 @@ define([
 			'change .banking input':'onToggleBanking',
 			'change .feedback input':'onToggleFeedback',
 			'change .auto-correct input':'onToggleAutoCorrect',
-			'click .menu-unlock':'onMenuUnlock',
+			'click .unlock':'onUnlock',
 			'click .open-map':'onOpenMap',
 			'click .complete-page':'onCompletePage',
 			'click .pass':'onPassHalfFail',
@@ -40,7 +40,7 @@ define([
 		initialize:function() {
 			this.render();
 
-			this._checkMenuUnlockVisibility();
+			this._checkUnlockVisibility();
 			this._checkTrickleEndVisibility();
 			this._checkBankingVisibility();
 			this._checkFeedbackVisibility();
@@ -58,18 +58,18 @@ define([
 		},
 
 		/*************************************************/
-		/********************** MENU *********************/
+		/********************* UNLOCK ********************/
 		/*************************************************/
 
-		_checkMenuUnlockVisibility:function() {
+		_checkUnlockVisibility:function() {
 			// check if function available and not already activated
-			if (!Adapt.devtools.get('_unlockMenuAvailable') || Adapt.devtools.get('_menuUnlocked')) this.$('.menu-unlock').addClass('display-none');
-			else this.$('.menu-unlock').toggleClass('display-none', Adapt.location._contentType != 'menu');
+			if (!Adapt.devtools.get('_unlockAvailable') || Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('display-none');
+			else this.$('.unlock').toggleClass('display-none', Adapt.location._contentType != 'menu');
 		},
 
-		onMenuUnlock:function() {
-			Adapt.devtools.set('_menuUnlocked', true);
-			this._checkMenuUnlockVisibility();
+		onUnlock:function() {
+			Adapt.devtools.set('_unlocked', true);
+			this._checkUnlockVisibility();
 		},
 
 		/*************************************************/
