@@ -64,7 +64,18 @@ define([
 		_checkUnlockVisibility:function() {
 			// check if function available and not already activated
 			if (!Adapt.devtools.get('_unlockAvailable') || Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('display-none');
-			else this.$('.unlock').toggleClass('display-none', Adapt.location._contentType != 'menu');
+			else this.$('.unlock').toggleClass('display-none', !this._checkForLocks());
+		},
+
+		_checkForLocks:function() {
+			var hasLock = function(model) {return model.has('_lockType');};
+
+			if (hasLock(Adapt.course)) return true;
+			if (Adapt.contentObjects.some(hasLock)) return true;
+			if (Adapt.articles.some(hasLock)) return true;
+			if (Adapt.blocks.some(hasLock)) return true;
+
+			return false;
 		},
 
 		onUnlock:function() {

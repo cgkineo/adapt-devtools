@@ -4,10 +4,21 @@ define(function(require) {
 	var Router = require('coreJS/router');
 
 	var buffer = '';
+	var isMouseDown = false;
 
 	function onKeypress(e) {
-		buffer += String.fromCharCode(e.which).toLowerCase();
-		processBuffer();
+		var c = String.fromCharCode(e.which).toLowerCase();
+		buffer += c;
+		if (isMouseDown && c == '5' && !Adapt.devtools.get('_isEnabled')) enable();
+		else processBuffer();
+	}
+
+	function onMouseDown() {
+		isMouseDown = true;
+	}
+
+	function onMouseUp() {
+		isMouseDown = false;
 	}
 	
 	function processBuffer() {
@@ -16,20 +27,24 @@ define(function(require) {
 		blen = buffer.length;
 
 		if (buffer.substr( blen - ("kcheat").length, ("kcheat").length  ) == "kcheat") {
-			if (!Adapt.devtools.get('_isEnabled')) {
-				removeHooks();
-				Adapt.devtools.set('_isEnabled', true);
-				Adapt.trigger('devtools:enable');
-
-				// reload the menu/page
-				if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
-				else Router.handleId(Adapt.location._currentId);
-			}
+			if (!Adapt.devtools.get('_isEnabled')) enable();
 		}
+	}
+
+	function enable() {
+		removeHooks();
+		Adapt.devtools.set('_isEnabled', true);
+		Adapt.trigger('devtools:enable');
+
+		// reload the menu/page
+		if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
+		else Router.handleId(Adapt.location._currentId);
 	}
 
 	function addHooks() {
 		$(window).on("keypress", onKeypress);
+		$(window).on("mousedown", onMouseDown);
+		$(window).on("mouseup", onMouseUp);
 
 		window.kcheat = function() {
 			buffer = "kcheat";
@@ -43,7 +58,9 @@ define(function(require) {
 
 	function removeHooks() {
 		$(window).off("keypress", onKeypress);
-		window.kcheat = undefined;
+		$(window).off("mousedown", onMouseDown);
+		$(window).off("mouseup", onMouseUp);
+		delete window.kcheat;
 	}
 
 	Adapt.once('adapt:initialize', function() {
