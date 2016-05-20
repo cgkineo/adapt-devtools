@@ -5,19 +5,33 @@ define(function(require) {
 
 	var ToggleBanking = {
 
-		initialize:function() {},
+		initialize:function() {
+			Adapt.articles.each(function(m) {
+				var config = this.getConfig(m);
+				if (m.has('_assessment') && m.get('_assessment')._banks && !m.get('_assessment')._banks._isEnabled) {
+					config._assessmentBankDisabled = true;
+				}
+			}, this);
+		},
+
+		getConfig:function(articleModel) {
+			if (!articleModel.has('_devtools')) articleModel.set('_devtools', {});
+			return articleModel.get('_devtools');
+		},
 
 		getBankedAssessmentsInCurrentPage:function() {
 			var pageModel = Adapt.findById(Adapt.location._currentId);
 			var f = function(m) {
-				if (m.has('_assessment') &&
+				config = this.getConfig(m);
+				if (!config._assessmentBankDisabled &&
+					m.has('_assessment') &&
 					m.get('_assessment')._isEnabled &&
 					m.get('_assessment')._banks._split.length > 1) return true;
 
 				return false;
 			};
 
-			return pageModel.findDescendants('articles').filter(f);
+			return Adapt.location._contentType == 'menu' ? [] : pageModel.findDescendants('articles').filter(f, this);
 		},
 
 		toggle:function() {

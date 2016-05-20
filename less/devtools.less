@@ -19,6 +19,28 @@
 		}
 	}
 
+	.section-general, .section-page {
+		position: relative;
+		text-align: center;
+		z-index: 2;
+
+		&:after {
+			border-top:dotted 1px @drawer-item-text-color;
+			content:"";
+			position:absolute;
+			top:50%;
+			left:0;
+			right:0;
+			z-index:-1;
+		}
+
+		span {
+			background:@drawer-color;
+			margin:0;
+			padding:0 10px;
+		}
+	}
+
 	.drawer-item {
 
 		margin:5px auto;
@@ -103,6 +125,9 @@
 			}
 			&:after {
 				content: "\e610";
+				font-family:'vanilla';
+				position: relative;
+				left:6px;
 			}
 		}
 		&.pass {
