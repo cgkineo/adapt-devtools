@@ -91,6 +91,7 @@
 		&.open-map {
 			position: relative;
 			.devtools-alpha {
+				display: none;
 				color:#ffff00;
 				font-family: 'Courier New', Courier, monospace;
 				font-size: 10px;
@@ -99,6 +100,9 @@
 				position: absolute;
 				right:0px;
 				top:0px;
+			}
+			&:after {
+				content: "\e610";
 			}
 		}
 		&.pass {
