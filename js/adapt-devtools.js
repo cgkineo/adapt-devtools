@@ -6,6 +6,7 @@
 
 define([
 	'coreJS/adapt',
+	'coreModels/adaptModel',
 	'./devtools-model',
 	'./pass-half-fail',
 	'./toggle-banking',
@@ -17,7 +18,7 @@ define([
 	'./toggle-feedback',
 	'./unlock',
 	'./enable'
-], function(Adapt, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
+], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
 	var DevtoolsView = Backbone.View.extend({
 
@@ -68,6 +69,8 @@ define([
 		},
 
 		_checkForLocks:function() {
+			if (typeof AdaptModel.prototype.checkLocking != 'function') return Adapt.location._contentType == 'menu';
+
 			var hasLock = function(model) {return model.has('_lockType');};
 
 			if (hasLock(Adapt.course)) return true;
