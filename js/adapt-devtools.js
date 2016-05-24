@@ -16,6 +16,7 @@ define([
 	'./end-trickle',
 	'./hinting',
 	'./toggle-feedback',
+	'./toggle-alt-text',
 	'./unlock',
 	'./enable'
 ], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
@@ -30,6 +31,7 @@ define([
 			'change .banking input':'onToggleBanking',
 			'change .feedback input':'onToggleFeedback',
 			'change .auto-correct input':'onToggleAutoCorrect',
+			'change .alt-text input':'onToggleAltText',
 			'click .unlock':'onUnlock',
 			'click .open-map':'onOpenMap',
 			'click .complete-page':'onCompletePage',
@@ -47,6 +49,7 @@ define([
 			this._checkFeedbackVisibility();
 			this._checkHintingVisibility();
 			this._checkAutoCorrectVisibility();
+			this._checkAltTextVisibility();
 			this._checkPassHalfFailVisibility();
 			this._checkCompletePageVisibility();
 		},
@@ -191,6 +194,26 @@ define([
 		onToggleAutoCorrect:function() {
 			Adapt.devtools.toggleAutoCorrect();
 			this._checkAutoCorrectVisibility();
+		},
+
+		/*************************************************/
+		/******************* ALT TEXT ********************/
+		/*************************************************/
+
+		_checkAltTextVisibility:function() {
+			if (Adapt.devtools.get('_altTextAvailable')) {
+				this.$('.toggle.alt-text').removeClass('display-none');
+				this.$('.toggle.alt-text label').toggleClass('selected', Adapt.devtools.get('_altTextEnabled'));
+				this.$('.tip.alt-text').toggleClass('display-none', Adapt.devtools.get('_altTextEnabled'));
+			}
+			else {
+				this.$('.alt-text').addClass('display-none');
+			}
+		},
+
+		onToggleAltText:function() {
+			Adapt.devtools.toggleAltText();
+			this._checkAltTextVisibility();
 		},
 
 		/*************************************************/

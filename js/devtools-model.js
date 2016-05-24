@@ -14,6 +14,8 @@ define(function(require) {
 				'_feedbackEnabled':true,
 				'_autoCorrectAvailable':true,
 				'_autoCorrectEnabled':false,
+				'_altTextAvailable':true,
+				'_altTextEnabled':false,
 				'_tutorListener':null,
 				'_unlockAvailable':true,
 				'_unlocked':false,
@@ -38,6 +40,10 @@ define(function(require) {
 
 		toggleAutoCorrect:function() {
 			this.set('_autoCorrectEnabled', !this.get('_autoCorrectEnabled'));
+		},
+
+		toggleAltText:function() {
+			this.set('_altTextEnabled', !this.get('_altTextEnabled'));
 		}
 	});
 
