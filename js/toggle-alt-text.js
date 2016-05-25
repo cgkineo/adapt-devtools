@@ -78,7 +78,10 @@ define(function(require) {
 		},
 
 		updateAnnotation:function($img, $annotation) {
-			$annotation.css($img.position());
+			var position = $img.position();
+			position.left += parseInt($img.css('marginLeft'), 10) + parseInt($img.css('paddingLeft'), 10);
+			position.top += parseInt($img.css('marginTop'), 10) + parseInt($img.css('paddingTop'), 10);
+			$annotation.css(position);
 		},
 
 		onDomMutation:function(mutations) {
