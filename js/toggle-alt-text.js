@@ -92,7 +92,7 @@ define(function(require) {
 			if (this.mutated === false) return;
 			if (this.observer) this.mutated = false;
 
-			console.log('devtools::toggle-alt-text:run check');
+			//console.log('devtools::toggle-alt-text:run check');
 
 			this.disconnectObserver();
 
