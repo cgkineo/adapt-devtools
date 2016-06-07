@@ -330,7 +330,7 @@ define([
 
 		onContentRendered:function(view) {
 			if (view.model.get('_id') == Adapt.location._currentId) {
-				this.stopListening('change:_isReady');
+				this.stopListening(view.model, 'change:_isReady', this.deferredRender);
 				this.listenToOnce(view.model, 'change:_isReady', this.deferredRender);
 			}
 		},
