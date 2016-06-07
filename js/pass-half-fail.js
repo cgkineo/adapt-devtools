@@ -85,8 +85,8 @@ define(function(require) {
 		},
 
 		onComponentRendered:function(view) {
-			// check component is part of current page (should always be)
-			if (view.model.findAncestor('contentObjects').get('_id') == this._currentPageId) {
+			// check component is part of current page
+			if (view.model.has('_parentId') && view.model.findAncestor('contentObjects').get('_id') == this._currentPageId) {
 				if (view.model.get('_isQuestionType')) {
 					this._questionViews.push(view);
 				}
