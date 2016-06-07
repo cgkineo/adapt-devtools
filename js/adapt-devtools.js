@@ -228,7 +228,8 @@ define([
 				return;
 			}
 
-			var incomplete = currentModel.findDescendants('components').where({'_isInteractionComplete':false});
+			var cond = currentModel.has('_isInteractionsComplete') ? {'_isInteractionsComplete':false} : {'_isInteractionComplete':false};
+			var incomplete = currentModel.findDescendants('components').where(cond);
 
 			this.$('.complete-page').toggleClass('display-none', incomplete.length == 0);
 
@@ -239,7 +240,8 @@ define([
 
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
-			var incomplete = currentModel.findDescendants('components').where({'_isInteractionComplete':false});
+			var cond = currentModel.has('_isInteractionsComplete') ? {'_isInteractionsComplete':false} : {'_isInteractionComplete':false};
+			var incomplete = currentModel.findDescendants('components').where(cond);
 
 			_.each(incomplete, function(component) {
 				if (component.get('_isQuestionType')) {
@@ -250,7 +252,7 @@ define([
 				}
 				
 				component.set("_isComplete", true);
-				component.set("_isInteractionComplete", true);
+				component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
 			});
 
 			Adapt.trigger('drawer:closeDrawer');
