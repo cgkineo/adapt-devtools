@@ -1,6 +1,8 @@
 define(function(require) {
 
 	var Adapt = require('coreJS/adapt');
+	var AdaptModel = require('coreModels/adaptModel');
+	var QuestionView = require('coreViews/questionView');
 	
 	// control-click to access Adapt model
 	function onDocumentClicked(e) {
@@ -28,6 +30,35 @@ define(function(require) {
 			if (getModel($target.parents('.menu'), 'menu')) return;
 		}
 	}
+
+	function getAdaptCoreVersion() {
+		try {
+			if (typeof AdaptModel.prototype.setCompletionStatus == 'function') return ">=v2.0.10";
+			if (typeof AdaptModel.prototype.checkLocking == 'function') return "v2.0.9";
+			if (typeof Adapt.checkingCompletion == 'function') return "v2.0.8";
+			if (typeof AdaptModel.prototype.getParents == 'function') return "v2.0.7";
+			if ($.a11y && $.a11y.options.hasOwnProperty('isIOSFixesEnabled')) return "v2.0.5-v2.0.6";
+			if (Adapt instanceof Backbone.Model) return "v2.0.4";
+			if (typeof QuestionView.prototype.recordInteraction == 'function') return "v2.0.2-v2.0.3";
+			if (typeof Adapt.findById == 'function') return "v2.0.0-v2.0.1";
+			return "v1.x";
+		}
+		catch (e) {
+			return 'unknown version';
+		}
+	}
+
+	Adapt.once('adapt:initialize', function() {
+		var str = 'Version of Adapt core detected: '+getAdaptCoreVersion();
+		var horz = getHorzLine();
+
+		console.log(horz+'\nVersion of Adapt core detected: '+getAdaptCoreVersion()+'\n'+horz);
+
+		function getHorzLine() {
+			for (var s='', i=0, c=str.length; i<c; i++) s+='*';
+			return s;
+		}
+	});
 
 	Adapt.once('adapt:initialize devtools:enable', function() {
 		if (!Adapt.devtools.get('_isEnabled')) return;
