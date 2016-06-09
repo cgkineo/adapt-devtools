@@ -343,7 +343,7 @@ define([
 		}
 	});
 
-	Adapt.once('app:dataLoaded', function() {
+	Adapt.once('courseModel:dataLoaded', function() {
 		Adapt.devtools = new DevtoolsModel();
 	});
 
