@@ -60,7 +60,7 @@ define(function(require) {
 		$(window).off("keypress", onKeypress);
 		$(window).off("mousedown", onMouseDown);
 		$(window).off("mouseup", onMouseUp);
-		delete window.kcheat;
+		window.kcheat = undefined;
 	}
 
 	Adapt.once('adapt:initialize', function() {
