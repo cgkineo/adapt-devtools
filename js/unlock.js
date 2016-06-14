@@ -22,7 +22,7 @@ define(function(require) {
 		if (Adapt.devtools.get('_unlocked')) {
 			breakCoreLocking();
 			// reload the page/menu
-			if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
+			if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
 			else Router.handleId(Adapt.location._currentId);
 		}
 	}

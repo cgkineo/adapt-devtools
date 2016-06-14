@@ -37,7 +37,7 @@ define(function(require) {
 		Adapt.trigger('devtools:enable');
 
 		// reload the menu/page
-		if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute();
+		if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
 		else Router.handleId(Adapt.location._currentId);
 	}
 
