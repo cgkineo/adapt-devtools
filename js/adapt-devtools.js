@@ -21,6 +21,8 @@ define([
 	'./enable'
 ], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
+	var navigationView;
+
 	var DevtoolsView = Backbone.View.extend({
 
 		className:'devtools',
@@ -326,6 +328,12 @@ define([
 			return this;
 		},
 
+		remove:function() {
+			this.$el.remove();
+			this.stopListening();
+			return this;
+		},
+
 		deferredRender:function() {
 			_.defer(_.bind(this.render, this));
 		},
@@ -347,9 +355,11 @@ define([
 		Adapt.devtools = new DevtoolsModel();
 	});
 
-	Adapt.once('adapt:initialize devtools:enable', function() {
+	Adapt.once('adapt:initialize devtools:enable languagePicker:languageChange', function() {
 		if (!Adapt.devtools.get('_isEnabled')) return;
+
+		if (navigationView) navigationView.remove();
 		
-		new DevtoolsNavigationView();
+		navigationView = new DevtoolsNavigationView();
 	});
 });
