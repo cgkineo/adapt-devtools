@@ -36,6 +36,7 @@ define([
 			'change .alt-text input':'onToggleAltText',
 			'click .unlock':'onUnlock',
 			'click .open-map':'onOpenMap',
+			'click .open-spoor-log':'onOpenSpoorLog',
 			'click .complete-page':'onCompletePage',
 			'click .pass':'onPassHalfFail',
 			'click .half':'onPassHalfFail',
@@ -46,6 +47,7 @@ define([
 			this.render();
 
 			this._checkUnlockVisibility();
+			this._checkSpoorLogVisibility();
 			this._checkTrickleEndVisibility();
 			this._checkBankingVisibility();
 			this._checkFeedbackVisibility();
@@ -97,6 +99,19 @@ define([
 
 		onOpenMap:function() {
 			Map.open();
+			Adapt.trigger('drawer:closeDrawer');
+		},
+
+		/*************************************************/
+		/********************* SPOOR *********************/
+		/*************************************************/
+
+		_checkSpoorLogVisibility:function() {
+			this.$('.open-spoor-log').prop('disabled', !require.defined('extensions/adapt-contrib-spoor/js/scorm'));
+		},
+
+		onOpenSpoorLog:function() {
+			require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
 			Adapt.trigger('drawer:closeDrawer');
 		},
 
