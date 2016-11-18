@@ -5,6 +5,13 @@ define(function(require) {
 
 	var buffer = '';
 	var isMouseDown = false;
+	var hitArea = 100;
+	var coords = {};
+	var topLeftTapHold = false;
+	var topRightTapHold = false;
+	var listenType = 0;
+	var timeoutId;
+	var focusableElements = "a,button,input,select,textarea,[tabindex],label";
 
 	function onKeypress(e) {
 		var c = String.fromCharCode(e.which).toLowerCase();
@@ -54,6 +61,8 @@ define(function(require) {
 		Router.route('kcheat', 'kcheat', function() {
 			if (window.kcheat) window.kcheat();
 		});
+
+		if (Modernizr.touch) addTouchHook();
 	}
 
 	function removeHooks() {
@@ -61,6 +70,59 @@ define(function(require) {
 		$(window).off("mousedown", onMouseDown);
 		$(window).off("mouseup", onMouseUp);
 		window.kcheat = undefined;
+		if (Modernizr.touch) removeTouchHook();
+	}
+
+	function addTouchHook() {
+		$('body').on('touchstart', onTouchStart);
+		$('body').on('touchend', onTouchEnd);
+
+		// a11y will stop propagation of event on focusable elements so we need to listen specifically to these
+		$('body').on('touchstart', focusableElements, onTouchStart);
+	}
+
+	function removeTouchHook() {
+		clearTimeout(timeoutId);
+
+		$('body').off('touchstart', onTouchStart);
+		$('body').off('touchend', onTouchEnd);
+		$('body').off('touchstart', focusableElements, onTouchStart);
+	}
+
+	function onTouchStart(event){
+		var touches = event.originalEvent.touches;
+
+		if(touches.length != 1) return;
+
+		coords.x = touches[0].pageX;
+		coords.y = touches[0].pageY;
+
+		if (coords.x >= 0 && coords.x < hitArea && coords.y >= 0 && coords.y < hitArea) {
+			listenType = 1;
+		} else if (coords.x >= $(window).width() - hitArea && coords.x < $(window).width() && coords.y >= 0 && coords.y < hitArea) {
+			listenType = 2;
+		} else {
+			listenType = topLeftTapHold = topRightTapHold = false;
+		}
+
+		if (listenType) {
+			timeoutId = setTimeout(function() {
+				// if finger still held
+				if (listenType) {
+					if (listenType == 1) topLeftTapHold = true;
+					else if (listenType == 2) topRightTapHold = true;
+
+					if (topLeftTapHold && topRightTapHold) {
+						if (window.kcheat) window.kcheat();
+					}
+				}
+			}, 200);
+		}
+	}
+
+	function onTouchEnd(event) {
+		listenType = false;
+		clearTimeout(timeoutId);
 	}
 
 	Adapt.once('adapt:initialize', function() {
