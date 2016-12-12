@@ -143,7 +143,7 @@ define([
 
 			if (bankedAssessments.length > 0) {
 				this.$('.banking').removeClass('display-none');
-				this.$('.banking label').toggleClass('selected', bankedAssessments.some(isBankingEnabled));
+				this.$('.banking label').toggleClass('selected', _.some(bankedAssessments, isBankingEnabled));
 			}
 			else {
 				this.$('.banking').addClass('display-none');

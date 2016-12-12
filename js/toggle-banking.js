@@ -37,7 +37,7 @@ define(function(require) {
 		toggle:function() {
 			var bankedAssessments = this.getBankedAssessmentsInCurrentPage();
 			var isBankingEnabled = function(m) {return m.get('_assessment')._banks._isEnabled;};
-			var enable = !bankedAssessments.some(isBankingEnabled);
+			var enable = !_.some(bankedAssessments, isBankingEnabled);
 
 			_.each(bankedAssessments, function(articleModel) {
 				articleModel.get('_assessment')._banks._isEnabled = enable;

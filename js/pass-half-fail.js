@@ -4,6 +4,8 @@ define(function(require) {
 	var AutoAnswer = require('./auto-answer');
 
 	var PassHalfFail = _.extend({
+		syncIterations:1,
+
 		initialize:function() {
 			this._questionViews = [];
 			this._currentPageId = null;
@@ -28,7 +30,7 @@ define(function(require) {
 
 			// async to avoid locking up the interface
 			function step() {
-				for (var j=0, count=Math.min(2, len-i); j < count; i++, j++) {
+				for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
 					AutoAnswer.answer(qs[i]);
 					if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
 				}
@@ -47,7 +49,7 @@ define(function(require) {
 
 			// async to avoid locking up the interface
 			function step() {
-				for (var j=0, count=Math.min(2, len-i); j < count; i++, j++) {
+				for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
 					AutoAnswer.answer(qs[i], i % 2 == 0);
 					if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
 				}
@@ -64,7 +66,7 @@ define(function(require) {
 
 			// async to avoid locking up the interface
 			function step() {
-				for (var j=0, count=Math.min(2, len-i); j < count; i++, j++) {
+				for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
 					AutoAnswer.answer(qs[i], true);
 					if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
 				}
