@@ -27,7 +27,7 @@ define(function(require) {
 			}
 
 			function getId($el, t) {
-				if ($el.data('id')) return $el.data('id');
+				if ($el.data('adapt-id')) return $el.data('adapt-id');
 
 				var re = new RegExp('[\\s]+('+t+'\\-[^\\s]+)');
 				var matches = re.exec($el.attr('class'));
