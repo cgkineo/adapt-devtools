@@ -11,8 +11,11 @@ define(function(require) {
 
 			function getModel($el, t) {
 				if ($el.length == 0) return false; 
-				var re = new RegExp('[\\s]+('+t+'\\-[^\\s]+)');
-				var id = re.exec($el.attr('class'))[1];
+
+				var id = getId($el, t);
+
+				if (!id) return false;
+
 				var model = id.slice(t.length+1) == Adapt.course.get('_id') ? Adapt.course : Adapt.findById(id);
 				if (model) {
 					id = model.get('_id').replace(/-/g, '');
@@ -21,6 +24,15 @@ define(function(require) {
 					console.log(model);
 				}
 				return true;
+			}
+
+			function getId($el, t) {
+				if ($el.data('id')) return $el.data('id');
+
+				var re = new RegExp('[\\s]+('+t+'\\-[^\\s]+)');
+				var matches = re.exec($el.attr('class'));
+
+				return matches[1];
 			}
 			
 			if (getModel($target.parents('.component'), 'c')) return;
