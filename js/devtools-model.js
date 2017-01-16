@@ -30,7 +30,7 @@ define(function(require) {
 			return {
 				'_isEnabled':false,
 				'_theme':'theme-dark',
-				'_extended':false
+				'_extended':true
 			};
 		},
 
