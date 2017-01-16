@@ -33,7 +33,7 @@ define(function(require) {
 			var openingTag = this.openingTags.exec($el[0].outerHTML)[0];
 
 			if (openingTag) {
-				// add some context for if possible
+				// add some context if possible
 				// strip leading whitespace/nbsp and get first line of text
 				var tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
 
