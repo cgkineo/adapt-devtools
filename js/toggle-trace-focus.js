@@ -5,6 +5,7 @@ define(function(require) {
 	var TraceFocus = _.extend({
 
 		openingTags:new RegExp("<[\\w-]+((\\s+[\\w-]+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))*)+\\s*|\\s*)/?>"),
+		consoleStyle:'background: lightgray; color: blue',
 
 		initialize:function() {
 			this.onFocusIn = _.bind(this.onFocusIn, this);
@@ -24,7 +25,7 @@ define(function(require) {
 		},
 
 		onFocusIn:function(e) {
-			if (!$('html').is('.ie')) return console.log('focussed: ', e.target);
+			if (!$('html').is('.ie')) return console.log('%cfocussed', this.consoleStyle, e.target);
 
 			var $el = $(e.target);
 
