@@ -19,14 +19,18 @@ define(function(require) {
 				'_tutorListener':null,
 				'_unlockAvailable':true,
 				'_unlocked':false,
-				'_toggleBankingAvailable':true
+				'_toggleBankingAvailable':true,
+				'_traceFocusAvailable':true,
+				'_traceFocusEnabled':false,
+				'_extended':true
 			}, config));
 		},
 
 		getDefaultConfig:function() {
 			return {
 				'_isEnabled':false,
-				'_theme':'theme-dark'
+				'_theme':'theme-dark',
+				'_extended':false
 			};
 		},
 
@@ -44,6 +48,10 @@ define(function(require) {
 
 		toggleAltText:function() {
 			this.set('_altTextEnabled', !this.get('_altTextEnabled'));
+		},
+
+		toggleTraceFocus:function() {
+			this.set('_traceFocusEnabled', !this.get('_traceFocusEnabled'));
 		}
 	});
 

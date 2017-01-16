@@ -18,7 +18,8 @@ define([
 	'./toggle-feedback',
 	'./toggle-alt-text',
 	'./unlock',
-	'./enable'
+	'./enable',
+	'./toggle-trace-focus'
 ], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
 	var navigationView;
@@ -40,7 +41,8 @@ define([
 			'click .complete-page':'onCompletePage',
 			'click .pass':'onPassHalfFail',
 			'click .half':'onPassHalfFail',
-			'click .fail':'onPassHalfFail'
+			'click .fail':'onPassHalfFail',
+			'change .trace-focus input':'onToggleTraceFocus'
 		},
 
 		initialize:function() {
@@ -56,6 +58,7 @@ define([
 			this._checkAltTextVisibility();
 			this._checkPassHalfFailVisibility();
 			this._checkCompletePageVisibility();
+			this._checkTraceFocusVisibility();
 		},
 
 		render:function() {
@@ -319,7 +322,26 @@ define([
 			if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
 
 			$('.loading').hide();
-		}
+		},
+
+		/*************************************************/
+		/******************* EXTENDED ********************/
+		/*************************************************/
+
+		_checkTraceFocusVisibility:function() {
+			if (Adapt.devtools.get('_traceFocusAvailable')) {
+				this.$('.toggle.trace-focus').removeClass('display-none');
+				this.$('.toggle.trace-focus label').toggleClass('selected', Adapt.devtools.get('_traceFocusEnabled'));
+			}
+			else {
+				this.$('.trace-focus').addClass('display-none');
+			}
+		},
+
+		onToggleTraceFocus:function() {
+			Adapt.devtools.toggleTraceFocus();
+			this._checkTraceFocusVisibility();
+		},
 	});
 
 	var DevtoolsNavigationView = Backbone.View.extend({
@@ -330,6 +352,7 @@ define([
 			this.$el = $(template());
 
 			$('html').addClass('devtools-enabled');
+			$('html').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
 
 			if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', _.bind(this.onDevtoolsClicked, this));
 			else this.$el.find('a, button').on('click', _.bind(this.onDevtoolsClicked, this));
