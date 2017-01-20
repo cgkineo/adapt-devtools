@@ -65,11 +65,20 @@ define(function(require) {
 		},
 
 		answerMultipleChoice:function(view, isGraphical) {
-			_.each(view.model.get('_items'), function(item, index) {
-				if (item._shouldBeSelected && !item._isSelected || !item._shouldBeSelected && item._isSelected) {
-					view.$(isGraphical ? '.gmcq-item input' : '.mcq-item input').eq(index).trigger('change');
+			var items = view.model.get('_items');
+			var noCorrectOptions = _.where(items, {'_shouldBeSelected':true}).length == 0;
+
+			if (noCorrectOptions) {
+				if (_.where(items, {'_isSelected':true}).length == 0) {
+					view.$(isGraphical ? '.gmcq-item input' : '.mcq-item input').eq(_.random(items.length - 1)).trigger('change');
 				}
-			});
+			} else {
+				_.each(items, function(item, index) {
+					if (item._shouldBeSelected && !item._isSelected || !item._shouldBeSelected && item._isSelected) {
+						view.$(isGraphical ? '.gmcq-item input' : '.mcq-item input').eq(index).trigger('change');
+					}
+				});
+			}
 		},
 
 		answerMultipleChoiceIncorrectly:function(view, isGraphical) {
@@ -121,9 +130,17 @@ define(function(require) {
 			_.each(view.model.get('_items'), function(item, itemIndex) {
 				var $select = view.$('select').eq(itemIndex);
 				var $options = $select.find('option');
-				_.each(item._options, function(option, optionIndex) {
-					if (option._isCorrect) $options.eq(optionIndex+1).prop('selected', true);
-				});
+				var noCorrectOptions = _.where(item._options, {'_isCorrect':true}).length == 0;
+
+				if (noCorrectOptions) {
+					if ($select.prop('selectedIndex') <= 0) {
+						$options.eq(_.random(item._options.length - 1)+1).prop('selected', true);
+					}
+				} else {
+					_.each(item._options, function(option, optionIndex) {
+						if (option._isCorrect) $options.eq(optionIndex+1).prop('selected', true);
+					});
+				}
 			});
 		},
 
