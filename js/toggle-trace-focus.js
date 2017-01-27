@@ -25,7 +25,7 @@ define(function(require) {
 		},
 
 		onFocusIn:function(e) {
-			if (!$('html').is('.ie')) return console.log('%cfocussed', this.consoleStyle, e.target);
+			if (!$('html').is('.ie, .Edge')) return console.log('%cfocussed', this.consoleStyle, e.target);
 
 			var $el = $(e.target);
 
