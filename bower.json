@@ -2,7 +2,7 @@
     "name": "adapt-devtools",
     "repository": "git://github.com/cgkineo/adapt-devtools",
     "framework": "^2.0.0",
-    "version": "2.1.13",
+    "version": "2.1.14",
     "homepage": "https://github.com/cgkineo/adapt-devtools",
     "issues": "https://github.com/cgkineo/adapt-devtools/issues/",
     "displayName": "Developer tools",
