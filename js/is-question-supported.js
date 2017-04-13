@@ -4,6 +4,7 @@ define(function(require) {
 			case 'mcq':
 			case 'gmcq':
 			case 'matching':
+			case 'ppq':
 			case 'slider':
 			case 'textinput':
 			case 'questionStrip':return true;

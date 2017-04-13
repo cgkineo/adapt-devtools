@@ -45,6 +45,7 @@ define(function(require) {
 					case 'mcq':this.answerMultipleChoiceIncorrectly(view); break;
 					case 'gmcq':this.answerMultipleChoiceIncorrectly(view, true); break;
 					case 'matching':this.answerMatchingIncorrectly(view); break;
+					case 'ppq':this.answerPpqIncorrectly(view); break;
 					case 'slider':this.answerSliderIncorrectly(view); break;
 					case 'textinput':this.answerTextInputIncorrectly(view); break;
 					case 'questionStrip':this.answerQuestionStripIncorrectly(view); break;
@@ -56,6 +57,7 @@ define(function(require) {
 					case 'mcq':this.answerMultipleChoice(view); break;
 					case 'gmcq':this.answerMultipleChoice(view, true); break;
 					case 'matching':this.answerMatching(view); break;
+					case 'ppq':this.answerPpq(view); break;
 					case 'slider':this.answerSlider(view); break;
 					case 'textinput':this.answerTextInput(view); break;
 					case 'questionStrip':this.answerQuestionStrip(view); break;
@@ -251,6 +253,136 @@ define(function(require) {
 					});
 				}
 			});
+		},
+
+		answerPpq:function(view) {
+			var model = view.model, items = model.get('_items'), itemCount = items.length;
+			// determine screen size
+			var isDesktop = Adapt.device.screenSize != 'small';
+			// select appropriate pinboard
+			var items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
+
+			var $pinboard = view.$('.ppq-pinboard');
+            var boardw = $pinboard.width();
+            var boardh = $pinboard.height();
+
+            for (i=0; i < itemCount; i++) {
+				var zone = items[i];
+				var pin = view.getNextUnusedPin();
+				var x = zone.left + zone.width / 2;
+				var y = zone.top + zone.height / 2;
+
+				console.log('using correct position',x+','+y);
+
+				pin.setPosition(x, y);
+
+				pin.$el.css({
+	                'left':boardw * x / 100 - pin.$el.width() / 2,
+	                'top':boardh * y / 100 - pin.$el.height()
+	            });
+			}
+        },
+
+		answerPpqIncorrectly:function(view) {
+			var model = view.model, items = model.get('_items'), itemCount = items.length;
+			// determine screen size
+			var isDesktop = Adapt.device.screenSize != 'small';
+			// select appropriate pinboard
+			var items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
+			// decide how many items to select
+			var nSelect = _.random(model.get('_minSelection'), model.get('_maxSelection'));
+			// decide how many of these should be incorrect
+			var nIncorrect = _.random(1, nSelect);
+			// and how many should be correct
+			var nCorrect = nSelect - nIncorrect;
+
+			var $pinboard = view.$('.ppq-pinboard');
+            var boardw = $pinboard.width();
+            var boardh = $pinboard.height();
+
+            console.log('nIncorrect=', nIncorrect, 'nCorrect=', nCorrect);
+
+			var maxSize = function(zone) {
+				return zone.left < 1 && zone.top < 1 && zone.width > 9999 && zone.height > 9999;
+			};
+
+			// work with integers for accuracy and simplicity
+			items = _.map(items, function(item) {
+				return {
+					'left':Math.round(item.left * 100),
+					'top':Math.round(item.top * 100),
+					'width':Math.round(item.width * 100),
+					'height':Math.round(item.height * 100)
+				};
+			});
+
+			if (_.some(items, maxSize) || nSelect == 0) {
+				console.warn('adapt-devtools: not possible to answer '+model.get('_id')+' incorrectly');
+				return;
+			}
+
+			view.resetPins();
+
+			// simplified approach for readability; statistically probable that finding pin positions will be extremely quick
+
+			for (var i=0; i < nIncorrect; i++) {
+				var ok = false;
+				var x, y;
+
+				// find a suitable x-coordinate
+				while (!ok) {
+					x = _.random(1, 10000);
+					ok = !_.some(items, function(zone) {
+						return x >= zone.left && x < zone.left + zone.width && zone.top < 1 && zone.height > 9999;
+					});
+				}
+
+				ok = false;
+
+				// find a suitable y-coordinate
+				while (!ok) {
+					y = _.random(1, 10000);
+					ok = !_.some(items, function(zone) {
+						return x >= zone.left && x < zone.left + zone.width && y >= zone.top && y < zone.top + zone.height;
+					});
+				}
+
+				x = x / 100;
+				y = y / 100;
+
+				console.log('using incorrect position',x+','+y);
+
+				var pin = view.getNextUnusedPin();
+
+				pin.setPosition(x, y);
+
+				pin.$el.css({
+	                'left':boardw * x / 100 - pin.$el.width() / 2,
+	                'top':boardh * y / 100 - pin.$el.height()
+	            });
+			}
+
+			// decide in which zones to place a pin
+			var correct = _.shuffle(_.times(itemCount, function(i) {return i;}));
+
+			for (i=0; i < nCorrect; i++) {
+				var zone = items[correct[i]];
+				var pin = view.getNextUnusedPin();
+				var x = zone.left + zone.width / 2;
+				var y = zone.top + zone.height / 2;
+
+				x = x / 100;
+				y = y / 100;
+
+				console.log('using correct position',x+','+y);
+
+				pin.setPosition(x, y);
+
+				pin.$el.css({
+	                'left':boardw * x / 100 - pin.$el.width() / 2,
+	                'top':boardh * y / 100 - pin.$el.height()
+	            });
+			}
 		},
 
 		answerUnsupported:function(view) {
