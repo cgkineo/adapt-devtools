@@ -18,7 +18,7 @@ Once installed a button is added to the navigation bar. By default this is a cog
 
 ##Question hinting
 
-Allows the user to toggle visual indicators which reveal how to answer correctly standard question components (gmcq, mcq, matching, question strip, slider, text input).
+Allows the user to toggle visual indicators which reveal how to answer correctly standard question components (gmcq, mcq, matching, ppq, question strip, slider, text input).
 
 ##Auto correct
 

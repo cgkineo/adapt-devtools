@@ -30,6 +30,7 @@ define(function(require) {
 				case 'mcq':this.setMcqHinting($el, model, hintingEnabled !== false); break;
 				case 'gmcq':this.setGmcqHinting($el, model, hintingEnabled !== false); break;
 				case 'matching':this.setMatchingHinting($el, model, hintingEnabled !== false); break;
+				case 'ppq':this.setPpqHinting($el, model, hintingEnabled !== false); break;
 				case 'slider':this.setSliderHinting($el, model, hintingEnabled !== false); break;
 				case 'textinput':this.setTextInputHinting($el, model, hintingEnabled !== false); break;
 				case 'questionStrip':this.setQuestionStripHinting($el, model, hintingEnabled !== false); break;
@@ -133,6 +134,13 @@ define(function(require) {
 			}
 			else {
 				$el.find('.qs-strapline-title-inner .hint').remove();
+			}
+		},
+
+		setPpqHinting:function($el, model, hintingEnabled) {console.log('setPpqHinting', hintingEnabled);
+			if (!model.get('_developerMode')) {
+				$el.find('.ppq-correct-zone').toggleClass('display-none', !hintingEnabled);
+				$el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);
 			}
 		}
 	}, Backbone.Events);
