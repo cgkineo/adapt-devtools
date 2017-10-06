@@ -8,12 +8,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <title>Map</title>
         <link rel="stylesheet" type="text/css" href="../adapt/css/adapt.css">
-        <script type="text/javascript" src="../libraries/jquery.js"></script>
+        <script src="../libraries/modernizr.js" type="text/javascript"></script>
         <script>
-            $(document).ready(function() {
-                Adapt = window.opener.require('coreJS/adapt');
-                Adapt.trigger('devtools:mapLoaded', window);
-            });
+            function start() {
+                $(document).ready(function() {
+                    Adapt = window.opener.require('core/js/adapt');
+                    Adapt.trigger('devtools:mapLoaded', window);
+                });
+            }
+
+            function getJQueryPath() {
+                // grab the path from the Adapt requirejs config or failing this try a hard path
+
+                var o = window.opener;
+                var c = o && o.require && o.require.s && o.require.s.contexts ? o.require.s.contexts._.config : null;
+                var p = c && c.paths && c.paths.jquery ? c.paths.jquery : 'libraries/jquery.v2.min';
+                return '../' + p + '.js';
+            }
+
+            Modernizr.load([
+                {
+                    load: getJQueryPath(),
+                    complete: start
+                }
+            ]);
         </script>
     </head>
     <body>
