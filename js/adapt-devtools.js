@@ -250,8 +250,9 @@ define([
 				return;
 			}
 
-			var cond = currentModel.has('_isInteractionsComplete') ? {'_isInteractionsComplete':false} : {'_isInteractionComplete':false};
-			var incomplete = currentModel.findDescendants('components').where(cond);
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
+				return m.get('_isInteractionComplete') === false;
+			});
 
 			this.$('.complete-page').toggleClass('display-none', incomplete.length == 0);
 
@@ -262,8 +263,9 @@ define([
 
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
-			var cond = currentModel.has('_isInteractionsComplete') ? {'_isInteractionsComplete':false} : {'_isInteractionComplete':false};
-			var incomplete = currentModel.findDescendants('components').where(cond);
+			var incomplete = _.where(currentModel.findDescendantModels('components'), function(m) {
+				return m.get('_isInteractionComplete') === false;
+			});
 
 			_.each(incomplete, function(component) {
 				if (component.get('_isQuestionType')) {
@@ -336,7 +338,9 @@ define([
 				return;
 			}
 
-			var unanswered = currentModel.findDescendants('components').where({'_isQuestionType':true, '_isSubmitted':false});
+			var unanswered = _.filter(currentModel.findDescendantModels('components'), function(m) {
+				return m.get('_isQuestionType') === true && m.get('_isSubmitted') === false;
+			});
 			
 			if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
 			else this.$('.tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');

@@ -31,7 +31,7 @@ define(function(require) {
 				return false;
 			};
 
-			return Adapt.location._contentType == 'menu' ? [] : pageModel.findDescendants('articles').filter(f, this);
+			return Adapt.location._contentType == 'menu' ? [] : _.filter(pageModel.findDescendantModels('articles'), f, this);
 		},
 
 		toggle:function() {
