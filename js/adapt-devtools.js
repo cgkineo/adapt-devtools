@@ -294,7 +294,7 @@ define([
 				return;
 			}
 
-			var incomplete = _.find(currentModel.findDescendantModels('components'), function(model) {
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
 				return !model.get('_isInteractionComplete');
 			});
 
@@ -307,7 +307,7 @@ define([
 
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
-			var incomplete = _.find(currentModel.findDescendantModels('components'), function(model) {
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
 				return !model.get('_isInteractionComplete');
 			});
 
