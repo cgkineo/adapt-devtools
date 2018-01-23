@@ -10,8 +10,10 @@ define(function(require) {
 
 		toggleHints:function() {
 			var contentObject = Adapt.findById(Adapt.location._currentId);
-			var components = contentObject.findDescendants('components');
-			var renderedQuestions = components.where({'_isQuestionType':true, '_isReady':true});
+			var components = contentObject.findDescendantModels('components');
+			var renderedQuestions = _.filter(components, function(m) {
+				return m.get('_isQuestionType') === true && m.get('_isReady') === true;
+			});
 
 			_.each(renderedQuestions, function(model) {
 				this.setHinting($('.'+model.get('_id')), model, Adapt.devtools.get('_hintingEnabled'));

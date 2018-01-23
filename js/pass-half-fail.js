@@ -15,7 +15,7 @@ define(function(require) {
 
 		_completeNonQuestions:function() {
 			var currentModel = Adapt.findById(Adapt.location._currentId);
-			var nonQuestions = currentModel.findDescendants("components").filter(function(m) {return m.get('_isQuestionType') !== true;});
+			var nonQuestions = _.filter(currentModel.findDescendantModels("components"), function(m) {return m.get('_isQuestionType') !== true;});
 
 			_.each(nonQuestions, function(item) {
 				item.set("_isComplete", true);
