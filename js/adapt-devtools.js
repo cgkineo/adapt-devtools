@@ -295,7 +295,7 @@ define([
 			}
 
 			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-				return !model.get('_isInteractionComplete');
+				return !model.get('_isComplete');
 			});
 
 			this.$('.complete-menu').toggleClass('display-none', incomplete.length == 0);
@@ -308,19 +308,11 @@ define([
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
 			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-				return !model.get('_isInteractionComplete');
+				return !model.get('_isComplete');
 			});
 
 			_.each(incomplete, function(component) {
-				if (component.get('_isQuestionType')) {
-					component.set("_isCorrect", true);
-					component.set("_isSubmitted", true);
-					component.set("_score", 1);
-					component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
-				}
-				
 				component.set("_isComplete", true);
-				component.set('_isInteractionComplete', true);
 			});
 
 			Adapt.trigger('drawer:closeDrawer');
