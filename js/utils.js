@@ -3,48 +3,37 @@ define(function(require) {
 	var Adapt = require('coreJS/adapt');
 	var AdaptModel = require('coreModels/adaptModel');
 	var QuestionView = require('coreViews/questionView');
-	
-	// control-click to access Adapt model
-	function onDocumentClicked(e) {
-		if (e.ctrlKey) {
-			var $target = $(e.target);
 
-			function getModel($el, t) {
-				if ($el.length == 0) return false; 
+	var mouseTarget = null;
 
-				var id = getId($el, t);
+	function onMouseDown(e) {
+		if (e.which == 1) mouseTarget = e.target;
+	}
 
-				if (!id) return false;
+	function onMouseUp(e) {
+		if (e.which == 1) mouseTarget = null;
+	}
 
-				var model = id.slice(t.length+1) == Adapt.course.get('_id') ? Adapt.course : Adapt.findById(id);
+	function onKeypress(e) {
+		var char = String.fromCharCode(e.which).toLowerCase();
+
+		if (mouseTarget) {
+			if (char == 'm') {
+				var model = Utils.getModelForElement(mouseTarget);
+
 				if (model) {
 					id = model.get('_id').replace(/-/g, '');
 					window[id] = model;
 					console.log('devtools: add property window.'+id+':');
-					console.log(model);
+					console.log(model.attributes);
 				}
-				return true;
 			}
-
-			function getId($el, t) {
-				if ($el.data('adapt-id')) return $el.data('adapt-id');
-
-				var re = new RegExp('[\\s]+('+t+'\\-[^\\s]+)');
-				var matches = re.exec($el.attr('class'));
-
-				return matches[1];
-			}
-			
-			if (getModel($target.parents('.component'), 'c')) return;
-			if (getModel($target.parents('.block'), 'b')) return;
-			if (getModel($target.parents('.article'), 'a')) return;
-			if (getModel($target.parents('.page'), 'co')) return;
-			if (getModel($target.parents('.menu'), 'menu')) return;
 		}
 	}
 
 	function getAdaptCoreVersion() {
 		try {
+			if (Adapt.build && Adapt.build.has('package')) return Adapt.build.get('package').version || ">=v3.0.0";
 			if (typeof AdaptModel.prototype.setCompletionStatus == 'function') return ">=v2.0.10";
 			if (typeof AdaptModel.prototype.checkLocking == 'function') return "v2.0.9";
 			if (typeof Adapt.checkingCompletion == 'function') return "v2.0.8";
@@ -59,6 +48,18 @@ define(function(require) {
 			return 'unknown version';
 		}
 	}
+
+	Utils = {
+		getModelForElement:function(element) {
+			var $target = $(element);
+
+			if ($target.length == 0) return false;
+
+			var id = $target.parents('[data-adapt-id]').data('adapt-id');
+
+			return !id ? false : Adapt.findById(id);
+		}
+	};
 
 	Adapt.once('adapt:initialize', function() {
 		var str = 'Version of Adapt core detected: '+getAdaptCoreVersion();
@@ -75,9 +76,13 @@ define(function(require) {
 	Adapt.once('adapt:initialize devtools:enable', function() {
 		if (!Adapt.devtools.get('_isEnabled')) return;
 
-		$(document).on('click', onDocumentClicked);
+		$(window).on("keypress", onKeypress);
+		$(window).on("mousedown", onMouseDown);
+		$(window).on("mouseup", onMouseUp);
 
 		// useful for command-line debugging
 		if (!window.a) window.a = Adapt;
 	});
+
+	return Utils;
 });

@@ -19,7 +19,8 @@ define([
 	'./toggle-alt-text',
 	'./unlock',
 	'./enable',
-	'./toggle-trace-focus'
+	'./toggle-trace-focus',
+	'./toggle-completion'
 ], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
 
 	var navigationView;
