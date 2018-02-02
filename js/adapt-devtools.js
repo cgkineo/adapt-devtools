@@ -39,6 +39,7 @@ define([
 			'click .open-map':'onOpenMap',
 			'click .open-spoor-log':'onOpenSpoorLog',
 			'click .complete-page':'onCompletePage',
+			'click .complete-menu':'onCompleteMenu',
 			'click .pass':'onPassHalfFail',
 			'click .half':'onPassHalfFail',
 			'click .fail':'onPassHalfFail',
@@ -58,6 +59,7 @@ define([
 			this._checkAltTextVisibility();
 			this._checkPassHalfFailVisibility();
 			this._checkCompletePageVisibility();
+			this._checkCompleteMenuVisibility();
 			this._checkTraceFocusVisibility();
 		},
 
@@ -275,6 +277,50 @@ define([
 				
 				component.set("_isComplete", true);
 				component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
+			});
+
+			Adapt.trigger('drawer:closeDrawer');
+		},
+
+		/*************************************************/
+		/***************** COMPLETE MENU *****************/
+		/*************************************************/
+
+		_checkCompleteMenuVisibility:function() {
+			var currentModel = Adapt.findById(Adapt.location._currentId);
+
+			if (currentModel.get('_type') != 'menu' && currentModel.get('_type') !== "course" ) {
+				this.$('.complete-menu').addClass('display-none');
+				return;
+			}
+
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
+				return !model.get('_isInteractionComplete');
+			});
+
+			this.$('.complete-menu').toggleClass('display-none', incomplete.length == 0);
+
+		},
+
+		onCompleteMenu:function(e) {
+			var currentModel = Adapt.findById(Adapt.location._currentId);
+
+			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
+				return !model.get('_isInteractionComplete');
+			});
+
+			_.each(incomplete, function(component) {
+				if (component.get('_isQuestionType')) {
+					component.set("_isCorrect", true);
+					component.set("_isSubmitted", true);
+					component.set("_score", 1);
+					component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
+				}
+				
+				component.set("_isComplete", true);
+				component.set('_isInteractionComplete', true);
 			});
 
 			Adapt.trigger('drawer:closeDrawer');
