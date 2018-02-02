@@ -1,7 +1,7 @@
 {
     "name": "adapt-devtools",
     "repository": "git://github.com/cgkineo/adapt-devtools",
-    "framework": ">=2",
+    "framework": ">=2.2.0",
     "version": "2.1.18",
     "homepage": "https://github.com/cgkineo/adapt-devtools",
     "issues": "https://github.com/cgkineo/adapt-devtools/issues/",
