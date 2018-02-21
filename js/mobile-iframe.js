@@ -52,6 +52,10 @@ define([
         console.log("Frame outerHTML", frame.outerHTML);
         console.log("Frame size client", frame.clientWidth, "x", frame.clientHeight);
         console.log("Frame size css", frame.style.width, "x", frame.style.height);
+
+        $("#FirebugUI").css({
+            width:frame.clientWidth+"px"
+        });
     }
 
 

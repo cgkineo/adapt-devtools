@@ -16,20 +16,13 @@
     </style>
 </head>
 <body>
-    <iframe class="fullscreen" style="height:100%; width:100%;" src="./index.html">
+    <iframe class="mm-iframe" style="height:100%; width:100%;" src="./index.html">
     </iframe>
     <script>
-        var iframe = document.querySelectorAll(".fullscreen")[0];
+        var iframe = document.querySelectorAll(".mm-iframe")[0];
         function resize(event) {
-            if (Math.abs(window.orientation) === 90) {
-                // Landscape
-                iframe.style.height = screen.width+"px";
-                iframe.style.width = screen.height+"px";
-            } else {
-                // Portrait
-                iframe.style.width = screen.width+"px";
-                iframe.style.height = screen.height+"px";
-            }
+            iframe.style.height = window.innerHeight+"px";
+            iframe.style.width = window.innerWidth+"px";
         }
         if (iframe.style.width === "100%" && iframe.style.height === "100%") {
             window.addEventListener("resize", resize);
