@@ -21,8 +21,15 @@
     <script>
         var iframe = document.querySelectorAll(".fullscreen")[0];
         function resize(event) {
-            iframe.style.width = screen.width+"px";
-            iframe.style.height = screen.height+"px";
+            if (Math.abs(window.orientation) === 90) {
+                // Landscape
+                iframe.style.height = screen.width+"px";
+                iframe.style.width = screen.height+"px";
+            } else {
+                // Portrait
+                iframe.style.width = screen.width+"px";
+                iframe.style.height = screen.height+"px";
+            }
         }
         if (iframe.style.width === "100%" && iframe.style.height === "100%") {
             window.addEventListener("resize", resize);

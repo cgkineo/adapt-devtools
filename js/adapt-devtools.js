@@ -111,9 +111,23 @@ define([
 		},
 
 		onIFrameForce: function() {
+			var height, width;
+			console.log("Frame force orientation", window.top.orientation);
+			// if (Math.abs(window.top.orientation) === 90) {
+   //              // Landscape
+   //              height = screen.width+"px";
+   //              width = screen.height+"px";
+   //          } else {
+   //              // Portrait
+   //              width = screen.width+"px";
+   //              height = screen.height+"px";
+   //          }
+   			height = window.top.innerHeight;
+   			width = window.top.innerWidth;
+            console.log("Frame force size", width, "x", height);
 			$(IOSIFrame.containerFrame).css({
-				height: screen.height+"px",
-				width: screen.width+"px"
+				height: height+"px",
+				width: width+"px"
 			});
 		},
 
