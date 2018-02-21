@@ -11,6 +11,7 @@ define([
 	'./pass-half-fail',
 	'./toggle-banking',
 	'./map',
+	'./mobile-iframe',
 	'./auto-answer',
 	'./utils',
 	'./end-trickle',
@@ -21,7 +22,7 @@ define([
 	'./enable',
 	'./toggle-trace-focus',
 	'./toggle-completion'
-], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
+], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map, IOSIFrame) {
 
 	var navigationView;
 
@@ -36,6 +37,9 @@ define([
 			'change .feedback input':'onToggleFeedback',
 			'change .auto-correct input':'onToggleAutoCorrect',
 			'change .alt-text input':'onToggleAltText',
+			'click .firebug':'onFireBug',
+			'click .force':'onIFrameForce',
+			'click .resize':'onIFrameResize',
 			'click .unlock':'onUnlock',
 			'click .open-map':'onOpenMap',
 			'click .open-spoor-log':'onOpenSpoorLog',
@@ -51,6 +55,7 @@ define([
 			this.render();
 
 			this._checkUnlockVisibility();
+			this._checkMobile();
 			this._checkSpoorLogVisibility();
 			this._checkTrickleEndVisibility();
 			this._checkBankingVisibility();
@@ -92,6 +97,51 @@ define([
 			if (Adapt.blocks.some(hasLock)) return true;
 
 			return false;
+		},
+
+		_checkMobile() {
+			switch (Adapt.device.OS) {
+				case "android":
+				case "ios":
+					this.$(".mobile").removeClass("display-none");
+					break;
+			}
+			if (!IOSIFrame.containerFrame) return;
+			this.$(".ios-iframe").removeClass("display-none");
+		},
+
+		onIFrameForce: function() {
+			$(IOSIFrame.containerFrame).css({
+				height: screen.height+"px",
+				width: screen.width+"px"
+			});
+		},
+
+		onIFrameResize: function() {
+			IOSIFrame.evalInTop("window.dispatchEvent(new Event('resize'));");
+		},
+
+		onFireBug: function() {
+			function showFirebug() {
+				Firebug.chrome.open();
+				$("#FirebugUI").css("z-index", 500);
+			}
+			function waitFor(rule, then) {
+				var intervalHandle = setInterval(function() {
+					if (rule()) {
+						clearInterval(intervalHandle);
+						then();
+					}
+				}, 250);
+			}
+			if (!window.Firebug) {
+				$("head").append($('<script src="firebug-lite/build/firebug-lite-debug.js">'));
+				waitFor(function() {
+					return window.Firebug && window.Firebug.chrome;
+				}, showFirebug);
+			} else {
+				showFirebug();
+			}
 		},
 
 		onUnlock:function() {
@@ -275,7 +325,7 @@ define([
 					component.set("_score", 1);
 					component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
 				}
-				
+
 				component.set("_isComplete", true);
 				component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
 			});
@@ -334,7 +384,7 @@ define([
 			var unanswered = _.filter(currentModel.findDescendantModels('components'), function(m) {
 				return m.get('_isQuestionType') === true && m.get('_isSubmitted') === false;
 			});
-			
+
 			if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
 			else this.$('.tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
 
@@ -440,7 +490,7 @@ define([
 		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		if (navigationView) navigationView.remove();
-		
+
 		navigationView = new DevtoolsNavigationView();
 	});
 });

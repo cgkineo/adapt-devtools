@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="">
+    <style>
+        iframe.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <iframe class="fullscreen" style="height:100%; width:100%;" src="./index.html">
+    </iframe>
+    <script>
+        var iframe = document.querySelectorAll(".fullscreen")[0];
+        function resize(event) {
+            iframe.style.width = screen.width+"px";
+            iframe.style.height = screen.height+"px";
+        }
+        if (iframe.style.width === "100%" && iframe.style.height === "100%") {
+            window.addEventListener("resize", resize);
+            window.addEventListener("orientationchange", resize);
+            resize({type: "load"});
+        }
+    </script>
+</body>
+</html>
