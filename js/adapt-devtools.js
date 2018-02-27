@@ -264,7 +264,7 @@ define([
 
 			if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
-			var incomplete = _.where(currentModel.findDescendantModels('components'), function(m) {
+			var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
 				return m.get('_isInteractionComplete') === false;
 			});
 
