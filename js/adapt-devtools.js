@@ -402,6 +402,8 @@ define([
 
 			// keep drawer item to left of PLP, resources, close button etc
 			this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
+			// ensure render occurs at least once (_isReady will not change to true on menus that exclude content objects)
+			this.listenToOnce(Adapt, 'pageView:postRender menuView:postRender', this.render);
 		},
 
 		render: function() {
