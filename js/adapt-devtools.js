@@ -438,11 +438,16 @@ define([
 		Adapt.devtools = new DevtoolsModel();
 	});
 
-	Adapt.once('adapt:initialize devtools:enable languagePicker:languageChange', function() {
+	function initNavigationView() {
 		if (!Adapt.devtools.get('_isEnabled')) return;
 
 		if (navigationView) navigationView.remove();
-		
+
 		navigationView = new DevtoolsNavigationView();
+	}
+
+	Adapt.once('adapt:initialize devtools:enable', function() {
+		initNavigationView();
+		Adapt.on('app:languageChanged', initNavigationView);
 	});
 });
