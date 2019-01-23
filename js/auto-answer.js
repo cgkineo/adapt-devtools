@@ -136,11 +136,27 @@ define(function(require) {
 
 				if (noCorrectOptions) {
 					if ($select.prop('selectedIndex') <= 0) {
-						$options.eq(_.random(item._options.length - 1)+1).prop('selected', true);
+						var i = _.random(item._options.length - 1);
+						var option = item._options[i];
+						if (view.model.setOptionSelected) {
+							$select.val(option.text);
+							$select.trigger('change');
+							view.model.setOptionSelected(itemIndex, i, true);
+						} else {
+							$options.eq(i+1).prop('selected', true);
+						}
 					}
 				} else {
 					_.each(item._options, function(option, optionIndex) {
-						if (option._isCorrect) $options.eq(optionIndex+1).prop('selected', true);
+						if (option._isCorrect) {
+							if (view.model.setOptionSelected) {
+								$select.val(option.text);
+								$select.trigger('change');
+								view.model.setOptionSelected(itemIndex, optionIndex, true);
+							} else {
+								$options.eq(optionIndex+1).prop('selected', true);
+							}
+						}
 					});
 				}
 			});
@@ -159,13 +175,28 @@ define(function(require) {
 					// start at a random position in options to avoid bias (err is contingency for bad data)
 					for (var count=item._options.length, i=_.random(count), err=count; err>=0; i++, err--)
 						if (!item._options[i%count]._isCorrect) {
-							$options.eq((i%count)+1).prop('selected', true);
+							if (view.model.setOptionSelected) {
+								var option = item._options[i%count];
+								$select.val(option.text);
+								$select.trigger('change');
+								view.model.setOptionSelected(itemIndex, i%count, true);
+							} else {
+								$options.eq((i%count)+1).prop('selected', true);
+							}
 							return;
 						}
 				}
 				else {
 					_.each(item._options, function(option, optionIndex) {
-						if (option._isCorrect) $options.eq(optionIndex+1).prop('selected', true);
+						if (option._isCorrect) {
+							if (view.model.setOptionSelected) {
+								$select.val(option.text);
+								$select.trigger('change');
+								view.model.setOptionSelected(itemIndex, optionIndex, true);
+							} else {
+								$options.eq(optionIndex+1).prop('selected', true);
+							}
+						}
 					});
 				}
 			});
