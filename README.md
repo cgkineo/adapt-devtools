@@ -66,4 +66,4 @@ When selected, approximately half of the unanswered questions in the current pag
 
 The core Adapt object can be reached via window.a for convenience.
 
-With the browser developer console open, control-click content to reveal the underlying model (content object, article, block, component). Note that doing so also creates a global variable named according to the model's unique identifier.
+With the browser developer console open, press ctrl+m to reveal the underlying model (content object, article, block, component). Note that doing so also creates a global variable named according to the model's unique identifier.
