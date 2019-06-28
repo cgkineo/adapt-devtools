@@ -253,8 +253,8 @@ define(function(require) {
 		answerTextInput:function(view) {
 			var answers = view.model.get('_answers');
 			_.each(view.model.get('_items'), function(item, index) {
-				if (answers) view.$('.textinput-item input').eq(index).val(answers[index][0]); // generic answers
-				else view.$('.textinput-item input').eq(index).val(item._answers[0]); // specific answers
+				if (answers) view.$('.textinput-item input').eq(index).val(answers[index][0]).trigger('change'); // generic answers
+				else view.$('.textinput-item input').eq(index).val(item._answers[0]).trigger('change'); // specific answers
 			});
 		},
 
@@ -265,11 +265,11 @@ define(function(require) {
 			var answers = view.model.get('_answers');
 			_.each(items, function(item, index) {
 				if (selectionStates[index]) {
-					view.$('.textinput-item input').eq(index).val('***4n 1nc0rr3ct 4nsw3r***'); // probably
+					view.$('.textinput-item input').eq(index).val('***4n 1nc0rr3ct 4nsw3r***').trigger('change'); // probably
 				}
 				else {
-					if (answers) view.$('.textinput-item input').eq(index).val(answers[index][0]);
-					else view.$('.textinput-item input').eq(index).val(item._answers[0]);
+					if (answers) view.$('.textinput-item input').eq(index).val(answers[index][0]).trigger('change');
+					else view.$('.textinput-item input').eq(index).val(item._answers[0]).trigger('change');
 				}
 			});
 		},
