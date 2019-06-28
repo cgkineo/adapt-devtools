@@ -1,6 +1,7 @@
 define(function(require) {
 
 	var Adapt = require('coreJS/adapt');
+	var ItemsQuestionModel = require('core/js/models/itemsQuestionModel');
 	var Hinting = require('./hinting');
 	var isQuestionSupported = require('./is-question-supported');
 
@@ -67,7 +68,7 @@ define(function(require) {
 		},
 
 		answerMultipleChoice:function(view, isGraphical) {
-			var items = view.model.get('_items');
+			var items = view.model instanceof ItemsQuestionModel ? view.model.getChildren().toJSON() : view.model.get('_items');
 			var noCorrectOptions = _.where(items, {'_shouldBeSelected':true}).length == 0;
 
 			if (noCorrectOptions) {
@@ -84,7 +85,9 @@ define(function(require) {
 		},
 
 		answerMultipleChoiceIncorrectly:function(view, isGraphical) {
-			var model = view.model, items = model.get('_items'), itemCount = items.length;
+			var model = view.model;
+			var items = model instanceof ItemsQuestionModel ? model.getChildren().toJSON() : model.get('_items');
+			var itemCount = items.length;
 			var selectionStates = _.times(itemCount, function() {return false;});
 			// number of items that should be selected
 			var nShould = _.where(items, {_shouldBeSelected:true}).length;
@@ -135,7 +138,13 @@ define(function(require) {
 				var noCorrectOptions = _.where(item._options, {'_isCorrect':true}).length == 0;
 
 				if (noCorrectOptions) {
-					if ($select.prop('selectedIndex') <= 0) {
+					if (view.dropdowns) {
+						if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
+							var i = _.random(item._options.length - 1);
+							view.selectValue(itemIndex, i);
+						}
+					}
+					else if ($select.prop('selectedIndex') <= 0) {
 						var i = _.random(item._options.length - 1);
 						var option = item._options[i];
 						if (view.model.setOptionSelected) {
@@ -149,7 +158,10 @@ define(function(require) {
 				} else {
 					_.each(item._options, function(option, optionIndex) {
 						if (option._isCorrect) {
-							if (view.model.setOptionSelected) {
+							if (view.selectValue) {
+								view.selectValue(itemIndex, option._index);
+							}
+							else if (view.model.setOptionSelected) {
 								$select.val(option.text);
 								$select.trigger('change');
 								view.model.setOptionSelected(itemIndex, optionIndex, true);
@@ -175,7 +187,11 @@ define(function(require) {
 					// start at a random position in options to avoid bias (err is contingency for bad data)
 					for (var count=item._options.length, i=_.random(count), err=count; err>=0; i++, err--)
 						if (!item._options[i%count]._isCorrect) {
-							if (view.model.setOptionSelected) {
+							if (view.selectValue) {
+								var option = item._options[i%count];
+								view.selectValue(itemIndex, option._index);
+							}
+							else if (view.model.setOptionSelected) {
 								var option = item._options[i%count];
 								$select.val(option.text);
 								$select.trigger('change');
@@ -189,7 +205,10 @@ define(function(require) {
 				else {
 					_.each(item._options, function(option, optionIndex) {
 						if (option._isCorrect) {
-							if (view.model.setOptionSelected) {
+							if (view.selectValue) {
+								view.selectValue(itemIndex, option._index);
+							}
+							else if (view.model.setOptionSelected) {
 								$select.val(option.text);
 								$select.trigger('change');
 								view.model.setOptionSelected(itemIndex, optionIndex, true);

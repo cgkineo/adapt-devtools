@@ -5,7 +5,7 @@
         "url": "git://github.com/cgkineo/adapt-devtools"
     },
     "framework": ">=2.2.0",
-    "version": "2.1.22",
+    "version": "2.1.23",
     "homepage": "https://github.com/cgkineo/adapt-devtools",
     "issues": "https://github.com/cgkineo/adapt-devtools/issues/",
     "displayName": "Developer tools",
