@@ -1,261 +1,260 @@
 .devtools-map {
 
-    body {
-        max-width: 1400px;
-        width: 100%;
-        overflow-x: hidden;
-        overflow-y: auto !important;
-        margin: 0 auto;
-        
-        &.theme-dark {
-            background-color: #000000;
-            color:#ffffff;
-        }
-        &.theme-light {
-            background-color: #ffffff;
-            color:#000000;
-        }
+  body {
+    max-width: 1400px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    margin: 0 auto;
+
+    &.theme-dark {
+      background-color: #000000;
+      color:#ffffff;
+    }
+    &.theme-light {
+      background-color: #ffffff;
+      color:#000000;
+    }
+  }
+
+  .devtools-map-container {
+    a {
+      color:inherit;
+      text-decoration: inherit;
     }
 
-    .devtools-map-container {
+    .devtools-map-text {
+      font-family: 'Open Sans', Arial;
+      font-size: 14px;
+      line-height: normal;
+    }
 
-        a {
-            color:inherit;
-            text-decoration: inherit;
+    .devtools-map-border {
+      border-bottom:1px solid;
+    }
+
+    .devtools-map-menu {
+      display: table;
+      width:100%;
+
+      &:not(.last) {
+        .devtools-map-border;
+      }
+      .devtools-map-menu-title {
+        .devtools-map-text;
+        background-color: rgba(255,153,153,0.35);
+        display: table-cell;
+        position: relative;
+        text-align: center;
+        vertical-align: middle;
+        width:20%;
+
+        &.devtools-map-optional {
+          background-color: rgba(225,225,225,0.6);
         }
-
-        .devtools-map-text {
-            font-family: 'Open Sans', Arial;
-            font-size: 14px;
-            line-height: normal;
+        &.devtools-map-completed {
+          background-color:rgba(153,255,153,0.35) !important;
         }
+      }
+      .devtools-map-menu-items {
+        display: table-cell;
+        width:80%;
+      }
+    }
 
-        .devtools-map-border {
-        	border-bottom:1px solid;
+    .devtools-map-content-object {
+      display: table;
+      width:100%;
+
+      &:not(.last) {
+        .devtools-map-border;
+      }
+      .devtools-map-content-object-title {
+        .devtools-map-text;
+        background-color: rgba(255,153,153,0.4);
+        display: table-cell;
+        position: relative;
+        text-align: center;
+        vertical-align: middle;
+        width:20%;
+
+        &.devtools-map-optional {
+          background-color: rgba(225,225,225,0.6);
         }
-
-        .devtools-map-menu {
-        	display: table;
-        	width:100%;
-
-            &:not(.last) {
-                .devtools-map-border;
-            }
-            .devtools-map-menu-title {
-                .devtools-map-text;
-                background-color: rgba(255,153,153,0.35);
-                display: table-cell;
-                position: relative;
-                text-align: center;
-                vertical-align: middle;
-                width:20%;
-
-                &.devtools-map-optional {
-                    background-color: rgba(225,225,225,0.6);
-                }
-                &.devtools-map-completed {
-                    background-color:rgba(153,255,153,0.35) !important;
-                }
-            }
-            .devtools-map-menu-items {
-                display: table-cell;
-                width:80%;
-            }
+        &.devtools-map-completed {
+          background-color:rgba(153,255,153,0.4) !important;
         }
+      }
+      .devtools-map-article-container {
+        display: table-cell;
+        width:80%;
+      }
+    }
 
-        .devtools-map-content-object {
-        	display: table;
-        	width:100%;
+    .devtools-map-article {
+      display: table;
+      width:100%;
 
-        	&:not(.last) {
-        		.devtools-map-border;
-        	}
-            .devtools-map-content-object-title {
-                .devtools-map-text;
-                background-color: rgba(255,153,153,0.4);
-                display: table-cell;
-                position: relative;
-                text-align: center;
-                vertical-align: middle;
-                width:20%;
-
-                &.devtools-map-optional {
-                    background-color: rgba(225,225,225,0.6);
-                }
-                &.devtools-map-completed {
-                    background-color:rgba(153,255,153,0.4) !important;
-                }
-            }
-            .devtools-map-article-container {
-                display: table-cell;
-                width:80%;
-            }
-        }
-
-        .devtools-map-article {
-        	display: table;
-        	width:100%;
-
-        	&:not(.last) {
-        		.devtools-map-border;
-        	}
-            .devtools-map-article-header {
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                .devtools-map-abc-id {
-                    position: static;
-                    top: auto;
-                    left: auto;
-                }
-                .trickled {
-                    border-top: 10px solid rgba(255, 255, 0, 1);
-                    border-left: 7.5px solid transparent;
-                    border-right: 7.5px solid transparent;
-                    content: "";
-                    display: inline-block;
-                    width: 0px;
-                    height: 0px;
-                    margin-left:5px;
-                }
-            }
-            .devtools-map-article-title {
-                .devtools-map-text;
-                background-color: rgba(255,153,153,0.5);
-                display: table-cell;
-                position: relative;
-                text-align: center;
-                vertical-align: middle;
-                width: 20%;
-
-                &.devtools-map-optional {
-                    background-color: rgba(225,225,225,0.6);
-                }
-                &.devtools-map-completed {
-                    background-color:rgba(153,255,153,0.5) !important;
-                }
-            }
-            .devtools-map-article-blocks {
-                display: table-cell;
-                width: 80%;
-            }
-        }
-
-        .devtools-map-block {
-            display: table;
-            width: 100%;
-
-            &:not(.last) {
-        		.devtools-map-border;
-        	}
-            &.trickled:before {
-                border-top: 10px solid rgba(255, 255, 0, 1);
-                border-left: 7.5px solid transparent;
-                border-right: 7.5px solid transparent;
-                content: "";
-                position: absolute;
-                width: 0px;
-                height: 0px;
-            }
-            .devtools-map-block-title {
-                .devtools-map-text;
-                background-color: rgba(255,153,153,0.6);
-                display: block;
-                font-size: 10px;
-                text-align: center;
-                
-                &.devtools-map-optional {
-                    background-color: rgba(225,225,225,0.6);
-                }
-                &.devtools-map-completed {
-                    background-color:rgba(153,255,153,0.6) !important;
-                }
-                .devtools-map-abc-id {
-                    margin:0;
-                    position: static;
-                }
-            }
-            .devtools-map-block-components {
-                display: table;
-                width: 100%;
-            }
-        }
-
-        .devtools-map-component {
-        	background-color: rgba(255,153,153,0.6);
-            display: table-cell;
-            position: relative;
-            vertical-align: middle;
-            width:50%;
-
-            &.devtools-map-optional {
-                background-color: rgba(225,225,225,0.6);
-            }
-            &.devtools-map-completed {
-                background-color:rgba(153,255,153,0.6) !important;
-            }
-            &.devtools-map-component-0.last {
-                width: 100%;
-            }
-            &.devtools-map-component-1 {
-                .devtools-map-abc-id {
-                    left:auto;
-                    right:0px;
-                }
-                .devtools-map-component-info {
-                    left:auto;
-                    right:0px;
-                }
-            }
-            &.correct {
-                .devtools-map-component-mark:after {
-                    content: "\e633";
-                }
-            }
-            &.incorrect {
-                .devtools-map-component-mark:after {
-                    content: "\e634";
-                }
-            }
-            
-            .devtools-map-component-info {
-                position: absolute;
-                margin:2px;
-                opacity: 0.5;
-                bottom:0px;
-                left:0px;
-
-                .devtools-map-component-type {
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 10px;
-                    font-style: italic;
-                    line-height: normal;
-                }
-                .devtools-map-component-mark {
-                    font-family: "vanilla";
-                    position: relative;
-                    top: 3px;
-                }
-            }
-            
-            .devtools-map-component-label {
-                .devtools-map-text;
-                text-align:center;
-                margin: 10px 0;
-                width: 100%;
-                display: inline-block;
-            }
-        }
-
+      &:not(.last) {
+        .devtools-map-border;
+      }
+      .devtools-map-article-header {
+        position: absolute;
+        top: 0px;
+        left: 0px;
         .devtools-map-abc-id {
-            font-family: 'Courier New', Courier;
-            font-size: 13px;
-            font-style: italic;
-            line-height: normal;
-            position: absolute;
-            margin:2px;
-            top:0px;
-            left:0px;
+          position: static;
+          top: auto;
+          left: auto;
         }
+        .trickled {
+          border-top: 10px solid rgba(255, 255, 0, 1);
+          border-left: 7.5px solid transparent;
+          border-right: 7.5px solid transparent;
+          content: "";
+          display: inline-block;
+          width: 0px;
+          height: 0px;
+          margin-left:5px;
+        }
+      }
+      .devtools-map-article-title {
+        .devtools-map-text;
+        background-color: rgba(255,153,153,0.5);
+        display: table-cell;
+        position: relative;
+        text-align: center;
+        vertical-align: middle;
+        width: 20%;
+
+        &.devtools-map-optional {
+          background-color: rgba(225,225,225,0.6);
+        }
+        &.devtools-map-completed {
+          background-color:rgba(153,255,153,0.5) !important;
+        }
+      }
+      .devtools-map-article-blocks {
+        display: table-cell;
+        width: 80%;
+      }
     }
+
+    .devtools-map-block {
+      display: table;
+      width: 100%;
+
+      &:not(.last) {
+        .devtools-map-border;
+      }
+      &.trickled:before {
+        border-top: 10px solid rgba(255, 255, 0, 1);
+        border-left: 7.5px solid transparent;
+        border-right: 7.5px solid transparent;
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+      }
+      .devtools-map-block-title {
+        .devtools-map-text;
+        background-color: rgba(255,153,153,0.6);
+        display: block;
+        font-size: 10px;
+        text-align: center;
+
+        &.devtools-map-optional {
+          background-color: rgba(225,225,225,0.6);
+        }
+        &.devtools-map-completed {
+          background-color:rgba(153,255,153,0.6) !important;
+        }
+        .devtools-map-abc-id {
+          margin:0;
+          position: static;
+        }
+      }
+      .devtools-map-block-components {
+        display: table;
+        width: 100%;
+      }
+    }
+
+    .devtools-map-component {
+      background-color: rgba(255,153,153,0.6);
+      display: table-cell;
+      position: relative;
+      vertical-align: middle;
+      width:50%;
+
+      &.devtools-map-optional {
+        background-color: rgba(225,225,225,0.6);
+      }
+      &.devtools-map-completed {
+        background-color:rgba(153,255,153,0.6) !important;
+      }
+      &.devtools-map-component-0.last {
+        width: 100%;
+      }
+      &.devtools-map-component-1 {
+        .devtools-map-abc-id {
+          left:auto;
+          right:0px;
+        }
+        .devtools-map-component-info {
+          left:auto;
+          right:0px;
+        }
+      }
+      &.correct {
+        .devtools-map-component-mark:after {
+          content: "\e633";
+        }
+      }
+      &.incorrect {
+        .devtools-map-component-mark:after {
+          content: "\e634";
+        }
+      }
+
+      .devtools-map-component-info {
+        position: absolute;
+        margin:2px;
+        opacity: 0.5;
+        bottom:0px;
+        left:0px;
+
+        .devtools-map-component-type {
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 10px;
+          font-style: italic;
+          line-height: normal;
+        }
+        .devtools-map-component-mark {
+          font-family: "vanilla";
+          position: relative;
+          top: 3px;
+        }
+      }
+
+      .devtools-map-component-label {
+        .devtools-map-text;
+        text-align:center;
+        margin: 10px 0;
+        width: 100%;
+        display: inline-block;
+      }
+    }
+
+    .devtools-map-abc-id {
+      font-family: 'Courier New', Courier;
+      font-size: 13px;
+      font-style: italic;
+      line-height: normal;
+      position: absolute;
+      margin:2px;
+      top:0px;
+      left:0px;
+    }
+  }
 }

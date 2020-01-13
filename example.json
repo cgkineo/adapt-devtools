@@ -1,5 +1,5 @@
-// to go in config.json
-"_devtools": {
-    "_isEnabled": true,
-    "_theme": "theme-dark"
-}
+    // to go in config.json
+    "_devtools": {
+        "_isEnabled": true,
+        "_theme": "theme-dark"
+    }

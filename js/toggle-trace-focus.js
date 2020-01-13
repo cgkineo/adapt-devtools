@@ -1,61 +1,62 @@
 define(function(require) {
 
-	var Adapt = require('coreJS/adapt');
+  var Adapt = require('coreJS/adapt');
 
-	var TraceFocus = _.extend({
+  var TraceFocus = _.extend({
 
-		openingTags:new RegExp("<[\\w-]+((\\s+[\\w-]+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))*)+\\s*|\\s*)/?>"),
-		consoleStyle:'background: lightgray; color: blue',
+    openingTags:new RegExp("<[\\w-]+((\\s+[\\w-]+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))*)+\\s*|\\s*)/?>"),
+    consoleStyle:'background: lightgray; color: blue',
 
-		initialize:function() {
-			this.onFocusIn = _.bind(this.onFocusIn, this);
+    initialize:function() {
+      this.onFocusIn = _.bind(this.onFocusIn, this);
 
-			this.listenTo(Adapt.devtools, 'change:_traceFocusEnabled', this.toggleTraceFocus);
+      this.listenTo(Adapt.devtools, 'change:_traceFocusEnabled', this.toggleTraceFocus);
 
-			this.toggleTraceFocus();
-		},
+      this.toggleTraceFocus();
+    },
 
-		toggleTraceFocus:function() {
-			if (Adapt.devtools.get('_traceFocusEnabled')) {
-				$('body').on('focusin', this.onFocusIn);
-			}
-			else {
-				$('body').off('focusin', this.onFocusIn);
-			}
-		},
+    toggleTraceFocus:function() {
+      if (Adapt.devtools.get('_traceFocusEnabled')) {
+        $('body').on('focusin', this.onFocusIn);
+      }
+      else {
+        $('body').off('focusin', this.onFocusIn);
+      }
+    },
 
-		onFocusIn:function(e) {
-			if (!$('html').is('.ie, .Edge')) return console.log('%cfocussed', this.consoleStyle, e.target);
+    onFocusIn:function(e) {
+      if (!$('html').is('.ie, .Edge')) return console.log('%cfocussed', this.consoleStyle, e.target);
 
-			var $el = $(e.target);
+      var $el = $(e.target);
 
-			if (!$el[0] || !$el[0].outerHTML) return console.log('focussed: ', e.target);
-			
-			var openingTag = this.openingTags.exec($el[0].outerHTML)[0];
+      if (!$el[0] || !$el[0].outerHTML) return console.log('focussed: ', e.target);
 
-			if (openingTag) {
-				// add some context if possible
-				// strip leading whitespace/nbsp and get first line of text
-				var tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
+      var openingTag = this.openingTags.exec($el[0].outerHTML)[0];
 
-				if (tokens[0]) openingTag = openingTag.slice(0, 20) + '[...]';
+      if (openingTag) {
+        // add some context if possible
+        // strip leading whitespace/nbsp and get first line of text
+        var tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
 
-				if ($('html').is('.ie8')) {
-					console.log('focussed: ', openingTag, tokens[0]);
-				} else {
-					console.log('focussed: ', openingTag, tokens[0], $el);
-				}
-			} else {
-				console.log('focussed: '+e.target);
-			}
-		}
-	}, Backbone.Events);
+        if (tokens[0]) openingTag = openingTag.slice(0, 20) + '[...]';
 
-	Adapt.once('adapt:initialize devtools:enable', function() {
-		if (!Adapt.devtools.get('_isEnabled')) return;
+        if ($('html').is('.ie8')) {
+          console.log('focussed: ', openingTag, tokens[0]);
+        } else {
+          console.log('focussed: ', openingTag, tokens[0], $el);
+        }
+      } else {
+        console.log('focussed: '+e.target);
+      }
+    }
+  }, Backbone.Events);
 
-		TraceFocus.initialize();
-	});
+  Adapt.once('adapt:initialize devtools:enable', function() {
+    if (!Adapt.devtools.get('_isEnabled')) return;
 
-	return TraceFocus;
+    TraceFocus.initialize();
+  });
+
+  return TraceFocus;
+
 });

@@ -1,5 +1,5 @@
-# adapt-devtools  
-Revised developer/testing tool.  
+# adapt-devtools
+Revised developer/testing tool.
 ![](https://raw.githubusercontent.com/wiki/cgkineo/adapt-devtools/adapt-cheat-preview.gif)
 
 ## Installation
