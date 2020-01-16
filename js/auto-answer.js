@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Adapt = require('coreJS/adapt');
-  var ItemsQuestionModel = require('core/js/models/itemsQuestionModel');
+  var ItemsQuestionModel = undefined;
   var Hinting = require('./hinting');
   var isQuestionSupported = require('./is-question-supported');
 
@@ -31,6 +31,22 @@ define(function(require) {
       }
       else if (e.ctrlKey && e.shiftKey) {
         this.answer(view, true);
+      }
+    },
+
+    isItemsQuestionModel:function(model) {
+      if (ItemsQuestionModel) {
+        return model instanceof ItemsQuestionModel;
+      } else if (ItemsQuestionModel === null) {
+        return false;
+      }
+
+      if (require.defined('core/js/models/'+'itemsQuestionModel')) {
+        ItemsQuestionModel = require('core/js/models/'+'itemsQuestionModel');
+        return model instanceof ItemsQuestionModel;
+      } else {
+        ItemsQuestionModel = null;
+        return false;
       }
     },
 
@@ -68,7 +84,7 @@ define(function(require) {
     },
 
     answerMultipleChoice:function(view, isGraphical) {
-      var items = view.model instanceof ItemsQuestionModel ? view.model.getChildren().toJSON() : view.model.get('_items');
+      var items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
       var noCorrectOptions = _.where(items, {'_shouldBeSelected':true}).length == 0;
 
       if (noCorrectOptions) {
@@ -86,7 +102,7 @@ define(function(require) {
 
     answerMultipleChoiceIncorrectly:function(view, isGraphical) {
       var model = view.model;
-      var items = model instanceof ItemsQuestionModel ? model.getChildren().toJSON() : model.get('_items');
+      var items = this.isItemsQuestionModel(model) ? model.getChildren().toJSON() : model.get('_items');
       var itemCount = items.length;
       var selectionStates = _.times(itemCount, function() {return false;});
       // number of items that should be selected
