@@ -10,7 +10,7 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.$('html').addClass('devtools-map');
+      this.$('html').addClass('has-devtools-map');
       this._renderIntervalId = setInterval(_.bind(this._checkRenderInterval, this), 500);
       this.listenTo(Adapt.components, 'change:_isComplete', this.onModelCompletionChanged);
       this.listenTo(Adapt.blocks, 'change:_isComplete', this.onModelCompletionChanged);
