@@ -1,4 +1,5 @@
 define(function(require) {
+
   function isQuestionSupported(model) {
     switch (model.get('_component')) {
       case 'mcq':

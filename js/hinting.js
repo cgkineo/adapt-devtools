@@ -42,25 +42,30 @@ define(function(require) {
     setMcqHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, index) {
-          $el.find('.mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hintCorrect' : 'hintIncorrect');
+          $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
         });
       }
       else {
-        $el.find('.mcq-item').removeClass('hintCorrect hintIncorrect');
+        $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
     setGmcqHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, index) {
-          $el.find('.gmcq-item').eq(index).addClass(item._shouldBeSelected ? 'hintCorrect' : 'hintIncorrect');
+          $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
         });
       }
       else {
-        $el.find('.gmcq-item').removeClass('hintCorrect hintIncorrect');
+        $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
+    // --------------------------------------------------
+    // --------------------------------------------------
+    // NEEDS UPDATING?
+    // --------------------------------------------------
+    // --------------------------------------------------
     setMatchingHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, itemIndex) {
@@ -82,24 +87,26 @@ define(function(require) {
         /*else $el.find('option').removeClass('hintCorrect hintIncorrect');*/
       }
     },
+    // --------------------------------------------------
+    // --------------------------------------------------
 
     setSliderHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         var correctAnswer = model.get('_correctAnswer');
         if (correctAnswer) {
-          $el.find('.slider-scale-number').addClass('hintIncorrect');
-          $el.find('.slider-scale-number[data-id="'+correctAnswer+'"]').removeClass('hintIncorrect').addClass('hintCorrect');
+          $el.find('.js-slider-number').addClass('hint-is-incorrect');
+          $el.find('.js-slider-number[data-id="'+correctAnswer+'"]').removeClass('hint-is-incorrect').addClass('hint-is-correct');
         }
         else {
-          $el.find('.slider-scale-number').addClass('hintIncorrect');
+          $el.find('.js-slider-number').addClass('hint-is-incorrect');
           var bottom = model.get('_correctRange')._bottom;
           var top = model.get('_correctRange')._top;
           for (var i = bottom; i <= top; i++)
-          $el.find('.slider-scale-number[data-id="'+i+'"]').removeClass('hintIncorrect').addClass('hintCorrect');
+          $el.find('.js-slider-number[data-id="'+i+'"]').removeClass('hint-is-incorrect').addClass('hint-is-correct');
         }
       }
       else {
-        $el.find('.slider-scale-number').removeClass('hintCorrect hintIncorrect');
+        $el.find('.js-slider-number').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
@@ -108,23 +115,28 @@ define(function(require) {
         _.each(model.get('_items'), function(item, index) {
           if (model.get('_answers')) {
             // generic answers
-            $el.find('.textinput-item').eq(index).find('input').attr('placeholder', model.get('_answers')[index][0]);
+            $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', model.get('_answers')[index][0]);
           }
           else {
             // specific answers
-            $el.find('.textinput-item').eq(index).find('input').attr('placeholder', item._answers[0]);
+            $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item._answers[0]);
           }
         });
       }
       else {
         _.each(model.get('_items'), function(item, index) {
           if (model.get('_answers')) {
-            $el.find('.textinput-item').eq(index).find('input').attr('placeholder', item.placeholder);
+            $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item.placeholder);
           }
         });
       }
     },
 
+    // --------------------------------------------------
+    // --------------------------------------------------
+    // NEEDS UPDATING?
+    // --------------------------------------------------
+    // --------------------------------------------------
     setQuestionStripHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, itemIndex) {
@@ -146,6 +158,9 @@ define(function(require) {
         $el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);
       }
     }
+    // --------------------------------------------------
+    // --------------------------------------------------
+
   }, Backbone.Events);
 
   Adapt.once('adapt:initialize devtools:enable', function() {

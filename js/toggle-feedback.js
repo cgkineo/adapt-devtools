@@ -26,11 +26,11 @@ define(function(require) {
   function onFeedbackToggled() {
     if (Adapt.devtools.get('_feedbackEnabled')) {
       reinstateTutor();
-      $(document).off('mouseup', '.buttons-feedback');
+      $(document).off('mouseup', '.js-btn-feedback');
     }
     else {
       hushTutor();
-      $(document).on('mouseup', '.buttons-feedback', onFeedbackButtonClicked);
+      $(document).on('mouseup', '.js-btn-feedback', onFeedbackButtonClicked);
     }
   }
 

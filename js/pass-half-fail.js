@@ -32,7 +32,7 @@ define(function(require) {
       function step() {
         for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
           AutoAnswer.answer(qs[i]);
-          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
+          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
         }
         i == len ? callback() : setTimeout(step);
       }
@@ -51,7 +51,7 @@ define(function(require) {
       function step() {
         for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
           AutoAnswer.answer(qs[i], i % 2 == 0);
-          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
+          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
         }
         i == len ? callback() : setTimeout(step);
       }
@@ -68,7 +68,7 @@ define(function(require) {
       function step() {
         for (var j=0, count=Math.min(PassHalfFail.syncIterations, len-i); j < count; i++, j++) {
           AutoAnswer.answer(qs[i], true);
-          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.buttons-action').trigger('click');
+          if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
         }
         i == len ? callback() : setTimeout(step);
       }

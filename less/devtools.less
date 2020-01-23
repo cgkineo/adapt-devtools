@@ -1,389 +1,223 @@
-.devtools-navigation-drawer-toggle-button {
-  float:right;
-  .dir-rtl & {
-    float:left;
-  }
-}
-
-.devtools-extended-settings {
-  display:none;
-  clear:both;
-}
-
-.devtools-extended {
-  .devtools-extended-settings {
-    display:block;
-  }
-}
-
 .devtools {
-
-  .devtools-button-container {
-    overflow: hidden;
+  &__nav-btn {
+    .u-float-right;
   }
 
-  .pass-half-fail-container {
-    .drawer-item {
-      float:left;
-      margin:5px 1%;
-      width:30%;
-    }
+  &__nav-btn .icon {
+    .icon-cog;
   }
 
-  .section-general, .section-page, .section-menu {
+  //
+
+  &__item {
     position: relative;
+  }
+
+  &__item-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    z-index: -1;
+    .transform(translate(-50%, -50%));
+  }
+
+  &__item-label {
+    display: block;
+    z-index: 1;
+  }
+
+  &__item-label:not(.is-disabled) {
+    cursor: pointer;
+  }
+
+  &__item-icon .icon {
+    .icon-checkbox-unchecked;
+  }
+
+  &__item-label.is-selected {
+    .devtools__item-icon .icon {
+      .icon-checkbox-checked;
+    }
+  }
+}
+
+// --------------------------------------------------
+// --------------------------------------------------
+// THEME
+// --------------------------------------------------
+// --------------------------------------------------
+.devtools {
+  color: @drawer-inverted;
+
+  &__section-title {
+    position: relative;
+    // .component-title;
     text-align: center;
-    z-index: 2;
+  }
 
-    &:after {
-      border-top:dotted 1px @drawer-item-text-color;
-      content:"";
-      position:absolute;
-      top:50%;
-      left:0;
-      right:0;
-      z-index:-1;
-    }
+  &__section-title:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    .transform(translateY(-50%));
+    height: 0;
+    width: 100%;
+    border-bottom: 1px dotted @drawer-item-inverted;
+    z-index: -1;
+  }
 
-    span {
-      background:@drawer-color;
-      margin:0;
-      padding:0 10px;
+  &__section-title-inner {
+    display: inline-block;
+    padding: @item-padding / 2;
+    background-color: @drawer;
+  }
+
+  //
+
+  &__item {
+    margin-bottom: @item-margin / 2;
+  }
+
+  &__item-label {
+    background-color: @drawer-item;
+    color: @drawer-item-inverted;
+
+    .no-touch &:not(.is-disabled):not(.is-selected):hover {
+      background-color: @drawer-item-hover;
+      color: @drawer-item-inverted-hover;
+      .transition(background-color @duration ease-in, color @duration ease-in;);
     }
   }
 
-  .drawer-item {
+  &__item-label.is-disabled {
+    background-color: @disabled;
+    color: @disabled-inverted;
+  }
 
-    margin:5px auto;
+  &__item-label.is-selected {
+    background-color: @drawer-item-selected;
+    color: @drawer-item-inverted-selected;
+  }
 
-    &.toggle {
-      position: relative;
+  &__item-state {
+    position: absolute;
+    top: 50%;
+    left: @item-padding;
+    .transform(translateY(-50%));
 
-      input {
-        position: absolute;
-        top:14px;
-        left:14px;
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-        opacity: 0;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 5px;
-        position: relative;
-        z-index:1;
-        cursor: pointer;
-
-        .toggle-state {
-          background: transparent none repeat scroll 0% 0%;
-          position: absolute;
-          left: 20px;
-          width: 24px;
-          height: 24px;
-          top: 50%;
-          margin-top: -12px;
-          z-index: 0;
-
-          .checkbox {
-            &:before {
-              content: " ";
-            }
-            border: 3px solid #fff;
-            width:18px;
-            height:18px;
-            font-size:18px;
-            font-weight: bold;
-            border-radius: 2px;
-          }
-        }
-
-        &.selected {
-
-          .toggle-state .checkbox {
-            color:#fff;
-
-            &:before {
-              content: "\e633";
-            }
-          }
-        }
-      }
-
-      .toggle-inner {
-        padding:20px 20px 20px 64px;
-      }
-    }
-
-    &.tip {
-      margin:10px auto;
-      width:95%;
-
-      &.pass-half-fail {
-      }
-    }
-    &.open-map {
-      float:left;
-      margin-left:3%;
-      padding-left:5px;
-      padding-right:5px;
-      width:46%;
-      .devtools-alpha {
-        display: none;
-        color:#ffff00;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 10px;
-        line-height: normal;
-        margin:2px;
-        position: absolute;
-        right:0px;
-        top:0px;
-      }
-      &:after {
-        content: "\e610";
-        font-family:'vanilla';
-        position: relative;
-        left:6px;
-      }
-    }
-    &.open-spoor-log {
-      float:left;
-      margin-left:2%;
-      margin-right:3%;
-      width:46%;
-    }
-    &.pass {
-      margin-left:3%;
-      background-color: rgba(153,255,153,0.6);
-    }
-    &.fail {
-      margin-right:3%;
-      background-color: rgba(255,153,153,0.6);
+    .dir-rtl & {
+      left: inherit;
+      right: @item-padding;
     }
   }
-}
 
-.devtools-annotation {
-  position: absolute;
-  background-color: yellow;
-  color:black;
-  font-size:12px;
-  padding:0 5px;
+  &__item-title {
+    padding: @item-padding @item-padding @item-padding (@icon-size + (@item-padding * 2));
+    .drawer-item-title;
 
-  &.devtools-annotation-warning {
-    background-color: #ff9999;
+    .dir-rtl & {
+      padding-left: @item-padding;
+      padding-right: @icon-size + (@item-padding * 2);
+    }
   }
-}
 
-.touch {
-  .devtools {
-    .tip.auto-correct {
-      display: none !important;
+  //
+
+  &__item.is-tip {
+    padding: @item-padding / 2;
+    .drawer-item-body;
+    font-style: italic;
+  }
+
+  .touch &__item.is-tip.auto-correct {
+    .u-display-none;
+  }
+
+  //
+
+  &__item-btn-container {
+    display: flex;
+  }
+
+  &__item-btn {
+    flex-grow: 1;
+    margin-bottom: @item-margin / 2;
+    padding: (@btn-padding / 2) @btn-padding;
+    .button-text;
+    background-color: @drawer-item-hover;
+    color: @drawer-item-inverted-hover;
+
+    .no-touch &:hover {
+      background-color: darken(@drawer-item-hover, 10%);
+      color: @drawer-item-inverted-hover;
+      .transition(background-color @duration ease-in, color @duration ease-in;);
+    }
+  }
+
+  //
+
+  &__item-btn.open-map {
+    margin-right: @item-margin / 2;
+  }
+
+  //
+
+  &__item-btn.end-trickle {
+    margin-right: @item-margin / 2;
+  }
+
+  //
+
+  &__item-btn.pass {
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+
+    .no-touch &:hover {
+      background-color: darken(@validation-success, 10%);
+      color: @validation-success-inverted;
+      .transition(background-color @duration ease-in, color @duration ease-in;);
+    }
+  }
+
+  &__item-btn.half {
+    margin-left: @item-margin / 2;
+    margin-right: @item-margin / 2;
+  }
+
+  &__item-btn.fail {
+    background-color: @validation-error;
+    color: @validation-error-inverted;
+
+    .no-touch &:hover {
+      background-color: darken(@validation-error, 10%);
+      color: @validation-error-inverted;
+      .transition(background-color @duration ease-in, color @duration ease-in;);
     }
   }
 }
 
-.mcq-component {
-  .mcq-widget:not(.complete) {
-    .mcq-item {
-      &.hintCorrect {
-        label {
-          /*background-color: green !important;*/
-          opacity: 1;
-        }
-      }
-      &.hintIncorrect {
-        input {
-          opacity: 0;
-        }
-        label {
-          /*background-color: red !important;*/
-          opacity: 0.1;
-        }
-      }
-    }
+//
+
+.mcq,
+.gmcq,
+.matching {
+  &__widget:not(.is-complete) &__item.hint-is-correct {
+    opacity: 1;
+  }
+
+  &__widget:not(.is-complete) &__item.hint-is-incorrect {
+    opacity: 0.3;
   }
 }
 
-.ie8 {
-  .mcq-component {
-    .mcq-widget {
-      .mcq-item {
-        &.hintCorrect {
-          label {
-            /*background-color: green !important;*/
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-        &.hintIncorrect {
-          input {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-          }
-          label {
-            /*background-color: red !important;*/
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-          }
-        }
-      }
-    }
-    .mcq-widget.complete {
-      .mcq-item {
-        &.hintCorrect {
-          label {
-            /*background-color: green !important;*/
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-        &.hintIncorrect {
-          input {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-          label {
-            /*background-color: red !important;*/
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-      }
-    }
+.slider {
+  &__widget:not(.is-complete) &__number.hint-is-correct {
+    opacity: 1;
   }
-}
 
-.gmcq-component {
-  .gmcq-widget:not(.complete) {
-    .gmcq-item {
-      &.hintCorrect {
-        label {
-          opacity: 1;
-        }
-      }
-      &.hintIncorrect {
-        input {
-          opacity: 0;
-        }
-        label {
-          opacity: 0.1;
-        }
-      }
-    }
-  }
-}
-
-.ie8 {
-  .gmcq-component {
-    .gmcq-widget {
-      .gmcq-item {
-        &.hintCorrect {
-          label {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-        &.hintIncorrect {
-          input {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-          }
-          label {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-          }
-        }
-      }
-    }
-    .gmcq-widget.complete {
-      .gmcq-item {
-        &.hintCorrect {
-          label {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-        &.hintIncorrect {
-          input {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-          label {
-            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-          }
-        }
-      }
-    }
-  }
-}
-
-/*.matching-component {
-  .matching-widget:not(.complete) {
-    option {
-      &.hintCorrect {
-        opacity: 1;
-      }
-      &.hintIncorrect {
-        opacity: 0.1;
-      }
-    }
-  }
-}
-
-.ie8 {
-  .matching-component {
-    .matching-widget {
-      option {
-        &.hintCorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-        &.hintIncorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-        }
-      }
-    }
-    .matching-widget.complete {
-      option {
-        &.hintCorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-        &.hintIncorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-      }
-    }
-  }
-}*/
-
-.slider-component {
-  .slider-widget:not(.complete) {
-    .slider-scale-number {
-      &.hintCorrect {
-        opacity: 1;
-      }
-      &.hintIncorrect {
-        opacity: 0.1;
-      }
-    }
-  }
-}
-
-.ie8 {
-  .slider-component {
-    .slider-widget {
-      .slider-scale-number {
-        &.hintCorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-        &.hintIncorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-        }
-      }
-    }
-    .slider-widget.complete {
-      .slider-scale-number {
-        &.hintCorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-        &.hintIncorrect {
-          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        }
-      }
-    }
-  }
-}
-
-.menu {
-  a.unlock, button.unlock {
-    pointer-events: auto !important;
+  &__widget:not(.is-complete) &__number.hint-is-incorrect {
+    opacity: 0.3;
   }
 }

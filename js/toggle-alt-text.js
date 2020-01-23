@@ -55,7 +55,7 @@ define(function(require) {
 
       var $annotation = $(template({text:text}));
 
-      if (!text) $annotation.addClass('devtools-annotation-warning');
+      if (!text) $annotation.addClass('has-annotation-warning');
 
       $img.after($annotation);
       $img.data('annotation', $annotation);

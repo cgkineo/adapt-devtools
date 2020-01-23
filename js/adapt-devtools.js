@@ -77,8 +77,8 @@ define([
 
     _checkUnlockVisibility: function() {
       // check if function available and not already activated
-      if (!Adapt.devtools.get('_unlockAvailable') || Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('display-none');
-      else this.$('.unlock').toggleClass('display-none', !this._checkForLocks());
+      if (!Adapt.devtools.get('_unlockAvailable') || Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('u-display-none');
+      else this.$('.unlock').toggleClass('u-display-none', !this._checkForLocks());
     },
 
     _checkForLocks: function() {
@@ -126,7 +126,7 @@ define([
     /*************************************************/
 
     _checkTrickleEndVisibility: function() {
-      this.$('.end-trickle').toggleClass('display-none', !Adapt.devtools.get('_trickleEnabled'));
+      this.$('.end-trickle').toggleClass('u-display-none', !Adapt.devtools.get('_trickleEnabled'));
     },
 
     onEndTrickle: function() {
@@ -140,7 +140,7 @@ define([
 
     _checkBankingVisibility: function() {
       if (!Adapt.devtools.get('_toggleFeedbackAvailable')) {
-        this.$('.banking').addClass('display-none');
+        this.$('.banking').addClass('u-display-none');
         return;
       }
 
@@ -148,11 +148,11 @@ define([
       var isBankingEnabled = function(m) {return m.get('_assessment')._banks._isEnabled;};
 
       if (bankedAssessments.length > 0) {
-        this.$('.banking').removeClass('display-none');
-        this.$('.banking label').toggleClass('selected', _.some(bankedAssessments, isBankingEnabled));
+        this.$('.banking').removeClass('u-display-none');
+        this.$('.banking label').toggleClass('is-selected', _.some(bankedAssessments, isBankingEnabled));
       }
       else {
-        this.$('.banking').addClass('display-none');
+        this.$('.banking').addClass('u-display-none');
       }
     },
 
@@ -167,11 +167,11 @@ define([
 
     _checkFeedbackVisibility: function() {
       if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
-        this.$('.feedback').removeClass('display-none');
-        this.$('.feedback label').toggleClass('selected', Adapt.devtools.get('_feedbackEnabled'));
+        this.$('.feedback').removeClass('u-display-none');
+        this.$('.feedback label').toggleClass('is-selected', Adapt.devtools.get('_feedbackEnabled'));
       }
       else {
-        this.$('.feedback').addClass('display-none');
+        this.$('.feedback').addClass('u-display-none');
       }
     },
 
@@ -186,11 +186,11 @@ define([
 
     _checkHintingVisibility: function() {
       if (Adapt.devtools.get('_hintingAvailable')) {
-        this.$('.hinting').removeClass('display-none');
-        this.$('.hinting label').toggleClass('selected', Adapt.devtools.get('_hintingEnabled'));
+        this.$('.hinting').removeClass('u-display-none');
+        this.$('.hinting label').toggleClass('is-selected', Adapt.devtools.get('_hintingEnabled'));
       }
       else {
-        this.$('.hinting').addClass('display-none');
+        this.$('.hinting').addClass('u-display-none');
       }
     },
 
@@ -205,12 +205,12 @@ define([
 
     _checkAutoCorrectVisibility: function() {
       if (Adapt.devtools.get('_autoCorrectAvailable')) {
-        this.$('.toggle.auto-correct').removeClass('display-none');
-        this.$('.toggle.auto-correct label').toggleClass('selected', Adapt.devtools.get('_autoCorrectEnabled'));
-        this.$('.tip.auto-correct').toggleClass('display-none', Adapt.devtools.get('_autoCorrectEnabled'));
+        this.$('.is-toggle.auto-correct').removeClass('u-display-none');
+        this.$('.is-toggle.auto-correct label').toggleClass('is-selected', Adapt.devtools.get('_autoCorrectEnabled'));
+        this.$('.is-tip.auto-correct').toggleClass('u-display-none', Adapt.devtools.get('_autoCorrectEnabled'));
       }
       else {
-        this.$('.auto-correct').addClass('display-none');
+        this.$('.auto-correct').addClass('u-display-none');
       }
     },
 
@@ -225,12 +225,12 @@ define([
 
     _checkAltTextVisibility: function() {
       if (Adapt.devtools.get('_altTextAvailable')) {
-        this.$('.toggle.alt-text').removeClass('display-none');
-        this.$('.toggle.alt-text label').toggleClass('selected', Adapt.devtools.get('_altTextEnabled'));
-        this.$('.tip.alt-text').toggleClass('display-none', Adapt.devtools.get('_altTextEnabled'));
+        this.$('.is-toggle.alt-text').removeClass('u-display-none');
+        this.$('.is-toggle.alt-text label').toggleClass('is-selected', Adapt.devtools.get('_altTextEnabled'));
+        this.$('.is-tip.alt-text').toggleClass('u-display-none', Adapt.devtools.get('_altTextEnabled'));
       }
       else {
-        this.$('.alt-text').addClass('display-none');
+        this.$('.alt-text').addClass('u-display-none');
       }
     },
 
@@ -247,7 +247,7 @@ define([
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') != 'page') {
-        this.$('.complete-page').addClass('display-none');
+        this.$('.complete-page').addClass('u-display-none');
         return;
       }
 
@@ -255,7 +255,7 @@ define([
         return m.get('_isInteractionComplete') === false;
       });
 
-      this.$('.complete-page').toggleClass('display-none', incomplete.length == 0);
+      this.$('.complete-page').toggleClass('u-display-none', incomplete.length == 0);
 
     },
 
@@ -291,7 +291,7 @@ define([
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') != 'menu' && currentModel.get('_type') !== "course" ) {
-        this.$('.complete-menu').addClass('display-none');
+        this.$('.complete-menu').addClass('u-display-none');
         return;
       }
 
@@ -299,7 +299,7 @@ define([
         return !model.get('_isComplete');
       });
 
-      this.$('.complete-menu').toggleClass('display-none', incomplete.length == 0);
+      this.$('.complete-menu').toggleClass('u-display-none', incomplete.length == 0);
 
     },
 
@@ -327,7 +327,7 @@ define([
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') != 'page') {
-        this.$('.pass, .half, .fail').addClass('display-none');
+        this.$('.pass, .half, .fail').addClass('u-display-none');
         return;
       }
 
@@ -336,9 +336,9 @@ define([
       });
 
       if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
-      else this.$('.tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
+      else this.$('.is-tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
 
-      this.$('.pass, .half, .fail').toggleClass('display-none', unanswered.length == 0);
+      this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length == 0);
 
     },
 
@@ -346,7 +346,7 @@ define([
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
 
       // potentially large operation so show some feedback
-      $('.loading').show();
+      $('.js-loading').show();
 
       var tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
 
@@ -364,7 +364,7 @@ define([
 
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
 
-      $('.loading').hide();
+      $('.js-loading').hide();
     },
 
     /*************************************************/
@@ -373,11 +373,11 @@ define([
 
     _checkTraceFocusVisibility: function() {
       if (Adapt.devtools.get('_traceFocusAvailable')) {
-        this.$('.toggle.trace-focus').removeClass('display-none');
-        this.$('.toggle.trace-focus label').toggleClass('selected', Adapt.devtools.get('_traceFocusEnabled'));
+        this.$('.is-toggle.trace-focus').removeClass('u-display-none');
+        this.$('.is-toggle.trace-focus label').toggleClass('is-selected', Adapt.devtools.get('_traceFocusEnabled'));
       }
       else {
-        this.$('.trace-focus').addClass('display-none');
+        this.$('.trace-focus').addClass('u-display-none');
       }
     },
 
@@ -407,7 +407,7 @@ define([
     },
 
     render: function() {
-      $('.navigation-inner').append(this.$el);
+      $('.nav__inner').append(this.$el);
       return this;
     },
 
