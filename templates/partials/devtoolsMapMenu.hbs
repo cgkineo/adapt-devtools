@@ -1,15 +1,31 @@
 {{#eachChild}}
-	{{#isMenu}}
-		<div class="devtools-map-menu{{#if @last}} last{{/if}}">
-			<a href="#{{getProp "_id"}}" class="devtools-map-menu-title{{#when "_isComplete"}} devtools-map-completed{{/when}}{{#when "_isOptional"}} devtools-map-optional{{/when}}">
-				<span class="devtools-map-abc-id">{{getProp "_id"}}</span>
-	            <span class="devtools-map-abc-label">{{getTitle}}</span>
-			</a>
-			<div class="devtools-map-menu-items">
-				{{> devtoolsMapMenu this}}
-			</div>
-		</div>
-	{{else}}
-		{{> devtoolsMapPage this}}
-	{{/isMenu}}
+{{#isMenu}}
+
+<div class="devtools__map-section is-content-object{{#if @last}} is-last{{/if}}">
+
+  <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-content-object{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}">
+
+    <div class="devtools__map-info is-content-object">
+      <div class="devtools__map-id is-content-object">
+        {{getProp "_id"}}
+      </div>
+    </div>
+
+    <div class="devtools__map-label is-content-object">
+      {{getTitle}}
+    </div>
+
+  </a>
+
+  <div class="devtools__map-container is-article">
+    {{> devtoolsMapMenu this}}
+  </div>
+
+</div>
+
+{{else}}
+
+{{> devtoolsMapPage this}}
+
+{{/isMenu}}
 {{/eachChild}}

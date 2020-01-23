@@ -22,7 +22,7 @@
                   "title": "Enable dev tools",
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "validators": [],
-		  "help": "Set to true to enable 'dev tools' features. Remember to disable/uninstall before going live!"
+                  "help": "Set to true to enable 'dev tools' features. Remember to disable/uninstall before going live!"
                 }
               }
             }

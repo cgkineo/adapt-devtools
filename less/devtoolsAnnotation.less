@@ -1,0 +1,24 @@
+.devtools {
+  &__annotation {
+    position: absolute;
+  }
+}
+
+// --------------------------------------------------
+// --------------------------------------------------
+// THEME
+// --------------------------------------------------
+// --------------------------------------------------
+.devtools {
+  &__annotation {
+    padding: @item-padding / 2;
+    font-size: 0.875rem;
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+  }
+
+  &__annotation.has-annotation-warning {
+    background-color: @validation-error;
+    color: @validation-error-inverted;
+  }
+}
