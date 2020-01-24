@@ -61,19 +61,14 @@ define(function(require) {
       }
     },
 
-    // --------------------------------------------------
-    // --------------------------------------------------
-    // NEEDS UPDATING?
-    // --------------------------------------------------
-    // --------------------------------------------------
     setMatchingHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, itemIndex) {
-          var $select = $el.find('select').eq(itemIndex);
-          var $options = $select.find('option');
+          var $item = $el.find('.item').eq(itemIndex);
+          var $options = $item.find('.js-dropdown-list-item');
           _.each(item._options, function(option, optionIndex) {
             /*if (Modernizr.touch) {*/
-            if (option._isCorrect) $options.eq(optionIndex+1).append('<span class="hint"> (correct)</span>');
+            if (option._isCorrect) $options.eq(optionIndex+1).find('.js-dropdown-list-item-inner').append('<span class="hint"> (correct)</span>');
             /*}
             else {
               $options.eq(optionIndex+1).addClass(option._isCorrect ? 'hintCorrect' : 'hintIncorrect');
@@ -83,12 +78,10 @@ define(function(require) {
       }
       else {
         /*if (Modernizr.touch) */
-        $el.find('option .hint').remove();
+        $el.find('.js-dropdown-list-item-inner .hint').remove();
         /*else $el.find('option').removeClass('hintCorrect hintIncorrect');*/
       }
     },
-    // --------------------------------------------------
-    // --------------------------------------------------
 
     setSliderHinting:function($el, model, hintingEnabled) {
       if (hintingEnabled) {

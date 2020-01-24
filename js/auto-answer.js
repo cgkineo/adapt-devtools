@@ -147,48 +147,19 @@ define(function(require) {
       });
     },
 
-    // --------------------------------------------------
-    // --------------------------------------------------
-    // NEEDS UPDATING?
-    // --------------------------------------------------
-    // --------------------------------------------------
     answerMatching:function(view) {
       _.each(view.model.get('_items'), function(item, itemIndex) {
-        var $select = view.$('select').eq(itemIndex);
-        var $options = $select.find('option');
         var noCorrectOptions = _.where(item._options, {'_isCorrect':true}).length == 0;
 
         if (noCorrectOptions) {
-          if (view.dropdowns) {
-            if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
-              var i = _.random(item._options.length - 1);
-              view.selectValue(itemIndex, i);
-            }
-          }
-          else if ($select.prop('selectedIndex') <= 0) {
+          if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
             var i = _.random(item._options.length - 1);
-            var option = item._options[i];
-            if (view.model.setOptionSelected) {
-              $select.val(option.text);
-              $select.trigger('change');
-              view.model.setOptionSelected(itemIndex, i, true);
-            } else {
-              $options.eq(i+1).prop('selected', true);
-            }
+            view.selectValue(itemIndex, i);
           }
         } else {
           _.each(item._options, function(option, optionIndex) {
             if (option._isCorrect) {
-              if (view.selectValue) {
-                view.selectValue(itemIndex, option._index);
-              }
-              else if (view.model.setOptionSelected) {
-                $select.val(option.text);
-                $select.trigger('change');
-                view.model.setOptionSelected(itemIndex, optionIndex, true);
-              } else {
-                $options.eq(optionIndex+1).prop('selected', true);
-              }
+              view.selectValue(itemIndex, option._index);
             }
           });
         }
