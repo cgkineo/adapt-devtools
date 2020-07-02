@@ -51,7 +51,7 @@ define(function(require) {
     }
   }
 
-  Utils = {
+  var Utils = {
     getModelForElement:function(element) {
       var $target = $(element);
 
