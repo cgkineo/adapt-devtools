@@ -23,6 +23,15 @@
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "validators": [],
                   "help": "Set to true to enable 'dev tools' features. Remember to disable/uninstall before going live!"
+                },
+                "_isDisabledInProduction": {
+                  "type":"boolean",
+                  "required":false,
+                  "default": false,
+                  "title": "Disable dev tools when course is built without sourcemaps",
+                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "validators": [],
+                  "help": "Set to true to disabled 'dev tools' features when the course is built without sourcemaps."
                 }
               }
             }

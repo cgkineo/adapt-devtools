@@ -448,6 +448,7 @@ define([
   }
 
   Adapt.once('adapt:initialize devtools:enable', function() {
+    if (Adapt.build.get('type') === 'production' && Adapt.config.get('_devtools')._isDisabledInProduction) return;
     initNavigationView();
     Adapt.on('app:languageChanged', initNavigationView);
   });
