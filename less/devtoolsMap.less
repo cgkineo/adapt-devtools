@@ -1,3 +1,9 @@
+.devtools-map-hatched {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAEklEQVQYlWNgoBJooFjB0LcCALLcAwF+SpItAAAAAElFTkSuQmCC');
+  background-color: unset;
+  color:black;
+}
+
 .devtools-map-font() {
   font-family: 'Courier New', Courier;
   font-style: italic;
@@ -164,6 +170,10 @@ html.has-devtools-map {
     color: @disabled-inverted;
   }
 
+  &__map-section-title:not(.is-available) {
+    .devtools-map-hatched;
+  }
+
   &__map-section-title.is-complete {
     background-color: @validation-success;
     color: @validation-success-inverted;
@@ -182,6 +192,10 @@ html.has-devtools-map {
   &__map-component.is-complete {
     background-color: @validation-success;
     color: @validation-success-inverted;
+  }
+
+  &__map-component:not(.is-available) {
+    .devtools-map-hatched;
   }
 
   &__map-section.is-content-object:not(.is-last),

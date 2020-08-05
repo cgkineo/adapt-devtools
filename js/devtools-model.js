@@ -29,7 +29,6 @@ define(function(require) {
     getDefaultConfig:function() {
       return {
         '_isEnabled':false,
-        '_theme':'theme-dark',
         '_extended':true
       };
     },

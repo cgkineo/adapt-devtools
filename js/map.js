@@ -25,7 +25,6 @@ define(function(require) {
       var startTime = new Date().getTime();
 
       var template = Handlebars.templates['devtoolsMap'];
-      this.$('body').addClass(config.has('_theme') ? config.get('_theme') : 'theme-light');
       this.$('body').html(template(data));
 
       //console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');

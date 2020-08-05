@@ -7,14 +7,24 @@ define(function(require) {
 
   var AutoAnswer = _.extend({
 
+    mousedownHandlers:[],
+
     initialize:function() {
-      this.listenTo(Adapt, 'componentView:postRender', this.componentRendered);
+      this.listenTo(Adapt, {
+        'componentView:postRender': this.componentRendered,
+        'remove': this.onRemove
+      });
     },
 
     componentRendered:function(view) {
       if (isQuestionSupported(view.model)) {
         if (view.buttonsView) {
-          view.$('.js-btn-action').on('mousedown', _.bind(this.onSubmitClicked, this, view));
+          var handler = _.bind(this.onQuestionMouseDown, this, view);
+          view.$el.on('mousedown', handler);
+          this.mousedownHandlers.push({
+            element:view.$el,
+            handler:handler
+          });
         }
         else if (Adapt.devtools.get('_debug')) {
           console.warn('adapt-devtools: could not find submit button on '+view.model.get('_id'));
@@ -22,7 +32,7 @@ define(function(require) {
       }
     },
 
-    onSubmitClicked:function(view, e) {
+    onQuestionMouseDown:function(view, e) {
       // remove hinting if enabled
       if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
 
@@ -81,6 +91,8 @@ define(function(require) {
           default:this.answerUnsupported(view);
         }
       }
+
+      view.$('.js-btn-action').trigger('click');
     },
 
     answerMultipleChoice:function(view, isGraphical) {
@@ -448,6 +460,12 @@ define(function(require) {
 
       model.set({"_isComplete":true, "_isInteractionComplete":true, "_isCorrect":false, "_isSubmitted":true, "_score":0});
       model.set("_attemptsLeft", Math.max(0, model.get("_attempts") - 1));
+    },
+
+    onRemove:function() {
+      this.mousedownHandlers.forEach(tuple => {
+        tuple.element.off('mousedown', tuple.handler);
+      })
     }
   }, Backbone.Events);
 

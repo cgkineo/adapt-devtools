@@ -1,6 +1,6 @@
 <div class="devtools__map-section is-content-object{{#if @last}} is-last{{/if}}">
 
-  <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-content-object{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}">
+  <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-content-object{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isAvailable"}} is-available{{/when}}">
 
     <div class="devtools__map-info is-content-object">
       <div class="devtools__map-id is-content-object">
@@ -19,7 +19,7 @@
     {{#eachChild}}
     <div class="devtools__map-section is-article{{#if @last}} is-last{{/if}}">
 
-      <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-article{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}">
+      <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-article{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isAvailable"}} is-available{{/when}}">
 
         <div class="devtools__map-info is-article">
           <div class="devtools__map-id is-article">
@@ -42,7 +42,7 @@
         {{#eachChild}}
         <div class="devtools__map-section is-block{{#if @last}} is-last{{/if}}">
 
-          <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-block{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}">
+          <a href="#{{getProp "_id"}}" class="devtools__map-section-title is-block{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isAvailable"}} is-available{{/when}}">
 
             <div class="devtools__map-info is-block">
               <div class="devtools__map-id is-block">
@@ -59,7 +59,7 @@
           <div class="devtools__map-section is-component">
 
             {{#eachChild}}
-            <a href="#{{getProp "_id"}}" class="devtools__map-component index-{{@index}}{{#if @last}} is-last{{/if}}{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isSubmitted"}}{{#when "_isCorrect"}} is-correct{{else}} is-incorrect{{/when}}{{/when}}">
+            <a href="#{{getProp "_id"}}" class="devtools__map-component index-{{@index}}{{#if @last}} is-last{{/if}}{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isAvailable"}} is-available{{/when}}{{#when "_isSubmitted"}}{{#when "_isCorrect"}} is-correct{{else}} is-incorrect{{/when}}{{/when}}">
 
               <div class="devtools__map-id is-component">
                 {{getProp "_id"}}
