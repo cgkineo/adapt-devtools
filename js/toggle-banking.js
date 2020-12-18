@@ -22,7 +22,7 @@ define(function(require) {
     getBankedAssessmentsInCurrentPage:function() {
       var pageModel = Adapt.findById(Adapt.location._currentId);
       var f = function(m) {
-        config = this.getConfig(m);
+        var config = this.getConfig(m);
         if (!config._assessmentBankDisabled &&
           m.has('_assessment') &&
           m.get('_assessment')._isEnabled &&
