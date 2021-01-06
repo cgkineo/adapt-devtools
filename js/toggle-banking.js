@@ -1,11 +1,11 @@
-define(function(require) {
-
-  var Adapt = require('coreJS/adapt');
-  var Router = require('coreJS/router');
+define([
+  'core/js/adapt',
+  'core/js/router'
+], function(Adapt, Router) {
 
   var ToggleBanking = {
 
-    initialize:function() {
+    initialize: function() {
       Adapt.articles.each(function(m) {
         var config = this.getConfig(m);
         if (m.has('_assessment') && m.get('_assessment')._banks && !m.get('_assessment')._banks._isEnabled) {
@@ -14,15 +14,15 @@ define(function(require) {
       }, this);
     },
 
-    getConfig:function(articleModel) {
+    getConfig: function(articleModel) {
       if (!articleModel.has('_devtools')) articleModel.set('_devtools', {});
       return articleModel.get('_devtools');
     },
 
-    getBankedAssessmentsInCurrentPage:function() {
+    getBankedAssessmentsInCurrentPage: function() {
       var pageModel = Adapt.findById(Adapt.location._currentId);
       var f = function(m) {
-        config = this.getConfig(m);
+        var config = this.getConfig(m);
         if (!config._assessmentBankDisabled &&
           m.has('_assessment') &&
           m.get('_assessment')._isEnabled &&
@@ -31,18 +31,21 @@ define(function(require) {
         return false;
       };
 
-      return Adapt.location._contentType == 'menu' ? [] : _.filter(pageModel.findDescendantModels('articles'), f, this);
+      return Adapt.location._contentType === 'menu' ? [] : _.filter(pageModel.findDescendantModels('articles'), f, this);
     },
 
-    toggle:function() {
+    toggle: function() {
       var bankedAssessments = this.getBankedAssessmentsInCurrentPage();
-      var isBankingEnabled = function(m) {return m.get('_assessment')._banks._isEnabled;};
+      var isBankingEnabled = function(m) { return m.get('_assessment')._banks._isEnabled; };
       var enable = !_.some(bankedAssessments, isBankingEnabled);
 
       _.each(bankedAssessments, function(articleModel) {
         articleModel.get('_assessment')._banks._isEnabled = enable;
         // set properties to trigger setup of assessment data
-        articleModel.set({'_attemptInProgress':false, '_isPass':false});
+        articleModel.set({
+          _attemptInProgress: false,
+          _isPass: false
+        });
       });
 
       // reload page
