@@ -113,7 +113,9 @@ define([
     /*************************************************/
 
     _checkSpoorLogVisibility: function() {
-      this.$('.open-spoor-log').prop('disabled', !require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor'));
+      var spoorInstalled = require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor');
+      if (spoorInstalled) return;
+      this.$('.open-spoor-log').addClass('is-disabled').attr('disabled', 'disabled');
     },
 
     onOpenSpoorLog: function() {
