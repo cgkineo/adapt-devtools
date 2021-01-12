@@ -154,10 +154,9 @@ define([
       if (bankedAssessments.length > 0) {
         this.$('.banking').removeClass('u-display-none');
         this.$('.banking label').toggleClass('is-selected', _.some(bankedAssessments, isBankingEnabled));
+        return;
       }
-      else {
         this.$('.banking').addClass('u-display-none');
-      }
     },
 
     onToggleBanking: function() {
@@ -173,10 +172,9 @@ define([
       if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
         this.$('.feedback').removeClass('u-display-none');
         this.$('.feedback label').toggleClass('is-selected', Adapt.devtools.get('_feedbackEnabled'));
+        return;
       }
-      else {
         this.$('.feedback').addClass('u-display-none');
-      }
     },
 
     onToggleFeedback: function() {
@@ -192,10 +190,9 @@ define([
       if (Adapt.devtools.get('_hintingAvailable')) {
         this.$('.hinting').removeClass('u-display-none');
         this.$('.hinting label').toggleClass('is-selected', Adapt.devtools.get('_hintingEnabled'));
+        return;
       }
-      else {
         this.$('.hinting').addClass('u-display-none');
-      }
     },
 
     onToggleHinting: function() {
@@ -212,10 +209,9 @@ define([
         this.$('.is-toggle.auto-correct').removeClass('u-display-none');
         this.$('.is-toggle.auto-correct label').toggleClass('is-selected', Adapt.devtools.get('_autoCorrectEnabled'));
         this.$('.is-tip.auto-correct').toggleClass('u-display-none', Adapt.devtools.get('_autoCorrectEnabled'));
+        return;
       }
-      else {
         this.$('.auto-correct').addClass('u-display-none');
-      }
     },
 
     onToggleAutoCorrect: function() {
@@ -232,10 +228,9 @@ define([
         this.$('.is-toggle.alt-text').removeClass('u-display-none');
         this.$('.is-toggle.alt-text label').toggleClass('is-selected', Adapt.devtools.get('_altTextEnabled'));
         this.$('.is-tip.alt-text').toggleClass('u-display-none', Adapt.devtools.get('_altTextEnabled'));
+        return;
       }
-      else {
         this.$('.alt-text').addClass('u-display-none');
-      }
     },
 
     onToggleAltText: function() {
@@ -381,10 +376,9 @@ define([
       if (Adapt.devtools.get('_traceFocusAvailable')) {
         this.$('.is-toggle.trace-focus').removeClass('u-display-none');
         this.$('.is-toggle.trace-focus label').toggleClass('is-selected', Adapt.devtools.get('_traceFocusEnabled'));
+        return;
       }
-      else {
         this.$('.trace-focus').addClass('u-display-none');
-      }
     },
 
     onToggleTraceFocus: function() {
