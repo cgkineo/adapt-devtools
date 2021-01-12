@@ -250,9 +250,7 @@ define([
         return;
       }
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isInteractionComplete') === false;
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
       this.$('.complete-page').toggleClass('u-display-none', incomplete.length === 0);
 
@@ -263,11 +261,9 @@ define([
 
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isInteractionComplete') === false;
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
-      _.each(incomplete, function(component) {
+      incomplete.forEach(function(component) {
         if (component.get('_isQuestionType')) {
           component.set({
             _isCorrect: true,
@@ -296,9 +292,7 @@ define([
         return;
       }
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-        return !model.get('_isComplete');
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
 
       this.$('.complete-menu').toggleClass('u-display-none', incomplete.length === 0);
 
@@ -309,13 +303,8 @@ define([
 
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-        return !model.get('_isComplete');
-      });
-
-      _.each(incomplete, function(component) {
-        component.set("_isComplete", true);
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
+      _.invoke(incomplete, 'set', '_isComplete', true);
 
       Adapt.trigger('drawer:closeDrawer');
     },
@@ -332,9 +321,7 @@ define([
         return;
       }
 
-      var unanswered = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isQuestionType') === true && m.get('_isSubmitted') === false;
-      });
+      var unanswered = currentModel.findDescendantModels('components', { where: { _isQuestionType: true, _isSubmitted: false } });
 
       if (unanswered.length === 0) this.$('.tip.pass-half-fail').html('');
       else this.$('.is-tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
