@@ -72,7 +72,7 @@ define([
     },
 
     /*************************************************/
-    /********************* UNLOCK ********************/
+    /** ******************* UNLOCK *******************/
     /*************************************************/
 
     _checkUnlockVisibility: function() {
@@ -82,7 +82,7 @@ define([
     },
 
     _checkForLocks: function() {
-      if (typeof AdaptModel.prototype.checkLocking != 'function') return Adapt.location._contentType == 'menu';
+      if (typeof AdaptModel.prototype.checkLocking !== 'function') return Adapt.location._contentType === 'menu';
 
       var hasLock = function(model) {return model.has('_lockType');};
 
@@ -100,7 +100,7 @@ define([
     },
 
     /*************************************************/
-    /********************** MAP **********************/
+    /** ******************** MAP *********************/
     /*************************************************/
 
     onOpenMap: function() {
@@ -109,7 +109,7 @@ define([
     },
 
     /*************************************************/
-    /********************* SPOOR *********************/
+    /** ******************* SPOOR ********************/
     /*************************************************/
 
     _checkSpoorLogVisibility: function() {
@@ -126,7 +126,7 @@ define([
     },
 
     /*************************************************/
-    /******************** TRICKLE ********************/
+    /** ****************** TRICKLE *******************/
     /*************************************************/
 
     _checkTrickleEndVisibility: function() {
@@ -139,7 +139,7 @@ define([
     },
 
     /*************************************************/
-    /*************** QUESTION BANKING ****************/
+    /** ************* QUESTION BANKING ***************/
     /*************************************************/
 
     _checkBankingVisibility: function() {
@@ -166,7 +166,7 @@ define([
     },
 
     /*************************************************/
-    /*********** QUESTION FEEDBACK (TUTOR) ***********/
+    /** ********* QUESTION FEEDBACK (TUTOR) **********/
     /*************************************************/
 
     _checkFeedbackVisibility: function() {
@@ -185,7 +185,7 @@ define([
     },
 
     /*************************************************/
-    /*************** QUESTION HINTING ****************/
+    /** ************* QUESTION HINTING ***************/
     /*************************************************/
 
     _checkHintingVisibility: function() {
@@ -204,7 +204,7 @@ define([
     },
 
     /*************************************************/
-    /***************** AUTO CORRECT ******************/
+    /** *************** AUTO CORRECT *****************/
     /*************************************************/
 
     _checkAutoCorrectVisibility: function() {
@@ -224,7 +224,7 @@ define([
     },
 
     /*************************************************/
-    /******************* ALT TEXT ********************/
+    /** ***************** ALT TEXT *******************/
     /*************************************************/
 
     _checkAltTextVisibility: function() {
@@ -244,13 +244,13 @@ define([
     },
 
     /*************************************************/
-    /***************** COMPLETE PAGE *****************/
+    /** *************** COMPLETE PAGE ****************/
     /*************************************************/
 
     _checkCompletePageVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'page') {
+      if (currentModel.get('_type') !== 'page') {
         this.$('.complete-page').addClass('u-display-none');
         return;
       }
@@ -259,14 +259,14 @@ define([
         return m.get('_isInteractionComplete') === false;
       });
 
-      this.$('.complete-page').toggleClass('u-display-none', incomplete.length == 0);
+      this.$('.complete-page').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompletePage: function(e) {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
       var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
         return m.get('_isInteractionComplete') === false;
@@ -274,13 +274,15 @@ define([
 
       _.each(incomplete, function(component) {
         if (component.get('_isQuestionType')) {
-          component.set("_isCorrect", true);
-          component.set("_isSubmitted", true);
-          component.set("_score", 1);
-          component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
+          component.set({
+            _isCorrect: true,
+            _isSubmitted: true,
+            _score: 1
+          });
+          component.set('_attemptsLeft', Math.max(0, component.set('_attempts') - 1));
         }
 
-        component.set("_isComplete", true);
+        component.set('_isComplete', true);
         component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
       });
 
@@ -288,13 +290,13 @@ define([
     },
 
     /*************************************************/
-    /***************** COMPLETE MENU *****************/
+    /** *************** COMPLETE MENU ****************/
     /*************************************************/
 
     _checkCompleteMenuVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'menu' && currentModel.get('_type') !== "course" ) {
+      if (currentModel.get('_type') !== 'menu' && currentModel.get('_type') !== 'course') {
         this.$('.complete-menu').addClass('u-display-none');
         return;
       }
@@ -303,14 +305,14 @@ define([
         return !model.get('_isComplete');
       });
 
-      this.$('.complete-menu').toggleClass('u-display-none', incomplete.length == 0);
+      this.$('.complete-menu').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompleteMenu: function(e) {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
       var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
         return !model.get('_isComplete');
@@ -324,13 +326,13 @@ define([
     },
 
     /************************************************************/
-    /******* Similar to original adapt-cheat functionality ******/
+    /** ***** Similar to original adapt-cheat functionality *****/
     /************************************************************/
 
     _checkPassHalfFailVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'page') {
+      if (currentModel.get('_type') !== 'page') {
         this.$('.pass, .half, .fail').addClass('u-display-none');
         return;
       }
@@ -339,15 +341,15 @@ define([
         return m.get('_isQuestionType') === true && m.get('_isSubmitted') === false;
       });
 
-      if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
+      if (unanswered.length === 0) this.$('.tip.pass-half-fail').html('');
       else this.$('.is-tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
 
-      this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length == 0);
+      this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length === 0);
 
     },
 
     onPassHalfFail: function(e) {
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
       // potentially large operation so show some feedback
       $('.js-loading').show();
@@ -356,9 +358,9 @@ define([
 
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
 
-      if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
-      else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
-      else PassHalfFail.fail(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
+      if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(this.onPassHalfFailComplete.bind(this, tutorEnabled));
+      else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(this.onPassHalfFailComplete.bind(this, tutorEnabled));
+      else PassHalfFail.fail(this.onPassHalfFailComplete.bind(this, tutorEnabled));
 
       Adapt.trigger('drawer:closeDrawer');
     },
@@ -372,7 +374,7 @@ define([
     },
 
     /*************************************************/
-    /******************* EXTENDED ********************/
+    /** ***************** EXTENDED *******************/
     /*************************************************/
 
     _checkTraceFocusVisibility: function() {
@@ -388,7 +390,7 @@ define([
     onToggleTraceFocus: function() {
       Adapt.devtools.toggleTraceFocus();
       this._checkTraceFocusVisibility();
-    },
+    }
   });
 
   var DevtoolsNavigationView = Backbone.View.extend({
@@ -398,11 +400,10 @@ define([
 
       this.$el = $(template());
 
-      $('html').addClass('devtools-enabled');
-      $('html').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
+      $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
 
-      if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', _.bind(this.onDevtoolsClicked, this));
-      else this.$el.find('a, button').on('click', _.bind(this.onDevtoolsClicked, this));
+      if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', this.onDevtoolsClicked.bind(this));
+      else this.$el.find('a, button').on('click', this.onDevtoolsClicked.bind(this));
 
       // keep drawer item to left of PLP, resources, close button etc
       this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
@@ -422,11 +423,11 @@ define([
     },
 
     deferredRender: function() {
-      _.defer(_.bind(this.render, this));
+      _.defer(this.render.bind(this));
     },
 
     onContentRendered: function(view) {
-      if (view.model.get('_id') == Adapt.location._currentId) {
+      if (view.model.get('_id') === Adapt.location._currentId) {
         this.stopListening(view.model, 'change:_isReady', this.deferredRender);
         this.listenToOnce(view.model, 'change:_isReady', this.deferredRender);
       }
