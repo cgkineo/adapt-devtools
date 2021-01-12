@@ -113,12 +113,16 @@ define([
     /*************************************************/
 
     _checkSpoorLogVisibility: function() {
-      this.$('.open-spoor-log').prop('disabled', !require.defined('extensions/adapt-contrib-spoor/js/scorm'));
+      this.$('.open-spoor-log').prop('disabled', !require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor'));
     },
 
     onOpenSpoorLog: function() {
-      require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
       Adapt.trigger('drawer:closeDrawer');
+      if (Adapt.spoor) {
+        Adapt.spoor.scorm.showDebugWindow();
+        return;
+      }
+      require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
     },
 
     /*************************************************/
