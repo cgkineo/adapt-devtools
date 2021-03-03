@@ -7,10 +7,13 @@ define(function(require) {
     syncIterations:1,
 
     initialize:function() {
+      _.bindAll(this, 'onKeypress', 'onPassHalfFailComplete');
       this._questionViews = [];
       this._currentPageId = null;
       this.listenTo(Adapt, 'pageView:preRender', this.onPagePreRender);
       this.listenTo(Adapt, 'remove', this.onRemove);
+      $(window).off("keypress", this.onKeypress);
+			$(window).on("keypress", this.onKeypress);
     },
 
     _completeNonQuestions:function() {
@@ -93,7 +96,37 @@ define(function(require) {
           this._questionViews.push(view);
         }
       }
-    }
+    },
+
+    onKeypress:function(e) {
+			var char = String.fromCharCode(e.which).toLowerCase();
+
+			var perform = function(type) {
+				if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+
+				var tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
+
+				if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
+
+				if (type == 'pass') this.pass(_.partial(this.onPassHalfFailComplete, tutorEnabled));
+				else if (type == 'half') this.half(_.partial(this.onPassHalfFailComplete, tutorEnabled));
+				else this.fail(_.partial(this.onPassHalfFailComplete, tutorEnabled));
+
+				Adapt.trigger('drawer:closeDrawer');
+			}.bind(this);
+
+      switch (char) {
+        case 'p': return perform('pass');
+        case 'h': return perform('half');
+        case 'f': return perform('fail');
+      }
+		},
+
+		onPassHalfFailComplete: function(tutorEnabled) {
+			console.log('onPassHalfFailComplete');
+
+			if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
+		}
   }, Backbone.Events);
 
   Adapt.on('app:dataReady devtools:enable', function() {

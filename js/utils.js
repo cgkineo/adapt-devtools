@@ -83,7 +83,7 @@ define(function(require) {
     $(window).on("mouseup", onMouseUp);
 
     // useful for command-line debugging
-    if (!window.a) window.a = Adapt;
+    if (!window.Adapt) window.Adapt = Adapt;
   });
 
   return Utils;
