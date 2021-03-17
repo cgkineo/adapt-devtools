@@ -1,17 +1,17 @@
-define(function(require) {
-
-  var Adapt = require('coreJS/adapt');
-  var Router = require('coreJS/router');
+define([
+  'core/js/adapt',
+  'core/js/router'
+], function(Adapt, Router) {
 
   var MapView = Backbone.View.extend({
 
     events: {
-      'click a':'onLinkClicked'
+      'click a': 'onLinkClicked'
     },
 
     initialize: function() {
       this.$('html').addClass('has-devtools-map');
-      this._renderIntervalId = setInterval(_.bind(this._checkRenderInterval, this), 500);
+      this._renderIntervalId = setInterval(this._checkRenderInterval.bind(this), 500);
       this.listenTo(Adapt.components, 'change:_isComplete', this.onModelCompletionChanged);
       this.listenTo(Adapt.blocks, 'change:_isComplete', this.onModelCompletionChanged);
       this.listenTo(Adapt.articles, 'change:_isComplete', this.onModelCompletionChanged);
@@ -20,14 +20,13 @@ define(function(require) {
     },
 
     render: function() {
-      var config = Adapt.devtools;
       var data = this.model;
-      var startTime = new Date().getTime();
+      // var startTime = new Date().getTime();
 
-      var template = Handlebars.templates['devtoolsMap'];
+      var template = Handlebars.templates.devtoolsMap;
       this.$('body').html(template(data));
 
-      //console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
+      // console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
     },
 
     remove: function() {
@@ -37,19 +36,19 @@ define(function(require) {
       return this;
     },
 
-    _checkRenderInterval:function() {
+    _checkRenderInterval: function() {
       if (this._invalid) {
         this._invalid = false;
         this.render();
       }
     },
 
-    _getConfig:function(pageModel) {
+    _getConfig: function(pageModel) {
       if (!pageModel.has('_devtools')) pageModel.set('_devtools', {});
       return pageModel.get('_devtools');
     },
 
-    _disablePageIncompletePrompt:function(pageModel) {
+    _disablePageIncompletePrompt: function(pageModel) {
       var config = this._getConfig(pageModel);
 
       if (pageModel.has('_pageIncompletePrompt')) {
@@ -57,8 +56,7 @@ define(function(require) {
         if (pageModel.get('_pageIncompletePrompt').hasOwnProperty('_isEnabled')) {
           config._pageIncompletePromptEnabled = pageModel.get('_pageIncompletePrompt')._isEnabled;
         }
-      }
-      else {
+      } else {
         config._pageIncompletePromptExists = false;
         pageModel.set('_pageIncompletePrompt', {});
       }
@@ -66,27 +64,26 @@ define(function(require) {
       pageModel.get('_pageIncompletePrompt')._isEnabled = false;
     },
 
-    _restorePageIncompletePrompt:function(pageModel) {
+    _restorePageIncompletePrompt: function(pageModel) {
       var config = this._getConfig(pageModel);
 
       if (config._pageIncompletePromptExists) {
         if (config.hasOwnProperty('_pageIncompletePromptEnabled')) pageModel.get('_pageIncompletePrompt')._isEnabled = config._pageIncompletePromptEnabled;
         else delete pageModel.get('_pageIncompletePrompt')._isEnabled;
-      }
-      else {
+      } else {
         pageModel.unset('_pageIncompletePrompt');
       }
       delete config._pageIncompletePromptExists;
       delete config._pageIncompletePromptEnabled;
     },
 
-    onModelCompletionChanged:function() {
+    onModelCompletionChanged: function() {
       this.invalidate();
     },
 
-    onLinkClicked:function(e) {
+    onLinkClicked: function(e) {
       var $target = $(e.currentTarget);
-      var id = $target.attr("href").slice(1);
+      var id = $target.attr('href').slice(1);
       var model = Adapt.findById(id);
 
       e.preventDefault();
@@ -94,18 +91,16 @@ define(function(require) {
       if (e.ctrlKey && this.el.defaultView) {
         id = id.replace(/-/g, '');
         this.el.defaultView[id] = model;
-        this.el.defaultView.console.log('devtools: add property window.'+id+':');
+        this.el.defaultView.console.log('devtools: add property window.' + id + ':');
         this.el.defaultView.console.log(model);
-      }
-      else if (e.shiftKey) {
+      } else if (e.shiftKey) {
         this.navigateAndDisableTrickle(id);
-      }
-      else {
+      } else {
         this.navigateAndDisableTrickleUpTo(id);
       }
     },
 
-    invalidate:function() {
+    invalidate: function() {
       this._invalid = true;
     },
 
@@ -114,7 +109,7 @@ define(function(require) {
     * N.B. because trickle cannot be reliably manipulated in situ we must reload the page. Trickle remains disabled on
     * affected article(s)|block(s).
     */
-    navigateAndDisableTrickleUpTo:function(id) {
+    navigateAndDisableTrickleUpTo: function(id) {
       var model = Adapt.findById(id);
       var pageModel = Adapt.findById(Adapt.location._currentId);
 
@@ -123,41 +118,38 @@ define(function(require) {
 
       // now navigate
 
-      if (model._siblings == 'contentObjects') {
-        Backbone.history.navigate("#/id/"+id, {trigger:true});
-      }
-      else {
-        var level = model.get('_type') == 'component' ? model.getParent() : model;
-        var siblings = level.getParent().getChildren(), sibling = null;
+      if (model._siblings === 'contentObjects') {
+        Backbone.history.navigate('#/id/' + id, { trigger: true });
+      } else {
+        var level = model.get('_type') === 'component' ? model.getParent() : model;
+        var siblings = level.getParent().getChildren(); var sibling = null;
         // disable trickle on all preceeding article(s)|block(s)
-        for (var i=0, count=siblings.indexOf(level); i < count; i++) {
+        for (var i = 0, count = siblings.indexOf(level); i < count; i++) {
           sibling = siblings.at(i);
-          console.log('disabling trickle on '+sibling.get('_id'));
+          console.log('disabling trickle on ' + sibling.get('_id'));
           if (sibling.has('_trickle')) {
             sibling.get('_trickle')._isEnabled = false;
-          }
-          else {
-            sibling.set('_trickle', {_isEnabled:false});
+          } else {
+            sibling.set('_trickle', { _isEnabled: false });
           }
         }
         // check if already on page
-        if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
+        if (Adapt.location._currentId === model.findAncestor('contentObjects').get('_id')) {
           this.listenToOnce(Adapt, 'pageView:ready', function(view) {
-            _.defer(_.bind(function() {
-              Adapt.scrollTo($('.'+id));
+            _.defer(function() {
+              Adapt.scrollTo($('.' + id));
               this.checkVisibility(id);
-            }, this));
+            }.bind(this));
           });
-          if (Adapt.location._currentId == Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
+          if (Adapt.location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
           else Router.handleId(Adapt.location._currentId);
-        }
-        else {
+        } else {
           this.listenToOnce(Adapt, 'pageView:ready', function() {
-            _.defer(_.bind(function() {
+            _.defer(function() {
               this.checkVisibility(id);
-            }, this));
+            }.bind(this));
           });
-          Backbone.history.navigate("#/id/"+id, {trigger:true});
+          Backbone.history.navigate('#/id/' + id, { trigger: true });
         }
       }
 
@@ -171,48 +163,45 @@ define(function(require) {
     * Navigate to the element with the given id (or as closely to it as possible). Disable trickle on containing
     * page temporarily.
     */
-    navigateAndDisableTrickle:function(id) {
+    navigateAndDisableTrickle: function(id) {
       var model = Adapt.findById(id);
       var pageModel = Adapt.findById(Adapt.location._currentId);
 
       // first ensure page incomplete prompt won't activate
       this._disablePageIncompletePrompt(pageModel);
 
-      if (model._siblings == 'contentObjects') {
-        Backbone.history.navigate("#/id/"+id, {trigger:true});
-      }
-      else {
+      if (model._siblings === 'contentObjects') {
+        Backbone.history.navigate('#/id/' + id, { trigger: true });
+      } else {
         // if already on page ensure trickle is disabled
-        if (Adapt.location._currentId == model.findAncestor('contentObjects').get('_id')) {
+        if (Adapt.location._currentId === model.findAncestor('contentObjects').get('_id')) {
           Adapt.devtools.set('_trickleEnabled', false);
-          Adapt.scrollTo($('.'+id));
+          Adapt.scrollTo($('.' + id));
           this.checkVisibility(id);
-        }
-        else {
+        } else {
           // pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
           var targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
 
           // if necessary disable trickle (until page is ready)
           if (!targetModel.has('_trickle')) {
-            targetModel.set('_trickle', {_isEnabled:false});
+            targetModel.set('_trickle', { _isEnabled: false });
             this.listenToOnce(Adapt, 'pageView:ready', function() {
-              _.defer(_.bind(function() {
+              _.defer(function() {
                 targetModel.get('_trickle')._isEnabled = true;
                 this.checkVisibility(id);
-              }, this));
+              }.bind(this));
             });
-          }
-          else if (targetModel.get('_trickle')._isEnabled) {
+          } else if (targetModel.get('_trickle')._isEnabled) {
             targetModel.get('_trickle')._isEnabled = false;
             this.listenToOnce(Adapt, 'pageView:ready', function() {
-              _.defer(_.bind(function() {
+              _.defer(function() {
                 targetModel.get('_trickle')._isEnabled = true;
                 this.checkVisibility(id);
-              }, this));
+              }.bind(this));
             });
           }
 
-          Backbone.history.navigate("#/id/"+id, {trigger:true});
+          Backbone.history.navigate('#/id/' + id, { trigger: true });
         }
       }
 
@@ -222,38 +211,37 @@ define(function(require) {
       this.invalidate();
     },
 
-    checkVisibility:function(id) {
+    checkVisibility: function(id) {
       var model = Adapt.findById(id);
-      if ($('.'+id).is(':visible') || model == Adapt.course) return;
+      if ($('.' + id).is(':visible') || model === Adapt.course) return;
 
-      while (!$('.'+id).is(':visible') && model != Adapt.course) {
+      while (!$('.' + id).is(':visible') && model !== Adapt.course) {
         model = model.getParent();
         id = model.get('_id');
       }
-      console.log('adapt-devtools::checkVisibility scrolling to ancestor '+id);
-      Adapt.scrollTo($('.'+id));
+      console.log('adapt-devtools::checkVisibility scrolling to ancestor ' + id);
+      Adapt.scrollTo($('.' + id));
     }
   });
 
-  var Map = _.extend({
+  var CourseMap = _.extend({
     initialize: function() {
       this.listenTo(Adapt, 'devtools:mapLoaded', this.onMapLoaded);
-      $(window).on('unload', _.bind(this.onCourseClosed, this));
+      $(window).on('unload', this.onCourseClosed.bind(this));
 
       function isMenu(options) {
         if (this.get('_type') !== 'page') {
           return options.fn(this);
-        } else {
-          return options.inverse(this);
         }
+        return options.inverse(this);
       }
 
       function eachChild(options) {
-        var ret = "";
+        var ret = '';
         var children = this.get('_children').models;
 
         for (var i = 0, j = children.length; i < j; i++) {
-          ret = ret + options.fn(children[i], {data:{index:i,first:i==0,last:i===j-1}});
+          ret = ret + options.fn(children[i], { data: { index: i, first: i === 0, last: i === j - 1 } });
         }
 
         return ret;
@@ -264,7 +252,7 @@ define(function(require) {
       }
 
       function isStringEmpty(str) {
-        return !str || (str.trim && str.trim().length == 0) || ($.trim(str).length == 0)
+        return !str || (str.trim && str.trim().length === 0) || ($.trim(str).length === 0);
       }
 
       function getTitle(options) {
@@ -285,7 +273,7 @@ define(function(require) {
       function isTrickled(options) {
         var trickleConfig = this.get('_trickle');
         var trickled = false;
-        var isBlock = this.get('_type') == 'block';
+        var isBlock = this.get('_type') === 'block';
 
         if (trickleConfig) trickled = (isBlock || trickleConfig._onChildren !== true) && trickleConfig._isEnabled;
         else if (isBlock) {
@@ -308,11 +296,10 @@ define(function(require) {
       Handlebars.registerHelper('isTrickled', isTrickled);
     },
 
-    open:function() {
+    open: function() {
       if (!this.mapWindow) {
         this.mapWindow = window.open('assets/map.html', 'Map');
-      }
-      else {
+      } else {
         this.mapWindow.focus();
       }
     },
@@ -327,14 +314,14 @@ define(function(require) {
       this.mapWindow = mapWindow;
       this.mapWindow.focus();
       $('html', this.mapWindow.document).addClass($('html', window.document).attr('class'));
-      this.mapView = new MapView({model:Adapt, el:this.mapWindow.document});
-      $(this.mapWindow).on('unload', _.bind(this.onMapClosed, this));
+      this.mapView = new MapView({ model: Adapt, el: this.mapWindow.document });
+      $(this.mapWindow).on('unload', this.onMapClosed.bind(this));
     },
 
-    onCourseClosed:function() {
+    onCourseClosed: function() {
       if (this.mapView) {
         this.mapView.remove();
-        //this.mapWindow.close();
+        // this.mapWindow.close();
       }
     }
   }, Backbone.Events);
@@ -342,9 +329,9 @@ define(function(require) {
   Adapt.once('adapt:initialize devtools:enable', function() {
     if (!Adapt.devtools.get('_isEnabled')) return;
 
-    Map.initialize();
+    CourseMap.initialize();
   });
 
-  return Map;
+  return CourseMap;
 
 });

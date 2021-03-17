@@ -21,30 +21,30 @@ define([
   './enable',
   './toggle-trace-focus',
   './toggle-completion'
-], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
+], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, CourseMap) {
 
   var navigationView;
 
   var DevtoolsView = Backbone.View.extend({
 
-    className:'devtools',
+    className: 'devtools',
 
-    events:{
-      'click .end-trickle':'onEndTrickle',
-      'change .hinting input':'onToggleHinting',
-      'change .banking input':'onToggleBanking',
-      'change .feedback input':'onToggleFeedback',
-      'change .auto-correct input':'onToggleAutoCorrect',
-      'change .alt-text input':'onToggleAltText',
-      'click .unlock':'onUnlock',
-      'click .open-map':'onOpenMap',
-      'click .open-spoor-log':'onOpenSpoorLog',
-      'click .complete-page':'onCompletePage',
-      'click .complete-menu':'onCompleteMenu',
-      'click .pass':'onPassHalfFail',
-      'click .half':'onPassHalfFail',
-      'click .fail':'onPassHalfFail',
-      'change .trace-focus input':'onToggleTraceFocus'
+    events: {
+      'click .end-trickle': 'onEndTrickle',
+      'change .hinting input': 'onToggleHinting',
+      'change .banking input': 'onToggleBanking',
+      'change .feedback input': 'onToggleFeedback',
+      'change .auto-correct input': 'onToggleAutoCorrect',
+      'change .alt-text input': 'onToggleAltText',
+      'click .unlock': 'onUnlock',
+      'click .open-map': 'onOpenMap',
+      'click .open-spoor-log': 'onOpenSpoorLog',
+      'click .complete-page': 'onCompletePage',
+      'click .complete-menu': 'onCompleteMenu',
+      'click .pass': 'onPassHalfFail',
+      'click .half': 'onPassHalfFail',
+      'click .fail': 'onPassHalfFail',
+      'change .trace-focus input': 'onToggleTraceFocus'
     },
 
     initialize: function() {
@@ -84,7 +84,7 @@ define([
     _checkForLocks: function() {
       if (typeof AdaptModel.prototype.checkLocking !== 'function') return Adapt.location._contentType === 'menu';
 
-      var hasLock = function(model) {return model.has('_lockType');};
+      var hasLock = function(model) { return model.has('_lockType'); };
 
       if (hasLock(Adapt.course)) return true;
       if (Adapt.contentObjects.some(hasLock)) return true;
@@ -104,7 +104,7 @@ define([
     /*************************************************/
 
     onOpenMap: function() {
-      Map.open();
+      CourseMap.open();
       Adapt.trigger('drawer:closeDrawer');
     },
 
@@ -158,7 +158,7 @@ define([
         this.$('.banking label').toggleClass('is-selected', _.some(bankedAssessments, isBankingEnabled));
         return;
       }
-        this.$('.banking').addClass('u-display-none');
+      this.$('.banking').addClass('u-display-none');
     },
 
     onToggleBanking: function() {
@@ -176,7 +176,7 @@ define([
         this.$('.feedback label').toggleClass('is-selected', Adapt.devtools.get('_feedbackEnabled'));
         return;
       }
-        this.$('.feedback').addClass('u-display-none');
+      this.$('.feedback').addClass('u-display-none');
     },
 
     onToggleFeedback: function() {
@@ -194,7 +194,7 @@ define([
         this.$('.hinting label').toggleClass('is-selected', Adapt.devtools.get('_hintingEnabled'));
         return;
       }
-        this.$('.hinting').addClass('u-display-none');
+      this.$('.hinting').addClass('u-display-none');
     },
 
     onToggleHinting: function() {
@@ -213,7 +213,7 @@ define([
         this.$('.is-tip.auto-correct').toggleClass('u-display-none', Adapt.devtools.get('_autoCorrectEnabled'));
         return;
       }
-        this.$('.auto-correct').addClass('u-display-none');
+      this.$('.auto-correct').addClass('u-display-none');
     },
 
     onToggleAutoCorrect: function() {
@@ -232,7 +232,7 @@ define([
         this.$('.is-tip.alt-text').toggleClass('u-display-none', Adapt.devtools.get('_altTextEnabled'));
         return;
       }
-        this.$('.alt-text').addClass('u-display-none');
+      this.$('.alt-text').addClass('u-display-none');
     },
 
     onToggleAltText: function() {
@@ -367,7 +367,7 @@ define([
         this.$('.is-toggle.trace-focus label').toggleClass('is-selected', Adapt.devtools.get('_traceFocusEnabled'));
         return;
       }
-        this.$('.trace-focus').addClass('u-display-none');
+      this.$('.trace-focus').addClass('u-display-none');
     },
 
     onToggleTraceFocus: function() {
