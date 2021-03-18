@@ -21,30 +21,30 @@ define([
   './enable',
   './toggle-trace-focus',
   './toggle-completion'
-], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, Map) {
+], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, CourseMap) {
 
   var navigationView;
 
   var DevtoolsView = Backbone.View.extend({
 
-    className:'devtools',
+    className: 'devtools',
 
-    events:{
-      'click .end-trickle':'onEndTrickle',
-      'change .hinting input':'onToggleHinting',
-      'change .banking input':'onToggleBanking',
-      'change .feedback input':'onToggleFeedback',
-      'change .auto-correct input':'onToggleAutoCorrect',
-      'change .alt-text input':'onToggleAltText',
-      'click .unlock':'onUnlock',
-      'click .open-map':'onOpenMap',
-      'click .open-spoor-log':'onOpenSpoorLog',
-      'click .complete-page':'onCompletePage',
-      'click .complete-menu':'onCompleteMenu',
-      'click .pass':'onPassHalfFail',
-      'click .half':'onPassHalfFail',
-      'click .fail':'onPassHalfFail',
-      'change .trace-focus input':'onToggleTraceFocus'
+    events: {
+      'click .end-trickle': 'onEndTrickle',
+      'change .hinting input': 'onToggleHinting',
+      'change .banking input': 'onToggleBanking',
+      'change .feedback input': 'onToggleFeedback',
+      'change .auto-correct input': 'onToggleAutoCorrect',
+      'change .alt-text input': 'onToggleAltText',
+      'click .unlock': 'onUnlock',
+      'click .open-map': 'onOpenMap',
+      'click .open-spoor-log': 'onOpenSpoorLog',
+      'click .complete-page': 'onCompletePage',
+      'click .complete-menu': 'onCompleteMenu',
+      'click .pass': 'onPassHalfFail',
+      'click .half': 'onPassHalfFail',
+      'click .fail': 'onPassHalfFail',
+      'change .trace-focus input': 'onToggleTraceFocus'
     },
 
     initialize: function() {
@@ -72,7 +72,7 @@ define([
     },
 
     /*************************************************/
-    /********************* UNLOCK ********************/
+    /** ******************* UNLOCK *******************/
     /*************************************************/
 
     _checkUnlockVisibility: function() {
@@ -82,9 +82,9 @@ define([
     },
 
     _checkForLocks: function() {
-      if (typeof AdaptModel.prototype.checkLocking != 'function') return Adapt.location._contentType == 'menu';
+      if (typeof AdaptModel.prototype.checkLocking !== 'function') return Adapt.location._contentType === 'menu';
 
-      var hasLock = function(model) {return model.has('_lockType');};
+      var hasLock = function(model) { return model.has('_lockType'); };
 
       if (hasLock(Adapt.course)) return true;
       if (Adapt.contentObjects.some(hasLock)) return true;
@@ -100,29 +100,35 @@ define([
     },
 
     /*************************************************/
-    /********************** MAP **********************/
+    /** ******************** MAP *********************/
     /*************************************************/
 
     onOpenMap: function() {
-      Map.open();
+      CourseMap.open();
       Adapt.trigger('drawer:closeDrawer');
     },
 
     /*************************************************/
-    /********************* SPOOR *********************/
+    /** ******************* SPOOR ********************/
     /*************************************************/
 
     _checkSpoorLogVisibility: function() {
-      this.$('.open-spoor-log').prop('disabled', !require.defined('extensions/adapt-contrib-spoor/js/scorm'));
+      var spoorInstalled = require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor');
+      if (spoorInstalled) return;
+      this.$('.open-spoor-log').addClass('is-disabled').attr('disabled', 'disabled');
     },
 
     onOpenSpoorLog: function() {
-      require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
       Adapt.trigger('drawer:closeDrawer');
+      if (Adapt.spoor) {
+        Adapt.spoor.scorm.showDebugWindow();
+        return;
+      }
+      require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
     },
 
     /*************************************************/
-    /******************** TRICKLE ********************/
+    /** ****************** TRICKLE *******************/
     /*************************************************/
 
     _checkTrickleEndVisibility: function() {
@@ -135,7 +141,7 @@ define([
     },
 
     /*************************************************/
-    /*************** QUESTION BANKING ****************/
+    /** ************* QUESTION BANKING ***************/
     /*************************************************/
 
     _checkBankingVisibility: function() {
@@ -150,10 +156,9 @@ define([
       if (bankedAssessments.length > 0) {
         this.$('.banking').removeClass('u-display-none');
         this.$('.banking label').toggleClass('is-selected', _.some(bankedAssessments, isBankingEnabled));
+        return;
       }
-      else {
-        this.$('.banking').addClass('u-display-none');
-      }
+      this.$('.banking').addClass('u-display-none');
     },
 
     onToggleBanking: function() {
@@ -162,17 +167,16 @@ define([
     },
 
     /*************************************************/
-    /*********** QUESTION FEEDBACK (TUTOR) ***********/
+    /** ********* QUESTION FEEDBACK (TUTOR) **********/
     /*************************************************/
 
     _checkFeedbackVisibility: function() {
       if (Adapt.devtools.get('_toggleFeedbackAvailable')) {
         this.$('.feedback').removeClass('u-display-none');
         this.$('.feedback label').toggleClass('is-selected', Adapt.devtools.get('_feedbackEnabled'));
+        return;
       }
-      else {
-        this.$('.feedback').addClass('u-display-none');
-      }
+      this.$('.feedback').addClass('u-display-none');
     },
 
     onToggleFeedback: function() {
@@ -181,17 +185,16 @@ define([
     },
 
     /*************************************************/
-    /*************** QUESTION HINTING ****************/
+    /** ************* QUESTION HINTING ***************/
     /*************************************************/
 
     _checkHintingVisibility: function() {
       if (Adapt.devtools.get('_hintingAvailable')) {
         this.$('.hinting').removeClass('u-display-none');
         this.$('.hinting label').toggleClass('is-selected', Adapt.devtools.get('_hintingEnabled'));
+        return;
       }
-      else {
-        this.$('.hinting').addClass('u-display-none');
-      }
+      this.$('.hinting').addClass('u-display-none');
     },
 
     onToggleHinting: function() {
@@ -200,7 +203,7 @@ define([
     },
 
     /*************************************************/
-    /***************** AUTO CORRECT ******************/
+    /** *************** AUTO CORRECT *****************/
     /*************************************************/
 
     _checkAutoCorrectVisibility: function() {
@@ -208,10 +211,9 @@ define([
         this.$('.is-toggle.auto-correct').removeClass('u-display-none');
         this.$('.is-toggle.auto-correct label').toggleClass('is-selected', Adapt.devtools.get('_autoCorrectEnabled'));
         this.$('.is-tip.auto-correct').toggleClass('u-display-none', Adapt.devtools.get('_autoCorrectEnabled'));
+        return;
       }
-      else {
-        this.$('.auto-correct').addClass('u-display-none');
-      }
+      this.$('.auto-correct').addClass('u-display-none');
     },
 
     onToggleAutoCorrect: function() {
@@ -220,7 +222,7 @@ define([
     },
 
     /*************************************************/
-    /******************* ALT TEXT ********************/
+    /** ***************** ALT TEXT *******************/
     /*************************************************/
 
     _checkAltTextVisibility: function() {
@@ -228,10 +230,9 @@ define([
         this.$('.is-toggle.alt-text').removeClass('u-display-none');
         this.$('.is-toggle.alt-text label').toggleClass('is-selected', Adapt.devtools.get('_altTextEnabled'));
         this.$('.is-tip.alt-text').toggleClass('u-display-none', Adapt.devtools.get('_altTextEnabled'));
+        return;
       }
-      else {
-        this.$('.alt-text').addClass('u-display-none');
-      }
+      this.$('.alt-text').addClass('u-display-none');
     },
 
     onToggleAltText: function() {
@@ -240,43 +241,41 @@ define([
     },
 
     /*************************************************/
-    /***************** COMPLETE PAGE *****************/
+    /** *************** COMPLETE PAGE ****************/
     /*************************************************/
 
     _checkCompletePageVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'page') {
+      if (currentModel.get('_type') !== 'page') {
         this.$('.complete-page').addClass('u-display-none');
         return;
       }
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isInteractionComplete') === false;
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
-      this.$('.complete-page').toggleClass('u-display-none', incomplete.length == 0);
+      this.$('.complete-page').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompletePage: function(e) {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isInteractionComplete') === false;
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
-      _.each(incomplete, function(component) {
+      incomplete.forEach(function(component) {
         if (component.get('_isQuestionType')) {
-          component.set("_isCorrect", true);
-          component.set("_isSubmitted", true);
-          component.set("_score", 1);
-          component.set("_attemptsLeft", Math.max(0, component.set("_attempts") - 1));
+          component.set({
+            _isCorrect: true,
+            _isSubmitted: true,
+            _score: 1
+          });
+          component.set('_attemptsLeft', Math.max(0, component.set('_attempts') - 1));
         }
 
-        component.set("_isComplete", true);
+        component.set('_isComplete', true);
         component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
       });
 
@@ -284,66 +283,57 @@ define([
     },
 
     /*************************************************/
-    /***************** COMPLETE MENU *****************/
+    /** *************** COMPLETE MENU ****************/
     /*************************************************/
 
     _checkCompleteMenuVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'menu' && currentModel.get('_type') !== "course" ) {
+      if (currentModel.get('_type') !== 'menu' && currentModel.get('_type') !== 'course') {
         this.$('.complete-menu').addClass('u-display-none');
         return;
       }
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-        return !model.get('_isComplete');
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
 
-      this.$('.complete-menu').toggleClass('u-display-none', incomplete.length == 0);
+      this.$('.complete-menu').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompleteMenu: function(e) {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = _.filter(currentModel.findDescendantModels('components'), function(model) {
-        return !model.get('_isComplete');
-      });
-
-      _.each(incomplete, function(component) {
-        component.set("_isComplete", true);
-      });
+      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
+      _.invoke(incomplete, 'set', '_isComplete', true);
 
       Adapt.trigger('drawer:closeDrawer');
     },
 
     /************************************************************/
-    /******* Similar to original adapt-cheat functionality ******/
+    /** ***** Similar to original adapt-cheat functionality *****/
     /************************************************************/
 
     _checkPassHalfFailVisibility: function() {
       var currentModel = Adapt.findById(Adapt.location._currentId);
 
-      if (currentModel.get('_type') != 'page') {
+      if (currentModel.get('_type') !== 'page') {
         this.$('.pass, .half, .fail').addClass('u-display-none');
         return;
       }
 
-      var unanswered = _.filter(currentModel.findDescendantModels('components'), function(m) {
-        return m.get('_isQuestionType') === true && m.get('_isSubmitted') === false;
-      });
+      var unanswered = currentModel.findDescendantModels('components', { where: { _isQuestionType: true, _isSubmitted: false } });
 
-      if (unanswered.length == 0)	this.$('.tip.pass-half-fail').html('');
+      if (unanswered.length === 0) this.$('.tip.pass-half-fail').html('');
       else this.$('.is-tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
 
-      this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length == 0);
+      this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length === 0);
 
     },
 
     onPassHalfFail: function(e) {
-      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger("trickle:kill");
+      if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
       // potentially large operation so show some feedback
       $('.js-loading').show();
@@ -352,9 +342,9 @@ define([
 
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
 
-      if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
-      else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
-      else PassHalfFail.fail(_.bind(this.onPassHalfFailComplete, this, tutorEnabled));
+      if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(this.onPassHalfFailComplete.bind(this, tutorEnabled));
+      else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(this.onPassHalfFailComplete.bind(this, tutorEnabled));
+      else PassHalfFail.fail(this.onPassHalfFailComplete.bind(this, tutorEnabled));
 
       Adapt.trigger('drawer:closeDrawer');
     },
@@ -368,23 +358,22 @@ define([
     },
 
     /*************************************************/
-    /******************* EXTENDED ********************/
+    /** ***************** EXTENDED *******************/
     /*************************************************/
 
     _checkTraceFocusVisibility: function() {
       if (Adapt.devtools.get('_traceFocusAvailable')) {
         this.$('.is-toggle.trace-focus').removeClass('u-display-none');
         this.$('.is-toggle.trace-focus label').toggleClass('is-selected', Adapt.devtools.get('_traceFocusEnabled'));
+        return;
       }
-      else {
-        this.$('.trace-focus').addClass('u-display-none');
-      }
+      this.$('.trace-focus').addClass('u-display-none');
     },
 
     onToggleTraceFocus: function() {
       Adapt.devtools.toggleTraceFocus();
       this._checkTraceFocusVisibility();
-    },
+    }
   });
 
   var DevtoolsNavigationView = Backbone.View.extend({
@@ -394,11 +383,10 @@ define([
 
       this.$el = $(template());
 
-      $('html').addClass('devtools-enabled');
-      $('html').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
+      $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
 
-      if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', _.bind(this.onDevtoolsClicked, this));
-      else this.$el.find('a, button').on('click', _.bind(this.onDevtoolsClicked, this));
+      if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', this.onDevtoolsClicked.bind(this));
+      else this.$el.find('a, button').on('click', this.onDevtoolsClicked.bind(this));
 
       // keep drawer item to left of PLP, resources, close button etc
       this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
@@ -418,11 +406,11 @@ define([
     },
 
     deferredRender: function() {
-      _.defer(_.bind(this.render, this));
+      _.defer(this.render.bind(this));
     },
 
     onContentRendered: function(view) {
-      if (view.model.get('_id') == Adapt.location._currentId) {
+      if (view.model.get('_id') === Adapt.location._currentId) {
         this.stopListening(view.model, 'change:_isReady', this.deferredRender);
         this.listenToOnce(view.model, 'change:_isReady', this.deferredRender);
       }
