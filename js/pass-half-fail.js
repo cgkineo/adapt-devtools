@@ -99,6 +99,9 @@ define(function(require) {
     },
 
     onKeypress:function(e) {
+      // ignore keystrokes if the devtools drawer is not open
+      if ($('.drawer .devtools').length === 0) return;
+
 			var char = String.fromCharCode(e.which).toLowerCase();
 
 			var perform = function(type) {
