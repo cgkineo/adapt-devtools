@@ -22,7 +22,7 @@ define(function(require) {
         var model = Utils.getModelForElement(mouseTarget);
 
         if (model) {
-          id = model.get('_id').replace(/-/g, '');
+          var id = model.get('_id').replace(/-/g, '');
           window[id] = model;
           console.log('devtools: add property window.'+id+':');
           console.log(model.attributes);
