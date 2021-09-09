@@ -238,13 +238,18 @@ define([
 
       function eachChild(options) {
         var ret = '';
-        var children = this.get('_children').models;
+        var children = this.getChildren().models;
 
         for (var i = 0, j = children.length; i < j; i++) {
           ret = ret + options.fn(children[i], { data: { index: i, first: i === 0, last: i === j - 1 } });
         }
 
         return ret;
+      }
+
+      function getId(options) {
+        const val = this.get('_id') || '';
+        return val.slice(-6);
       }
 
       function getProp(prop, options) {
@@ -290,6 +295,7 @@ define([
 
       Handlebars.registerHelper('isMenu', isMenu);
       Handlebars.registerHelper('eachChild', eachChild);
+      Handlebars.registerHelper('getId', getId);
       Handlebars.registerHelper('getProp', getProp);
       Handlebars.registerHelper('getTitle', getTitle);
       Handlebars.registerHelper('when', when);

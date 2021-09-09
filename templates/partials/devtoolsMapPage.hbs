@@ -4,7 +4,7 @@
 
     <div class="devtools__map-info is-content-object">
       <div class="devtools__map-id is-content-object">
-        {{getProp "_id"}}
+        <span title="{{getProp "_id"}}">{{getId}}</span>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
 
         <div class="devtools__map-info is-article">
           <div class="devtools__map-id is-article">
-            {{getProp "_id"}}
+            <span title="{{getProp "_id"}}">{{getId}}</span>
           </div>
 
           {{#isTrickled}}
@@ -46,7 +46,7 @@
 
             <div class="devtools__map-info is-block">
               <div class="devtools__map-id is-block">
-                {{getProp "_id"}}
+                <span title="{{getProp "_id"}}">{{getId}}</span>
               </div>
 
               {{#isTrickled}}
@@ -62,7 +62,7 @@
             <a href="#{{getProp "_id"}}" class="devtools__map-component index-{{@index}}{{#if @last}} is-last{{/if}}{{#when "_isComplete"}} is-complete{{/when}}{{#when "_isOptional"}} is-optional{{/when}}{{#when "_isAvailable"}} is-available{{/when}}{{#when "_isSubmitted"}}{{#when "_isCorrect"}} is-correct{{else}} is-incorrect{{/when}}{{/when}}">
 
               <div class="devtools__map-id is-component">
-                {{getProp "_id"}}
+                <span title="{{getProp "_id"}}">{{getId}}</span>
               </div>
 
               <div class="devtools__map-info is-component">
