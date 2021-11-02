@@ -104,7 +104,7 @@ define(function(require) {
           view.model.getItem(_.random(items.length - 1)).set('_isActive', true);
         } else {
           view.model.getChildren().forEach(item => {
-            if (item.get('_shouldBeSelected') && !item.get('_isSelected') || !item.get('_shouldBeSelected') && item.get('_isSelected')) {
+            if (item.get('_shouldBeSelected') && !item.get('_isActive') || !item.get('_shouldBeSelected') && item.get('_isActive')) {
               item.toggleActive();
             }
           })
@@ -167,7 +167,7 @@ define(function(require) {
 
       if (this.isItemsQuestionModel(view.model)) {
         view.model.getChildren().forEach((item, index) => {
-          if (selectionStates[index] && !item._isSelected || !selectionStates[index] && item._isSelected) {
+          if (selectionStates[index] && !item.get('_isActive') || !selectionStates[index] && item.get('_isActive')) {
             item.toggleActive();
           }
         })
