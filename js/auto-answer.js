@@ -99,6 +99,19 @@ define(function(require) {
       var items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
       var noCorrectOptions = _.where(items, {'_shouldBeSelected':true}).length == 0;
 
+      if (this.isItemsQuestionModel(view.model)) {
+        if (noCorrectOptions) {
+          view.model.getItem(_.random(items.length - 1)).set('_isActive', true);
+        } else {
+          view.model.getChildren().forEach(item => {
+            if (item.get('_shouldBeSelected') && !item.get('_isSelected') || !item.get('_shouldBeSelected') && item.get('_isSelected')) {
+              item.toggleActive();
+            }
+          })
+        }
+        return;
+      }
+
       if (noCorrectOptions) {
         if (_.where(items, {'_isSelected':true}).length == 0) {
           view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(_.random(items.length - 1)).trigger('change');
@@ -150,6 +163,15 @@ define(function(require) {
             if (items[index]._shouldBeSelected) selectionStates[index] = found = true;
           }
         }
+      }
+
+      if (this.isItemsQuestionModel(view.model)) {
+        view.model.getChildren().forEach((item, index) => {
+          if (selectionStates[index] && !item._isSelected || !selectionStates[index] && item._isSelected) {
+            item.toggleActive();
+          }
+        })
+        return;
       }
 
       _.each(items, function(item, index) {
