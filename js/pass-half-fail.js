@@ -5,15 +5,20 @@ define(function(require) {
 
   var PassHalfFail = _.extend({
     syncIterations:1,
+    mouseTarget:null,
 
     initialize:function() {
-      _.bindAll(this, 'onKeypress', 'onPassHalfFailComplete');
+      _.bindAll(this, 'onMouseDown', 'onMouseUp', 'onKeypress', 'onPassHalfFailComplete');
       this._questionViews = [];
       this._currentPageId = null;
       this.listenTo(Adapt, 'pageView:preRender', this.onPagePreRender);
       this.listenTo(Adapt, 'remove', this.onRemove);
       $(window).off("keypress", this.onKeypress);
-			$(window).on("keypress", this.onKeypress);
+      $(window).off('mousedown', this.onMouseDown);
+      $(window).off('mouseup', this.onMouseUp);
+      $(window).on("keypress", this.onKeypress);
+      $(window).on('mousedown', this.onMouseDown);
+      $(window).on('mouseup', this.onMouseUp);
     },
 
     _completeNonQuestions:function() {
@@ -98,10 +103,15 @@ define(function(require) {
       }
     },
 
-    onKeypress:function(e) {
-      // ignore keystrokes if the devtools drawer is not open
-      if ($('.drawer .devtools').length === 0) return;
+    onMouseDown:function(e) {
+      if (e.which === 1) this.mouseTarget = e.target;
+    },
+  
+    onMouseUp:function(e) {
+      if (e.which === 1) this.mouseTarget = null;
+    },
 
+    onKeypress:function(e) {
 			var char = String.fromCharCode(e.which).toLowerCase();
 
 			var perform = function(type) {
@@ -118,10 +128,18 @@ define(function(require) {
 				Adapt.trigger('drawer:closeDrawer');
 			}.bind(this);
 
-      switch (char) {
-        case 'p': return perform('pass');
-        case 'h': return perform('half');
-        case 'f': return perform('fail');
+      if (this.mouseTarget && $('.drawer .devtools').length === 0) {
+        switch (char) {
+          case 'p': return perform('pass');
+          case 'h': return perform('half');
+          case 'f': return perform('fail');
+        }
+      } else {
+        switch (char) {
+          case 'p': return perform('pass');
+          case 'h': return perform('half');
+          case 'f': return perform('fail');
+        }
       }
 		},
 
