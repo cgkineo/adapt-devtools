@@ -249,7 +249,7 @@ define([
 
       function getId(options) {
         const val = this.get('_id') || '';
-        return val.slice(-6);
+        return /\w{1,2}-/.test(val) ? val : val.slice(-6);
       }
 
       function getProp(prop, options) {
