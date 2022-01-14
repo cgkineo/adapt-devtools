@@ -1,58 +1,56 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
-  var ItemsQuestionModel = undefined;
-  var Hinting = require('./hinting');
-  var isQuestionSupported = require('./is-question-supported');
+  const Adapt = require('coreJS/adapt');
+  let ItemsQuestionModel;
+  const Hinting = require('./hinting');
+  const isQuestionSupported = require('./is-question-supported');
 
-  var AutoAnswer = _.extend({
+  const AutoAnswer = _.extend({
 
-    mousedownHandlers:[],
+    mousedownHandlers: [],
 
-    initialize:function() {
+    initialize: function() {
       this.listenTo(Adapt, {
         'componentView:postRender': this.componentRendered,
-        'remove': this.onRemove
+        remove: this.onRemove
       });
     },
 
-    componentRendered:function(view) {
+    componentRendered: function(view) {
       if (isQuestionSupported(view.model)) {
         if (view.buttonsView) {
-          var handler = _.bind(this.onQuestionMouseDown, this, view);
+          const handler = _.bind(this.onQuestionMouseDown, this, view);
           view.$el.on('mousedown', handler);
           this.mousedownHandlers.push({
-            element:view.$el,
-            handler:handler
+            element: view.$el,
+            handler: handler
           });
-        }
-        else if (Adapt.devtools.get('_debug')) {
-          console.warn('adapt-devtools: could not find submit button on '+view.model.get('_id'));
+        } else if (Adapt.devtools.get('_debug')) {
+          console.warn('adapt-devtools: could not find submit button on ' + view.model.get('_id'));
         }
       }
     },
 
-    onQuestionMouseDown:function(view, e) {
+    onQuestionMouseDown: function(view, e) {
       // remove hinting if enabled
       if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
 
       if ((e.ctrlKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
         this.answer(view);
-      }
-      else if (e.ctrlKey && e.shiftKey) {
+      } else if (e.ctrlKey && e.shiftKey) {
         this.answer(view, true);
       }
     },
 
-    isItemsQuestionModel:function(model) {
+    isItemsQuestionModel: function(model) {
       if (ItemsQuestionModel) {
         return model instanceof ItemsQuestionModel;
       } else if (ItemsQuestionModel === null) {
         return false;
       }
 
-      if (require.defined('core/js/models/'+'itemsQuestionModel')) {
-        ItemsQuestionModel = require('core/js/models/'+'itemsQuestionModel');
+      if (require.defined('core/js/models/' + 'itemsQuestionModel')) {
+        ItemsQuestionModel = require('core/js/models/' + 'itemsQuestionModel');
         return model instanceof ItemsQuestionModel;
       } else {
         ItemsQuestionModel = null;
@@ -60,11 +58,11 @@ define(function(require) {
       }
     },
 
-    answer:function(view, incorrectly) {
+    answer: function(view, incorrectly) {
       if (view.model.get('_isSubmitted')) return;
 
       if (Adapt.devtools.get('_debug')) {
-        console.log('adapt-devtools: answer '+view.model.get('_id')+(incorrectly === true ? ' incorrectly' : ''));
+        console.log('adapt-devtools: answer ' + view.model.get('_id') + (incorrectly === true ? ' incorrectly' : ''));
       }
 
       if (incorrectly === true) {
@@ -78,8 +76,7 @@ define(function(require) {
           case 'questionStrip':this.answerQuestionStripIncorrectly(view); break;
           default:this.answerUnsupportedIncorrectly(view);
         }
-      }
-      else {
+      } else {
         switch (view.model.get('_component')) {
           case 'mcq':this.answerMultipleChoice(view); break;
           case 'gmcq':this.answerMultipleChoice(view, true); break;
@@ -95,9 +92,9 @@ define(function(require) {
       view.$('.js-btn-action').trigger('click');
     },
 
-    answerMultipleChoice:function(view, isGraphical) {
-      var items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
-      var noCorrectOptions = _.where(items, {'_shouldBeSelected':true}).length == 0;
+    answerMultipleChoice: function(view, isGraphical) {
+      const items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
+      const noCorrectOptions = _.where(items, { _shouldBeSelected: true }).length == 0;
 
       if (this.isItemsQuestionModel(view.model)) {
         if (noCorrectOptions) {
@@ -107,13 +104,13 @@ define(function(require) {
             if (item.get('_shouldBeSelected') && !item.get('_isActive') || !item.get('_shouldBeSelected') && item.get('_isActive')) {
               item.toggleActive();
             }
-          })
+          });
         }
         return;
       }
 
       if (noCorrectOptions) {
-        if (_.where(items, {'_isSelected':true}).length == 0) {
+        if (_.where(items, { _isSelected: true }).length == 0) {
           view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(_.random(items.length - 1)).trigger('change');
         }
       } else {
@@ -125,31 +122,31 @@ define(function(require) {
       }
     },
 
-    answerMultipleChoiceIncorrectly:function(view, isGraphical) {
-      var model = view.model;
-      var items = this.isItemsQuestionModel(model) ? model.getChildren().toJSON() : model.get('_items');
-      var itemCount = items.length;
-      var selectionStates = _.times(itemCount, function() {return false;});
+    answerMultipleChoiceIncorrectly: function(view, isGraphical) {
+      const model = view.model;
+      const items = this.isItemsQuestionModel(model) ? model.getChildren().toJSON() : model.get('_items');
+      const itemCount = items.length;
+      const selectionStates = _.times(itemCount, function() { return false; });
       // number of items that should be selected
-      var nShould = _.where(items, {_shouldBeSelected:true}).length;
+      const nShould = _.where(items, { _shouldBeSelected: true }).length;
       // and number that should not
-      var nShouldNot = itemCount - nShould;
+      const nShouldNot = itemCount - nShould;
       // decide how many items to select
-      var nSelect = model.get('_selectable');
+      const nSelect = model.get('_selectable');
       // decide how many of these should be incorrect
-      var nIncorrect = nShouldNot == 0 ? 0 : _.random(nShould == 1 ? 1 : 0, Math.min(nShouldNot, nSelect));
+      const nIncorrect = nShouldNot == 0 ? 0 : _.random(nShould == 1 ? 1 : 0, Math.min(nShouldNot, nSelect));
       // and how many should be correct
-      var nCorrect = nIncorrect == 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
+      const nCorrect = nIncorrect == 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
 
       if (itemCount == 1 || nSelect == 0) {
-        console.warn('adapt-devtools: not possible to answer '+model.get('_id')+' incorrectly');
+        console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
         return;
       }
 
       for (var j = 0; j < nIncorrect; j++) {
         // start at a random position in items to avoid bias (err is contingency for bad data)
-        for (var k=_.random(itemCount), err=itemCount, found=false; !found && err>=0; k++, err--) {
-          var index = k%itemCount;
+        for (var k = _.random(itemCount), err = itemCount, found = false; !found && err >= 0; k++, err--) {
+          var index = k % itemCount;
           if (selectionStates[index] === false) {
             if (!items[index]._shouldBeSelected) selectionStates[index] = found = true;
           }
@@ -157,8 +154,8 @@ define(function(require) {
       }
       for (var j = 0; j < nCorrect; j++) {
         // start at a random position in items to avoid bias (err is contingency for bad data)
-        for (var k=_.random(itemCount), err=itemCount, found=false; !found && err>=0; k++, err--) {
-          var index = k%itemCount;
+        for (var k = _.random(itemCount), err = itemCount, found = false; !found && err >= 0; k++, err--) {
+          var index = k % itemCount;
           if (selectionStates[index] === false) {
             if (items[index]._shouldBeSelected) selectionStates[index] = found = true;
           }
@@ -170,7 +167,7 @@ define(function(require) {
           if (selectionStates[index] && !item.get('_isActive') || !selectionStates[index] && item.get('_isActive')) {
             item.toggleActive();
           }
-        })
+        });
         return;
       }
 
@@ -181,13 +178,13 @@ define(function(require) {
       });
     },
 
-    answerMatching:function(view) {
+    answerMatching: function(view) {
       _.each(view.model.get('_items'), function(item, itemIndex) {
-        var noCorrectOptions = _.where(item._options, {'_isCorrect':true}).length == 0;
+        const noCorrectOptions = _.where(item._options, { _isCorrect: true }).length == 0;
 
         if (noCorrectOptions) {
           if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
-            var i = _.random(item._options.length - 1);
+            const i = _.random(item._options.length - 1);
             view.selectValue(itemIndex, i);
           }
         } else {
@@ -200,46 +197,44 @@ define(function(require) {
       });
     },
 
-    answerMatchingIncorrectly:function(view) {
-      var items = view.model.get('_items'), itemCount = items.length, nIncorrect = _.random(1, itemCount);
+    answerMatchingIncorrectly: function(view) {
+      const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
       // decide which items to answer incorrectly (minimum one)
-      var selectionStates = _.shuffle(_.times(itemCount, function(i) {return i<nIncorrect;}));
+      const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
 
       _.each(items, function(item, itemIndex) {
-        var $select = view.$('select').eq(itemIndex);
-        var $options = $select.find('option');
+        const $select = view.$('select').eq(itemIndex);
+        const $options = $select.find('option');
         // check if this item is to be answered incorrectly
         if (selectionStates[itemIndex]) {
           // start at a random position in options to avoid bias (err is contingency for bad data)
-          for (var count=item._options.length, i=_.random(count), err=count; err>=0; i++, err--)
-          if (!item._options[i%count]._isCorrect) {
-            if (view.selectValue) {
-              var option = item._options[i%count];
-              view.selectValue(itemIndex, option._index);
+          for (let count = item._options.length, i = _.random(count), err = count; err >= 0; i++, err--) {
+            if (!item._options[i % count]._isCorrect) {
+              if (view.selectValue) {
+                var option = item._options[i % count];
+                view.selectValue(itemIndex, option._index);
+              } else if (view.model.setOptionSelected) {
+                var option = item._options[i % count];
+                $select.val(option.text);
+                $select.trigger('change');
+                view.model.setOptionSelected(itemIndex, i % count, true);
+              } else {
+                $options.eq((i % count) + 1).prop('selected', true);
+              }
+              return;
             }
-            else if (view.model.setOptionSelected) {
-              var option = item._options[i%count];
-              $select.val(option.text);
-              $select.trigger('change');
-              view.model.setOptionSelected(itemIndex, i%count, true);
-            } else {
-              $options.eq((i%count)+1).prop('selected', true);
-            }
-            return;
           }
-        }
-        else {
+        } else {
           _.each(item._options, function(option, optionIndex) {
             if (option._isCorrect) {
               if (view.selectValue) {
                 view.selectValue(itemIndex, option._index);
-              }
-              else if (view.model.setOptionSelected) {
+              } else if (view.model.setOptionSelected) {
                 $select.val(option.text);
                 $select.trigger('change');
                 view.model.setOptionSelected(itemIndex, optionIndex, true);
               } else {
-                $options.eq(optionIndex+1).prop('selected', true);
+                $options.eq(optionIndex + 1).prop('selected', true);
               }
             }
           });
@@ -249,53 +244,50 @@ define(function(require) {
     // --------------------------------------------------
     // --------------------------------------------------
 
-    answerSlider:function(view) {
-      var correctAnswer = view.model.get('_correctAnswer');
+    answerSlider: function(view) {
+      const correctAnswer = view.model.get('_correctAnswer');
       if (correctAnswer) {
-        view.$('.js-slider-number[data-id="'+correctAnswer+'"]').trigger('click');
-      }
-      else {
-        var bottom = view.model.get('_correctRange')._bottom;
-        var top = view.model.get('_correctRange')._top;
-        var d = top - bottom;
+        view.$('.js-slider-number[data-id="' + correctAnswer + '"]').trigger('click');
+      } else {
+        const bottom = view.model.get('_correctRange')._bottom;
+        const top = view.model.get('_correctRange')._top;
+        const d = top - bottom;
         // select from range at random
-        view.$('.js-slider-number[data-id="'+(bottom+Math.floor(Math.random()*(d+1)))+'"]').trigger('click');
+        view.$('.js-slider-number[data-id="' + (bottom + Math.floor(Math.random() * (d + 1))) + '"]').trigger('click');
       }
     },
 
-    answerSliderIncorrectly:function(view) {
-      var correctAnswer = view.model.get('_correctAnswer');
-      var start = view.model.get('_scaleStart'), end = view.model.get('_scaleEnd');
-      var incorrect = _.times(end-start+1, function(i) {return start+i;});
+    answerSliderIncorrectly: function(view) {
+      const correctAnswer = view.model.get('_correctAnswer');
+      const start = view.model.get('_scaleStart'); const end = view.model.get('_scaleEnd');
+      const incorrect = _.times(end - start + 1, function(i) { return start + i; });
       if (correctAnswer) {
-        incorrect.splice(correctAnswer-start, 1);
+        incorrect.splice(correctAnswer - start, 1);
+      } else {
+        const bottom = view.model.get('_correctRange')._bottom;
+        const top = view.model.get('_correctRange')._top;
+        incorrect.splice(bottom - start, top - bottom + 1);
       }
-      else {
-        var bottom = view.model.get('_correctRange')._bottom;
-        var top = view.model.get('_correctRange')._top;
-        incorrect.splice(bottom-start, top-bottom+1);
-      }
-      view.$('.js-slider-number[data-id="'+_.shuffle(incorrect)[0]+'"]').trigger('click');
+      view.$('.js-slider-number[data-id="' + _.shuffle(incorrect)[0] + '"]').trigger('click');
     },
 
-    answerTextInput:function(view) {
-      var answers = view.model.get('_answers');
+    answerTextInput: function(view) {
+      const answers = view.model.get('_answers');
       _.each(view.model.get('_items'), function(item, index) {
         if (answers) view.$('.js-textinput-textbox').eq(index).val(answers[index][0]).trigger('change'); // generic answers
         else view.$('.js-textinput-textbox').eq(index).val(item._answers[0]).trigger('change'); // specific answers
       });
     },
 
-    answerTextInputIncorrectly:function(view) {
-      var items = view.model.get('_items'), itemCount = items.length, nIncorrect = _.random(1, itemCount);
+    answerTextInputIncorrectly: function(view) {
+      const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
       // decide which items to answer incorrectly (minimum one)
-      var selectionStates = _.shuffle(_.times(itemCount, function(i) {return i<nIncorrect;}));
-      var answers = view.model.get('_answers');
+      const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
+      const answers = view.model.get('_answers');
       _.each(items, function(item, index) {
         if (selectionStates[index]) {
           view.$('.js-textinput-textbox').eq(index).val('***4n 1nc0rr3ct 4nsw3r***').trigger('change'); // probably
-        }
-        else {
+        } else {
           if (answers) view.$('.js-textinput-textbox').eq(index).val(answers[index][0]).trigger('change');
           else view.$('.js-textinput-textbox').eq(index).val(item._answers[0]).trigger('change');
         }
@@ -307,7 +299,7 @@ define(function(require) {
     // NEEDS UPDATING?
     // --------------------------------------------------
     // --------------------------------------------------
-    answerQuestionStrip:function(view) {
+    answerQuestionStrip: function(view) {
       _.each(view.model.get('_items'), function(item, itemIndex) {
         _.each(item._subItems, function(subItem, subItemIndex) {
           if (subItem._isCorrect) view.setStage(itemIndex, subItemIndex, true);
@@ -315,22 +307,22 @@ define(function(require) {
       });
     },
 
-    answerQuestionStripIncorrectly:function(view) {
-      var items = view.model.get('_items'), itemCount = items.length, nIncorrect = _.random(1, itemCount);
+    answerQuestionStripIncorrectly: function(view) {
+      const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
       // decide which items to answer incorrectly (minimum one)
-      var selectionStates = _.shuffle(_.times(itemCount, function(i) {return i<nIncorrect;}));
+      const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
 
       _.each(items, function(item, itemIndex) {
         // check if this item is to be answered incorrectly
         if (selectionStates[itemIndex]) {
           // start at a random position in subitems to avoid bias (err is contingency for bad data)
-          for (var count=item._subItems.length, i=_.random(count), err=count; err>=0; i++, err--)
-          if (!item._subItems[i%count]._isCorrect) {
-            view.setStage(itemIndex, i%count, true);
-            return;
+          for (let count = item._subItems.length, i = _.random(count), err = count; err >= 0; i++, err--) {
+            if (!item._subItems[i % count]._isCorrect) {
+              view.setStage(itemIndex, i % count, true);
+              return;
+            }
           }
-        }
-        else {
+        } else {
           _.each(item._subItems, function(subItem, subItemIndex) {
             if (subItem._isCorrect) view.setStage(itemIndex, subItemIndex, true);
           });
@@ -338,69 +330,69 @@ define(function(require) {
       });
     },
 
-    answerPpq:function(view) {
-      var model = view.model, items = model.get('_items'), itemCount = items.length;
+    answerPpq: function(view) {
+      const model = view.model; var items = model.get('_items'); const itemCount = items.length;
       // determine screen size
-      var isDesktop = Adapt.device.screenSize != 'small';
+      const isDesktop = Adapt.device.screenSize != 'small';
       // select appropriate pinboard
       var items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
 
-      var $pinboard = view.$('.ppq-pinboard');
-      var boardw = $pinboard.width();
-      var boardh = $pinboard.height();
+      const $pinboard = view.$('.ppq-pinboard');
+      const boardw = $pinboard.width();
+      const boardh = $pinboard.height();
 
-      for (i=0; i < itemCount; i++) {
-        var zone = items[i];
-        var pin = view.getNextUnusedPin();
-        var x = zone.left + zone.width / 2;
-        var y = zone.top + zone.height / 2;
+      for (i = 0; i < itemCount; i++) {
+        const zone = items[i];
+        const pin = view.getNextUnusedPin();
+        const x = zone.left + zone.width / 2;
+        const y = zone.top + zone.height / 2;
 
-        console.log('using correct position',x+','+y);
+        console.log('using correct position', x + ',' + y);
 
         pin.setPosition(x, y);
 
         pin.$el.css({
-          'left':boardw * x / 100 - pin.$el.width() / 2,
-          'top':boardh * y / 100 - pin.$el.height()
+          left: boardw * x / 100 - pin.$el.width() / 2,
+          top: boardh * y / 100 - pin.$el.height()
         });
       }
     },
 
-    answerPpqIncorrectly:function(view) {
-      var model = view.model, items = model.get('_items'), itemCount = items.length;
+    answerPpqIncorrectly: function(view) {
+      const model = view.model; var items = model.get('_items'); const itemCount = items.length;
       // determine screen size
-      var isDesktop = Adapt.device.screenSize != 'small';
+      const isDesktop = Adapt.device.screenSize != 'small';
       // select appropriate pinboard
       var items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
       // decide how many items to select
-      var nSelect = _.random(model.get('_minSelection'), model.get('_maxSelection'));
+      const nSelect = _.random(model.get('_minSelection'), model.get('_maxSelection'));
       // decide how many of these should be incorrect
-      var nIncorrect = _.random(1, nSelect);
+      const nIncorrect = _.random(1, nSelect);
       // and how many should be correct
-      var nCorrect = nSelect - nIncorrect;
+      const nCorrect = nSelect - nIncorrect;
 
-      var $pinboard = view.$('.ppq-pinboard');
-      var boardw = $pinboard.width();
-      var boardh = $pinboard.height();
+      const $pinboard = view.$('.ppq-pinboard');
+      const boardw = $pinboard.width();
+      const boardh = $pinboard.height();
 
       console.log('nIncorrect=', nIncorrect, 'nCorrect=', nCorrect);
 
-      var maxSize = function(zone) {
+      const maxSize = function(zone) {
         return zone.left < 1 && zone.top < 1 && zone.width > 9999 && zone.height > 9999;
       };
 
       // work with integers for accuracy and simplicity
       items = _.map(items, function(item) {
         return {
-          'left':Math.round(item.left * 100),
-          'top':Math.round(item.top * 100),
-          'width':Math.round(item.width * 100),
-          'height':Math.round(item.height * 100)
+          left: Math.round(item.left * 100),
+          top: Math.round(item.top * 100),
+          width: Math.round(item.width * 100),
+          height: Math.round(item.height * 100)
         };
       });
 
       if (_.some(items, maxSize) || nSelect == 0) {
-        console.warn('adapt-devtools: not possible to answer '+model.get('_id')+' incorrectly');
+        console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
         return;
       }
 
@@ -408,8 +400,8 @@ define(function(require) {
 
       // simplified approach for readability; statistically probable that finding pin positions will be extremely quick
 
-      for (var i=0; i < nIncorrect; i++) {
-        var ok = false;
+      for (var i = 0; i < nIncorrect; i++) {
+        let ok = false;
         var x, y;
 
         // find a suitable x-coordinate
@@ -433,23 +425,23 @@ define(function(require) {
         x = x / 100;
         y = y / 100;
 
-        console.log('using incorrect position',x+','+y);
+        console.log('using incorrect position', x + ',' + y);
 
         var pin = view.getNextUnusedPin();
 
         pin.setPosition(x, y);
 
         pin.$el.css({
-          'left':boardw * x / 100 - pin.$el.width() / 2,
-          'top':boardh * y / 100 - pin.$el.height()
+          left: boardw * x / 100 - pin.$el.width() / 2,
+          top: boardh * y / 100 - pin.$el.height()
         });
       }
 
       // decide in which zones to place a pin
-      var correct = _.shuffle(_.times(itemCount, function(i) {return i;}));
+      const correct = _.shuffle(_.times(itemCount, function(i) { return i; }));
 
-      for (i=0; i < nCorrect; i++) {
-        var zone = items[correct[i]];
+      for (i = 0; i < nCorrect; i++) {
+        const zone = items[correct[i]];
         var pin = view.getNextUnusedPin();
         var x = zone.left + zone.width / 2;
         var y = zone.top + zone.height / 2;
@@ -457,37 +449,37 @@ define(function(require) {
         x = x / 100;
         y = y / 100;
 
-        console.log('using correct position',x+','+y);
+        console.log('using correct position', x + ',' + y);
 
         pin.setPosition(x, y);
 
         pin.$el.css({
-          'left':boardw * x / 100 - pin.$el.width() / 2,
-          'top':boardh * y / 100 - pin.$el.height()
+          left: boardw * x / 100 - pin.$el.width() / 2,
+          top: boardh * y / 100 - pin.$el.height()
         });
       }
     },
     // --------------------------------------------------
     // --------------------------------------------------
 
-    answerUnsupported:function(view) {
-      var model = view.model;
+    answerUnsupported: function(view) {
+      const model = view.model;
 
-      model.set({"_isComplete":true, "_isInteractionComplete":true, "_isCorrect":true, "_isSubmitted":true, "_score":1});
-      model.set("_attemptsLeft", Math.max(0, model.get("_attempts") - 1));
+      model.set({ _isComplete: true, _isInteractionComplete: true, _isCorrect: true, _isSubmitted: true, _score: 1 });
+      model.set('_attemptsLeft', Math.max(0, model.get('_attempts') - 1));
     },
 
-    answerUnsupportedIncorrectly:function(view) {
-      var model = view.model;
+    answerUnsupportedIncorrectly: function(view) {
+      const model = view.model;
 
-      model.set({"_isComplete":true, "_isInteractionComplete":true, "_isCorrect":false, "_isSubmitted":true, "_score":0});
-      model.set("_attemptsLeft", Math.max(0, model.get("_attempts") - 1));
+      model.set({ _isComplete: true, _isInteractionComplete: true, _isCorrect: false, _isSubmitted: true, _score: 0 });
+      model.set('_attemptsLeft', Math.max(0, model.get('_attempts') - 1));
     },
 
-    onRemove:function() {
+    onRemove: function() {
       this.mousedownHandlers.forEach(tuple => {
         tuple.element.off('mousedown', tuple.handler);
-      })
+      });
     }
   }, Backbone.Events);
 

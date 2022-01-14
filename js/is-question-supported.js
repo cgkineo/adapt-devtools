@@ -1,4 +1,4 @@
-define(function(require) {
+define([], function(require) {
 
   function isQuestionSupported(model) {
     switch (model.get('_component')) {

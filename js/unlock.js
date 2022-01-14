@@ -1,7 +1,7 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
-  var Router = require('coreJS/router');
+  const Adapt = require('coreJS/adapt');
+  const Router = require('coreJS/router');
 
   function breakCoreLocking() {
     Adapt.course.unset('_lockType');

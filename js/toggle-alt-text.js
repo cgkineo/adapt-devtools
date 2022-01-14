@@ -1,59 +1,60 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
+  const Adapt = require('coreJS/adapt');
 
-  var AltText = _.extend({
+  const AltText = _.extend({
 
-    initialize:function() {
+    initialize: function() {
       this.listenTo(Adapt.devtools, 'change:_altTextEnabled', this.toggleAltText);
 
       // if available we can use to avoid unnecessary checks
-      if (typeof MutationObserver == 'function') {
+      if (typeof MutationObserver === 'function') {
         this.observer = new MutationObserver(_.bind(this.onDomMutation, this));
       }
     },
 
-    addTimer:function(fireNow) {
+    addTimer: function(fireNow) {
       this.timerId = setInterval(_.bind(this.onTimer, this), 1000);
       if (fireNow) this.onTimer();
     },
 
-    removeTimer:function() {
+    removeTimer: function() {
       clearInterval(this.timerId);
     },
 
-    connectObserver:function() {
-      if (this.observer) this.observer.observe(document.getElementById('wrapper'), {
-        childList: true,
-        subtree:true,
-        attributes:true,
-        attributeFilter:['class', 'style']
-      });
+    connectObserver: function() {
+      if (this.observer) {
+        this.observer.observe(document.getElementById('wrapper'), {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+      }
     },
 
-    disconnectObserver:function() {
+    disconnectObserver: function() {
       if (this.observer) this.observer.disconnect();
     },
 
-    toggleAltText:function() {
+    toggleAltText: function() {
       if (Adapt.devtools.get('_altTextEnabled')) {
         this.addTimer(true);
         this.connectObserver();
-      }
-      else {
+      } else {
         this.removeTimer();
         this.removeAllAnnotations();
         this.disconnectObserver();
       }
     },
 
-    addAnnotation:function($img, $annotation) {
-      var template = Handlebars.templates['devtoolsAnnotation'];
-      var text = $img.attr('alt');
+    addAnnotation: function($img, $annotation) {
+      const template = Handlebars.templates.devtoolsAnnotation;
+      let text = $img.attr('alt');
 
       if (!text) text = $img.attr('aria-label');
 
-      var $annotation = $(template({text:text}));
+      var $annotation = $(template({ text: text }));
 
       if (!text) $annotation.addClass('has-annotation-warning');
 
@@ -63,49 +64,48 @@ define(function(require) {
       this.updateAnnotation($img, $annotation);
     },
 
-    removeAnnotation:function($img, $annotation) {
+    removeAnnotation: function($img, $annotation) {
       $annotation.remove();
       $img.removeData('annotation');
     },
 
-    removeAllAnnotations:function() {
+    removeAllAnnotations: function() {
       $('img').each(_.bind(function(index, element) {
-        var $img = $(element);
-        var $annotation = $img.data('annotation');
+        const $img = $(element);
+        const $annotation = $img.data('annotation');
 
         if ($annotation) this.removeAnnotation($img, $annotation);
       }, this));
     },
 
-    updateAnnotation:function($img, $annotation) {
-      var position = $img.position();
+    updateAnnotation: function($img, $annotation) {
+      const position = $img.position();
       position.left += parseInt($img.css('marginLeft'), 10) + parseInt($img.css('paddingLeft'), 10);
       position.top += parseInt($img.css('marginTop'), 10) + parseInt($img.css('paddingTop'), 10);
       $annotation.css(position);
     },
 
-    onDomMutation:function(mutations) {
+    onDomMutation: function(mutations) {
       this.mutated = true;
     },
 
-    onTimer:function() {
+    onTimer: function() {
       if (this.mutated === false) return;
       if (this.observer) this.mutated = false;
 
-      //console.log('devtools::toggle-alt-text:run check');
+      // console.log('devtools::toggle-alt-text:run check');
 
       this.disconnectObserver();
 
       $('img').each(_.bind(function(index, element) {
-        var $img = $(element);
-        var $annotation = $img.data('annotation');
-        var isVisible = $img.is(':visible');
+        const $img = $(element);
+        const $annotation = $img.data('annotation');
+        const isVisible = $img.is(':visible');
 
         if (isVisible) {
           if (!$annotation) this.addAnnotation($img, $annotation);
           else this.updateAnnotation($img, $annotation);
-        }
-        else if ($annotation) {
+        } else if ($annotation) {
           this.removeAnnotation($img, $annotation);
         }
       }, this));

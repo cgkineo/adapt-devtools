@@ -1,13 +1,13 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
+  const Adapt = require('coreJS/adapt');
 
-  var TraceFocus = _.extend({
+  const TraceFocus = _.extend({
 
-    openingTags:new RegExp("<[\\w-]+((\\s+[\\w-]+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))*)+\\s*|\\s*)/?>"),
-    consoleStyle:'background: lightgray; color: blue',
+    openingTags: new RegExp("<[\\w-]+((\\s+[\\w-]+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))*)+\\s*|\\s*)/?>"),
+    consoleStyle: 'background: lightgray; color: blue',
 
-    initialize:function() {
+    initialize: function() {
       this.onFocusIn = _.bind(this.onFocusIn, this);
 
       this.listenTo(Adapt.devtools, 'change:_traceFocusEnabled', this.toggleTraceFocus);
@@ -15,28 +15,27 @@ define(function(require) {
       this.toggleTraceFocus();
     },
 
-    toggleTraceFocus:function() {
+    toggleTraceFocus: function() {
       if (Adapt.devtools.get('_traceFocusEnabled')) {
         $('body').on('focusin', this.onFocusIn);
-      }
-      else {
+      } else {
         $('body').off('focusin', this.onFocusIn);
       }
     },
 
-    onFocusIn:function(e) {
+    onFocusIn: function(e) {
       if (!$('html').is('.ie, .Edge')) return console.log('%cfocussed', this.consoleStyle, e.target);
 
-      var $el = $(e.target);
+      const $el = $(e.target);
 
       if (!$el[0] || !$el[0].outerHTML) return console.log('focussed: ', e.target);
 
-      var openingTag = this.openingTags.exec($el[0].outerHTML)[0];
+      let openingTag = this.openingTags.exec($el[0].outerHTML)[0];
 
       if (openingTag) {
         // add some context if possible
         // strip leading whitespace/nbsp and get first line of text
-        var tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
+        const tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
 
         if (tokens[0]) openingTag = openingTag.slice(0, 20) + '[...]';
 
@@ -46,7 +45,7 @@ define(function(require) {
           console.log('focussed: ', openingTag, tokens[0], $el);
         }
       } else {
-        console.log('focussed: '+e.target);
+        console.log('focussed: ' + e.target);
       }
     }
   }, Backbone.Events);

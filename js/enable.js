@@ -1,20 +1,20 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
-  var Router = require('coreJS/router');
+  const Adapt = require('coreJS/adapt');
+  const Router = require('coreJS/router');
 
-  var buffer = '';
-  var isMouseDown = false;
-  var hitArea = 100;
-  var coords = {};
-  var topLeftTapHold = false;
-  var topRightTapHold = false;
-  var listenType = 0;
-  var timeoutId;
-  var focusableElements = "a,button,input,select,textarea,[tabindex],label";
+  let buffer = '';
+  let isMouseDown = false;
+  const hitArea = 100;
+  const coords = {};
+  let topLeftTapHold = false;
+  let topRightTapHold = false;
+  let listenType = 0;
+  let timeoutId;
+  const focusableElements = 'a,button,input,select,textarea,[tabindex],label';
 
   function onKeypress(e) {
-    var c = String.fromCharCode(e.which).toLowerCase();
+    const c = String.fromCharCode(e.which).toLowerCase();
     buffer += c;
     if (isMouseDown && c == '5' && !Adapt.devtools.get('_isEnabled')) enable();
     else processBuffer();
@@ -29,11 +29,11 @@ define(function(require) {
   }
 
   function processBuffer() {
-    var blen = buffer.length;
-    if (blen > 100) buffer = buffer.substr(1,100);
+    let blen = buffer.length;
+    if (blen > 100) buffer = buffer.substr(1, 100);
     blen = buffer.length;
 
-    if (buffer.substr( blen - ("kcheat").length, ("kcheat").length  ) == "kcheat") {
+    if (buffer.substr(blen - ('kcheat').length, ('kcheat').length) == 'kcheat') {
       if (!Adapt.devtools.get('_isEnabled')) enable();
     }
   }
@@ -49,12 +49,12 @@ define(function(require) {
   }
 
   function addHooks() {
-    $(window).on("keypress", onKeypress);
-    $(window).on("mousedown", onMouseDown);
-    $(window).on("mouseup", onMouseUp);
+    $(window).on('keypress', onKeypress);
+    $(window).on('mousedown', onMouseDown);
+    $(window).on('mouseup', onMouseUp);
 
     window.kcheat = function() {
-      buffer = "kcheat";
+      buffer = 'kcheat';
       processBuffer();
     };
 
@@ -66,9 +66,9 @@ define(function(require) {
   }
 
   function removeHooks() {
-    $(window).off("keypress", onKeypress);
-    $(window).off("mousedown", onMouseDown);
-    $(window).off("mouseup", onMouseUp);
+    $(window).off('keypress', onKeypress);
+    $(window).off('mousedown', onMouseDown);
+    $(window).off('mouseup', onMouseUp);
     window.kcheat = undefined;
     if (Modernizr.touch) removeTouchHook();
   }
@@ -89,10 +89,10 @@ define(function(require) {
     $('body').off('touchstart', focusableElements, onTouchStart);
   }
 
-  function onTouchStart(event){
-    var touches = event.originalEvent.touches;
+  function onTouchStart(event) {
+    const touches = event.originalEvent.touches;
 
-    if(touches.length != 1) return;
+    if (touches.length != 1) return;
 
     coords.x = touches[0].pageX;
     coords.y = touches[0].pageY;
@@ -129,7 +129,7 @@ define(function(require) {
     if (Adapt.devtools.get('_isEnabled')) return;
 
     // some plugins (e.g. bookmarking) will manipulate the router so defer the call
-    _.defer(function () {addHooks();});
+    _.defer(function () { addHooks(); });
   });
 
 });

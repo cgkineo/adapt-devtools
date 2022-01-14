@@ -3,7 +3,7 @@ define([
   'core/js/router'
 ], function(Adapt, Router) {
 
-  var MapView = Backbone.View.extend({
+  const MapView = Backbone.View.extend({
 
     events: {
       'click a': 'onLinkClicked'
@@ -20,10 +20,10 @@ define([
     },
 
     render: function() {
-      var data = this.model;
+      const data = this.model;
       // var startTime = new Date().getTime();
 
-      var template = Handlebars.templates.devtoolsMap;
+      const template = Handlebars.templates.devtoolsMap;
       this.$('body').html(template(data));
 
       // console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
@@ -49,7 +49,7 @@ define([
     },
 
     _disablePageIncompletePrompt: function(pageModel) {
-      var config = this._getConfig(pageModel);
+      const config = this._getConfig(pageModel);
 
       if (pageModel.has('_pageIncompletePrompt')) {
         config._pageIncompletePromptExists = true;
@@ -65,7 +65,7 @@ define([
     },
 
     _restorePageIncompletePrompt: function(pageModel) {
-      var config = this._getConfig(pageModel);
+      const config = this._getConfig(pageModel);
 
       if (config._pageIncompletePromptExists) {
         if (config.hasOwnProperty('_pageIncompletePromptEnabled')) pageModel.get('_pageIncompletePrompt')._isEnabled = config._pageIncompletePromptEnabled;
@@ -82,9 +82,9 @@ define([
     },
 
     onLinkClicked: function(e) {
-      var $target = $(e.currentTarget);
-      var id = $target.attr('href').slice(1);
-      var model = Adapt.findById(id);
+      const $target = $(e.currentTarget);
+      let id = $target.attr('href').slice(1);
+      const model = Adapt.findById(id);
 
       e.preventDefault();
 
@@ -110,8 +110,8 @@ define([
     * affected article(s)|block(s).
     */
     navigateAndDisableTrickleUpTo: function(id) {
-      var model = Adapt.findById(id);
-      var pageModel = Adapt.findById(Adapt.location._currentId);
+      const model = Adapt.findById(id);
+      const pageModel = Adapt.findById(Adapt.location._currentId);
 
       // first ensure page incomplete prompt won't activate
       this._disablePageIncompletePrompt(pageModel);
@@ -121,10 +121,10 @@ define([
       if (model._siblings === 'contentObjects') {
         Backbone.history.navigate('#/id/' + id, { trigger: true });
       } else {
-        var level = model.get('_type') === 'component' ? model.getParent() : model;
-        var siblings = level.getParent().getChildren(); var sibling = null;
+        const level = model.get('_type') === 'component' ? model.getParent() : model;
+        const siblings = level.getParent().getChildren(); let sibling = null;
         // disable trickle on all preceeding article(s)|block(s)
-        for (var i = 0, count = siblings.indexOf(level); i < count; i++) {
+        for (let i = 0, count = siblings.indexOf(level); i < count; i++) {
           sibling = siblings.at(i);
           console.log('disabling trickle on ' + sibling.get('_id'));
           if (sibling.has('_trickle')) {
@@ -164,8 +164,8 @@ define([
     * page temporarily.
     */
     navigateAndDisableTrickle: function(id) {
-      var model = Adapt.findById(id);
-      var pageModel = Adapt.findById(Adapt.location._currentId);
+      const model = Adapt.findById(id);
+      const pageModel = Adapt.findById(Adapt.location._currentId);
 
       // first ensure page incomplete prompt won't activate
       this._disablePageIncompletePrompt(pageModel);
@@ -180,7 +180,7 @@ define([
           this.checkVisibility(id);
         } else {
           // pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
-          var targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
+          const targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
 
           // if necessary disable trickle (until page is ready)
           if (!targetModel.has('_trickle')) {
@@ -212,7 +212,7 @@ define([
     },
 
     checkVisibility: function(id) {
-      var model = Adapt.findById(id);
+      let model = Adapt.findById(id);
       if ($('.' + id).is(':visible') || model === Adapt.course) return;
 
       while (!$('.' + id).is(':visible') && model !== Adapt.course) {
@@ -224,7 +224,7 @@ define([
     }
   });
 
-  var CourseMap = _.extend({
+  const CourseMap = _.extend({
     initialize: function() {
       this.listenTo(Adapt, 'devtools:mapLoaded', this.onMapLoaded);
       $(window).on('unload', this.onCourseClosed.bind(this));
@@ -237,10 +237,10 @@ define([
       }
 
       function eachChild(options) {
-        var ret = '';
-        var children = this.getChildren().models;
+        let ret = '';
+        const children = this.getChildren().models;
 
-        for (var i = 0, j = children.length; i < j; i++) {
+        for (let i = 0, j = children.length; i < j; i++) {
           ret = ret + options.fn(children[i], { data: { index: i, first: i === 0, last: i === j - 1 } });
         }
 
@@ -249,7 +249,7 @@ define([
 
       function getId(options) {
         const val = this.get('_id') || '';
-        return /\w{1,2}-/.test(val) ? val : val.slice(-6);
+        return val.slice(-6);
       }
 
       function getProp(prop, options) {
@@ -261,7 +261,7 @@ define([
       }
 
       function getTitle(options) {
-        var t = this.get('displayTitle');
+        let t = this.get('displayTitle');
         if (isStringEmpty(t)) t = this.get('title');
         if (isStringEmpty(t)) t = this.get('_id');
         return t;
@@ -276,9 +276,9 @@ define([
       }
 
       function isTrickled(options) {
-        var trickleConfig = this.get('_trickle');
-        var trickled = false;
-        var isBlock = this.get('_type') === 'block';
+        let trickleConfig = this.get('_trickle');
+        let trickled = false;
+        const isBlock = this.get('_type') === 'block';
 
         if (trickleConfig) trickled = (isBlock || trickleConfig._onChildren !== true) && trickleConfig._isEnabled;
         else if (isBlock) {

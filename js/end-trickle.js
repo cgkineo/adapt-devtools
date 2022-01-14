@@ -1,6 +1,6 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
+  const Adapt = require('coreJS/adapt');
 
   function onTrickleBegun() {
     if (!Adapt.devtools.get('_trickleEnabled')) {

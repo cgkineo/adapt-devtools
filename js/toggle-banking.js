@@ -3,11 +3,11 @@ define([
   'core/js/router'
 ], function(Adapt, Router) {
 
-  var ToggleBanking = {
+  const ToggleBanking = {
 
     initialize: function() {
       Adapt.articles.each(function(m) {
-        var config = this.getConfig(m);
+        const config = this.getConfig(m);
         if (m.has('_assessment') && m.get('_assessment')._banks && !m.get('_assessment')._banks._isEnabled) {
           config._assessmentBankDisabled = true;
         }
@@ -20,9 +20,9 @@ define([
     },
 
     getBankedAssessmentsInCurrentPage: function() {
-      var pageModel = Adapt.findById(Adapt.location._currentId);
-      var f = function(m) {
-        var config = this.getConfig(m);
+      const pageModel = Adapt.findById(Adapt.location._currentId);
+      const f = function(m) {
+        const config = this.getConfig(m);
         if (!config._assessmentBankDisabled &&
           m.has('_assessment') &&
           m.get('_assessment')._isEnabled &&
@@ -35,9 +35,9 @@ define([
     },
 
     toggle: function() {
-      var bankedAssessments = this.getBankedAssessmentsInCurrentPage();
-      var isBankingEnabled = function(m) { return m.get('_assessment')._banks._isEnabled; };
-      var enable = !_.some(bankedAssessments, isBankingEnabled);
+      const bankedAssessments = this.getBankedAssessmentsInCurrentPage();
+      const isBankingEnabled = function(m) { return m.get('_assessment')._banks._isEnabled; };
+      const enable = !_.some(bankedAssessments, isBankingEnabled);
 
       _.each(bankedAssessments, function(articleModel) {
         articleModel.get('_assessment')._banks._isEnabled = enable;

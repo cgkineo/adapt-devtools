@@ -1,33 +1,33 @@
-define(function(require) {
+define([], function(require) {
 
-  var Adapt = require('coreJS/adapt');
+  const Adapt = require('coreJS/adapt');
 
-  var Hinting = _.extend({
+  const Hinting = _.extend({
 
-    initialize:function() {
+    initialize: function() {
       this.listenTo(Adapt.devtools, 'change:_hintingEnabled', this.toggleHints);
     },
 
-    toggleHints:function() {
-      var contentObject = Adapt.findById(Adapt.location._currentId);
-      var components = contentObject.findDescendantModels('components');
-      var renderedQuestions = _.filter(components, function(m) {
+    toggleHints: function() {
+      const contentObject = Adapt.findById(Adapt.location._currentId);
+      const components = contentObject.findDescendantModels('components');
+      const renderedQuestions = _.filter(components, function(m) {
         return m.get('_isQuestionType') === true && m.get('_isReady') === true;
       });
 
       _.each(renderedQuestions, function(model) {
-        this.setHinting($('.'+model.get('_id')), model, Adapt.devtools.get('_hintingEnabled'));
+        this.setHinting($('.' + model.get('_id')), model, Adapt.devtools.get('_hintingEnabled'));
       }, this);
 
       if (Adapt.devtools.get('_hintingEnabled')) this.listenTo(Adapt, 'componentView:postRender', this.onComponentRendered);
       else this.stopListening(Adapt, 'componentView:postRender');
     },
 
-    onComponentRendered:function(view, hintingEnabled) {
+    onComponentRendered: function(view, hintingEnabled) {
       if (view.model.get('_isQuestionType')) this.setHinting(view.$el, view.model);
     },
 
-    setHinting:function($el, model, hintingEnabled) {
+    setHinting: function($el, model, hintingEnabled) {
       switch (model.get('_component')) {
         case 'mcq':this.setMcqHinting($el, model, hintingEnabled !== false); break;
         case 'gmcq':this.setGmcqHinting($el, model, hintingEnabled !== false); break;
@@ -39,84 +39,76 @@ define(function(require) {
       }
     },
 
-    setMcqHinting:function($el, model, hintingEnabled) {
+    setMcqHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, index) {
           $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
         });
-      }
-      else {
+      } else {
         $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
-    setGmcqHinting:function($el, model, hintingEnabled) {
+    setGmcqHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, index) {
           $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
         });
-      }
-      else {
+      } else {
         $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
-    setMatchingHinting:function($el, model, hintingEnabled) {
+    setMatchingHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, itemIndex) {
-          var $item = $el.find('.item').eq(itemIndex);
-          var $options = $item.find('.js-dropdown-list-item');
+          const $item = $el.find('.item').eq(itemIndex);
+          const $options = $item.find('.js-dropdown-list-item');
           _.each(item._options, function(option, optionIndex) {
-            /*if (Modernizr.touch) {*/
-            if (option._isCorrect) $options.eq(optionIndex+1).find('.js-dropdown-list-item-inner').append('<span class="hint"> (correct)</span>');
-            /*}
+            /* if (Modernizr.touch) { */
+            if (option._isCorrect) $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner').append('<span class="hint"> (correct)</span>');
+            /* }
             else {
               $options.eq(optionIndex+1).addClass(option._isCorrect ? 'hintCorrect' : 'hintIncorrect');
-            }*/
+            } */
           });
         });
-      }
-      else {
-        /*if (Modernizr.touch) */
+      } else {
+        /* if (Modernizr.touch) */
         $el.find('.js-dropdown-list-item-inner .hint').remove();
-        /*else $el.find('option').removeClass('hintCorrect hintIncorrect');*/
+        /* else $el.find('option').removeClass('hintCorrect hintIncorrect'); */
       }
     },
 
-    setSliderHinting:function($el, model, hintingEnabled) {
+    setSliderHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
-        var correctAnswer = model.get('_correctAnswer');
+        const correctAnswer = model.get('_correctAnswer');
         if (correctAnswer) {
           $el.find('.js-slider-number').addClass('hint-is-incorrect');
-          $el.find('.js-slider-number[data-id="'+correctAnswer+'"]').removeClass('hint-is-incorrect').addClass('hint-is-correct');
-        }
-        else {
+          $el.find('.js-slider-number[data-id="' + correctAnswer + '"]').removeClass('hint-is-incorrect').addClass('hint-is-correct');
+        } else {
           $el.find('.js-slider-number').addClass('hint-is-incorrect');
-          var bottom = model.get('_correctRange')._bottom;
-          var top = model.get('_correctRange')._top;
-          for (var i = bottom; i <= top; i++)
-          $el.find('.js-slider-number[data-id="'+i+'"]').removeClass('hint-is-incorrect').addClass('hint-is-correct');
+          const bottom = model.get('_correctRange')._bottom;
+          const top = model.get('_correctRange')._top;
+          for (let i = bottom; i <= top; i++) { $el.find('.js-slider-number[data-id="' + i + '"]').removeClass('hint-is-incorrect').addClass('hint-is-correct'); }
         }
-      }
-      else {
+      } else {
         $el.find('.js-slider-number').removeClass('hint-is-correct hint-is-incorrect');
       }
     },
 
-    setTextInputHinting:function($el, model, hintingEnabled) {
+    setTextInputHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, index) {
           if (model.get('_answers')) {
             // generic answers
             $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', model.get('_answers')[index][0]);
-          }
-          else {
+          } else {
             // specific answers
             $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item._answers[0]);
           }
         });
-      }
-      else {
+      } else {
         _.each(model.get('_items'), function(item, index) {
           if (model.get('_answers')) {
             $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item.placeholder);
@@ -130,22 +122,22 @@ define(function(require) {
     // NEEDS UPDATING?
     // --------------------------------------------------
     // --------------------------------------------------
-    setQuestionStripHinting:function($el, model, hintingEnabled) {
+    setQuestionStripHinting: function($el, model, hintingEnabled) {
       if (hintingEnabled) {
         _.each(model.get('_items'), function(item, itemIndex) {
-          var $item = $el.find('.component-item').eq(itemIndex);
-          var $subItems = $item.find('.qs-strapline-header-inner:not(.qs-noop) .qs-strapline-title-inner');
+          const $item = $el.find('.component-item').eq(itemIndex);
+          const $subItems = $item.find('.qs-strapline-header-inner:not(.qs-noop) .qs-strapline-title-inner');
           _.each(item._subItems, function(subItem, subItemIndex) {
             if (subItem._isCorrect) $subItems.eq(subItemIndex).append('<span class="hint"> (correct)</span>');
           });
         });
-      }
-      else {
+      } else {
         $el.find('.qs-strapline-title-inner .hint').remove();
       }
     },
 
-    setPpqHinting:function($el, model, hintingEnabled) {console.log('setPpqHinting', hintingEnabled);
+    setPpqHinting: function($el, model, hintingEnabled) {
+      console.log('setPpqHinting', hintingEnabled);
       if (!model.get('_developerMode')) {
         $el.find('.ppq-correct-zone').toggleClass('display-none', !hintingEnabled);
         $el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);

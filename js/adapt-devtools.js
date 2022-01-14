@@ -23,9 +23,9 @@ define([
   './toggle-completion'
 ], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, CourseMap) {
 
-  var navigationView;
+  let navigationView;
 
-  var DevtoolsView = Backbone.View.extend({
+  const DevtoolsView = Backbone.View.extend({
 
     className: 'devtools',
 
@@ -65,8 +65,8 @@ define([
     },
 
     render: function() {
-      var data = Adapt.devtools.toJSON();
-      var template = Handlebars.templates['devtools'];
+      const data = Adapt.devtools.toJSON();
+      const template = Handlebars.templates.devtools;
       this.$el.html(template(data));
       return this;
     },
@@ -84,7 +84,7 @@ define([
     _checkForLocks: function() {
       if (typeof AdaptModel.prototype.checkLocking !== 'function') return Adapt.location._contentType === 'menu';
 
-      var hasLock = function(model) { return model.has('_lockType'); };
+      const hasLock = function(model) { return model.has('_lockType'); };
 
       if (hasLock(Adapt.course)) return true;
       if (Adapt.contentObjects.some(hasLock)) return true;
@@ -113,7 +113,7 @@ define([
     /*************************************************/
 
     _checkSpoorLogVisibility: function() {
-      var spoorInstalled = require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor');
+      const spoorInstalled = require.defined('extensions/adapt-contrib-spoor/js/adapt-contrib-spoor');
       if (spoorInstalled) return;
       this.$('.open-spoor-log').addClass('is-disabled').attr('disabled', 'disabled');
     },
@@ -150,8 +150,8 @@ define([
         return;
       }
 
-      var bankedAssessments = ToggleBanking.getBankedAssessmentsInCurrentPage();
-      var isBankingEnabled = function(m) {return m.get('_assessment')._banks._isEnabled;};
+      const bankedAssessments = ToggleBanking.getBankedAssessmentsInCurrentPage();
+      const isBankingEnabled = function(m) { return m.get('_assessment')._banks._isEnabled; };
 
       if (bankedAssessments.length > 0) {
         this.$('.banking').removeClass('u-display-none');
@@ -245,25 +245,25 @@ define([
     /*************************************************/
 
     _checkCompletePageVisibility: function() {
-      var currentModel = Adapt.findById(Adapt.location._currentId);
+      const currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') !== 'page') {
         this.$('.complete-page').addClass('u-display-none');
         return;
       }
 
-      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
+      const incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
       this.$('.complete-page').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompletePage: function(e) {
-      var currentModel = Adapt.findById(Adapt.location._currentId);
+      const currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
+      const incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
 
       incomplete.forEach(function(component) {
         if (component.get('_isQuestionType')) {
@@ -287,25 +287,25 @@ define([
     /*************************************************/
 
     _checkCompleteMenuVisibility: function() {
-      var currentModel = Adapt.findById(Adapt.location._currentId);
+      const currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') !== 'menu' && currentModel.get('_type') !== 'course') {
         this.$('.complete-menu').addClass('u-display-none');
         return;
       }
 
-      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
+      const incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
 
       this.$('.complete-menu').toggleClass('u-display-none', incomplete.length === 0);
 
     },
 
     onCompleteMenu: function(e) {
-      var currentModel = Adapt.findById(Adapt.location._currentId);
+      const currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
 
-      var incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
+      const incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
       _.invoke(incomplete, 'set', '_isComplete', true);
 
       Adapt.trigger('drawer:closeDrawer');
@@ -316,17 +316,17 @@ define([
     /************************************************************/
 
     _checkPassHalfFailVisibility: function() {
-      var currentModel = Adapt.findById(Adapt.location._currentId);
+      const currentModel = Adapt.findById(Adapt.location._currentId);
 
       if (currentModel.get('_type') !== 'page') {
         this.$('.pass, .half, .fail').addClass('u-display-none');
         return;
       }
 
-      var unanswered = currentModel.findDescendantModels('components', { where: { _isQuestionType: true, _isSubmitted: false } });
+      const unanswered = currentModel.findDescendantModels('components', { where: { _isQuestionType: true, _isSubmitted: false } });
 
       if (unanswered.length === 0) this.$('.tip.pass-half-fail').html('');
-      else this.$('.is-tip.pass-half-fail').html('With the '+unanswered.length+' unanswered question(s) in this page do the following:');
+      else this.$('.is-tip.pass-half-fail').html('With the ' + unanswered.length + ' unanswered question(s) in this page do the following:');
 
       this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length === 0);
 
@@ -338,7 +338,7 @@ define([
       // potentially large operation so show some feedback
       $('.js-loading').show();
 
-      var tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
+      const tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
 
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
 
@@ -376,10 +376,10 @@ define([
     }
   });
 
-  var DevtoolsNavigationView = Backbone.View.extend({
+  const DevtoolsNavigationView = Backbone.View.extend({
 
     initialize: function() {
-      var template = Handlebars.templates.devtoolsNavigation;
+      const template = Handlebars.templates.devtoolsNavigation;
 
       this.$el = $(template());
 

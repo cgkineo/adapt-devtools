@@ -3,7 +3,7 @@ define([
   './utils'
 ], function(Adapt, Utils) {
 
-  var mouseTarget = null;
+  let mouseTarget = null;
 
   function init() {
     $(window).on('keypress', onKeypress);
@@ -12,7 +12,7 @@ define([
   }
 
   function onKeypress(e) {
-    var char = String.fromCharCode(e.which).toLowerCase();
+    const char = String.fromCharCode(e.which).toLowerCase();
 
     if (mouseTarget) {
       switch (char) {
@@ -23,15 +23,14 @@ define([
   }
 
   function complete(element) {
-    var model = Utils.getModelForElement(element) || Adapt.findById(Adapt.location._currentId);
-    
+    const model = Utils.getModelForElement(element);
     if (!model) return;
 
     function doCompletion(component) {
       component.set('_isComplete', true);
     }
 
-    var descendantComponents = model.findDescendantModels('components');
+    const descendantComponents = model.findDescendantModels('components');
     if (!descendantComponents || descendantComponents.length === 0) {
       console.log('devtools: completing', model.get('_id'));
       doCompletion(model);
@@ -45,10 +44,10 @@ define([
   }
 
   function reset(element) {
-    var model = Utils.getModelForElement(element);
+    const model = Utils.getModelForElement(element);
     if (!model) return;
 
-    var descendantComponents = model.findDescendantModels('components');
+    const descendantComponents = model.findDescendantModels('components');
     if (!descendantComponents || descendantComponents.length === 0) {
       console.log('devtools: resetting', model.get('_id'));
       model.reset(true, true);
