@@ -23,7 +23,7 @@ define([
   }
 
   function complete(element) {
-    const model = Utils.getModelForElement(element);
+    const model = Utils.getModelForElement(element) || Adapt.findById(Adapt.location._currentId);
     if (!model) return;
 
     function doCompletion(component) {
