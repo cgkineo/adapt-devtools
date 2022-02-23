@@ -128,13 +128,13 @@ define([], function(require) {
         Adapt.trigger('drawer:closeDrawer');
       }.bind(this);
 
-      if (this.mouseTarget && $('.drawer .devtools').length === 0) {
+      if (this.mouseTarget) {
         switch (char) {
           case 'p': return perform('pass');
           case 'h': return perform('half');
           case 'f': return perform('fail');
         }
-      } else {
+      } else if ($('.drawer .devtools').is(':visible')) {
         switch (char) {
           case 'p': return perform('pass');
           case 'h': return perform('half');
