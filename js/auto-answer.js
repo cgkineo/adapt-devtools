@@ -185,12 +185,20 @@ define([], function(require) {
         if (noCorrectOptions) {
           if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
             const i = _.random(item._options.length - 1);
-            view.selectValue(itemIndex, i);
+            if (view.model.setActiveOption) {
+              view.model.setActiveOption(item._options[i]._index);
+            } else {
+              view.selectValue(itemIndex, i);
+            }
           }
         } else {
           _.each(item._options, function(option, optionIndex) {
             if (option._isCorrect) {
-              view.selectValue(itemIndex, option._index);
+              if (view.model.setActiveOption) {
+                view.model.setActiveOption(option._index);
+              } else {
+                view.selectValue(itemIndex, option._index);
+              }
             }
           });
         }
@@ -210,11 +218,12 @@ define([], function(require) {
           // start at a random position in options to avoid bias (err is contingency for bad data)
           for (let count = item._options.length, i = _.random(count), err = count; err >= 0; i++, err--) {
             if (!item._options[i % count]._isCorrect) {
-              if (view.selectValue) {
-                var option = item._options[i % count];
+              const option = item._options[i % count];
+              if (view.model.setActiveOption) {
+                view.model.setActiveOption(option._index);
+              } else if (view.selectValue) {
                 view.selectValue(itemIndex, option._index);
               } else if (view.model.setOptionSelected) {
-                var option = item._options[i % count];
                 $select.val(option.text);
                 $select.trigger('change');
                 view.model.setOptionSelected(itemIndex, i % count, true);
@@ -227,7 +236,9 @@ define([], function(require) {
         } else {
           _.each(item._options, function(option, optionIndex) {
             if (option._isCorrect) {
-              if (view.selectValue) {
+              if (view.model.setActiveOption) {
+                view.model.setActiveOption(option._index);
+              } else if (view.selectValue) {
                 view.selectValue(itemIndex, option._index);
               } else if (view.model.setOptionSelected) {
                 $select.val(option.text);
