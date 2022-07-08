@@ -226,6 +226,9 @@ define([
 
   const CourseMap = _.extend({
     initialize: function() {
+      const courseId = Adapt.course.get('_id');
+      // a long alphanumeric identifier is likely to be Authoring Tool
+      this.truncateIds = courseId.length >= 6 && /[a-z]+[0-9]+|[0-9]+[a-z]+/.test(courseId);
       this.listenTo(Adapt, 'devtools:mapLoaded', this.onMapLoaded);
       $(window).on('unload', this.onCourseClosed.bind(this));
 
@@ -249,7 +252,7 @@ define([
 
       function getId(options) {
         const val = this.get('_id') || '';
-        return val.slice(-6);
+        return CourseMap.truncateIds ? '...' + val.slice(-4) : val;
       }
 
       function getProp(prop, options) {
