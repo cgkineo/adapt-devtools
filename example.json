@@ -1,4 +1,23 @@
-    // to go in config.json
-    "_devtools": {
-        "_isEnabled": true
-    }
+// to go in config.json
+"_devtools": {
+  "_isEnabled": true
+}
+
+/*
+  optionally, define dev.json in dev folder
+
+  _modelsToRemove - the identifiers of models (and their descendants) to be completely removed from the course
+*/
+{
+  "_isEnabled": true,
+  "_modelsToRemove": [
+    "co-100",
+    "co-700",
+    "co-1000",
+    "co-1100",
+    "section-2",
+    "section-3",
+    "section-5",
+    "section-6"
+  ]
+}

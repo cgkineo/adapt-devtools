@@ -6,6 +6,8 @@
 
 define([
   'core/js/adapt',
+  'core/js/data',
+  'core/js/wait',
   'core/js/models/adaptModel',
   './devtools-model',
   './pass-half-fail',
@@ -21,7 +23,7 @@ define([
   './enable',
   './toggle-trace-focus',
   './toggle-completion'
-], function(Adapt, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, CourseMap) {
+], function(Adapt, data, wait, AdaptModel, DevtoolsModel, PassHalfFail, ToggleBanking, CourseMap) {
 
   let navigationView;
 
@@ -439,5 +441,56 @@ define([
     initNavigationView();
     Adapt.on('app:languageChanged', initNavigationView);
   });
+
+  data.on('loaded', async () => {
+    const isDescendant = (model, ancestor) => {
+      let parent;
+      while (parent = data._byAdaptID[model.get('_parentId')]) {
+        if (parent === ancestor) {
+          return true;
+        }
+        model = parent;
+      }
+      return false;
+    }
+
+    const removeDescendants = (ancestor) => {
+      const prunable = [];
+      for (const id in data._byAdaptID) {
+        const model = data._byAdaptID[id];
+        if (isDescendant(model, ancestor)) {
+          prunable.push(model)
+        }
+      }
+      prunable.forEach(model => data.remove(model));
+    }
+
+    const removeModel = (id) => {
+      const model = data._byAdaptID[id];
+      removeDescendants(model);
+      data.remove(model);
+    }
+
+    const processConfig = (cfg) => {
+      if (!cfg || cfg._isEnabled === false) return;
+
+      if (Array.isArray(cfg._modelsToRemove)) {
+        cfg._modelsToRemove.forEach(id => removeModel(id));
+
+        // things like AdaptSubsetCollection instances need to update
+        data.trigger('reset');
+      }
+    }
+
+    wait.begin();
+
+    try {
+      const devConfig = await data.getJSON('dev.json');
+      processConfig(devConfig);
+    } catch (err) {
+    } finally {
+      wait.end();
+    }
+  })
 
 });
