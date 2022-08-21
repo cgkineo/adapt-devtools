@@ -1,117 +1,163 @@
-define([], function(require) {
+define([
+  'core/js/adapt',
+  './helpers'
+], function(Adapt, helpers) {
 
-  const Adapt = require('coreJS/adapt');
+  const computeAccesibleName = helpers.computeAccesibleName;
+  const computeAccessibleDescription = helpers.computeAccessibleDescription;
+  const getAnnotationPosition = helpers.getAnnotationPosition;
 
   const AltText = _.extend({
 
     initialize: function() {
+      _.bindAll(this, 'onDomMutation', 'render');
+      this.mutations = [];
+      this.mutated = false;
       this.listenTo(Adapt.devtools, 'change:_altTextEnabled', this.toggleAltText);
-
+      $('body').append($('<div class="devtools__annotations"></div>'));
       // if available we can use to avoid unnecessary checks
       if (typeof MutationObserver === 'function') {
         this.observer = new MutationObserver(_.bind(this.onDomMutation, this));
       }
     },
 
-    addTimer: function(fireNow) {
-      this.timerId = setInterval(_.bind(this.onTimer, this), 1000);
-      if (fireNow) this.onTimer();
-    },
-
-    removeTimer: function() {
-      clearInterval(this.timerId);
-    },
-
     connectObserver: function() {
       if (this.observer) {
-        this.observer.observe(document.getElementById('wrapper'), {
+        this.observer.observe(document.querySelector('html'), {
           childList: true,
           subtree: true,
           attributes: true,
-          attributeFilter: ['class', 'style']
+          attributeFilter: [
+            'class',
+            'style',
+            'aria-label',
+            'aria-labelledby',
+            'alt',
+            'aria-describedby',
+            'for',
+            'aria-valuetext',
+            'aria-valuenow',
+            'tabindex',
+            'aria-hidden'
+          ]
         });
       }
+      this.listenTo(Adapt, {
+        'popup:closed notify:closed drawer:closed': this.onDomMutation,
+        remove: this.removeAllAnnotations
+      });
+      $(window).on('scroll', this.onDomMutation);
     },
 
     disconnectObserver: function() {
-      if (this.observer) this.observer.disconnect();
+      if (!this.observer) {
+        this.observer.disconnect();
+      }
+      this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
+      $(window).off('scroll', this.onDomMutation);
     },
 
     toggleAltText: function() {
-      if (Adapt.devtools.get('_altTextEnabled')) {
-        this.addTimer(true);
-        this.connectObserver();
-      } else {
-        this.removeTimer();
-        this.removeAllAnnotations();
+      if (!Adapt.devtools.get('_altTextEnabled')) {
+        this.mutated = false;
         this.disconnectObserver();
+        this.removeAllAnnotations();
+        return;
       }
+      this.onDomMutation();
+      this.connectObserver();
     },
 
-    addAnnotation: function($img, $annotation) {
-      const template = Handlebars.templates.devtoolsAnnotation;
-      let text = $img.attr('alt');
-
-      if (!text) text = $img.attr('aria-label');
-
-      var $annotation = $(template({ text: text }));
-
-      if (!text) $annotation.addClass('has-annotation-warning');
-
-      $img.after($annotation);
-      $img.data('annotation', $annotation);
-
-      this.updateAnnotation($img, $annotation);
+    addAnnotation: function($element, $annotation, allowText) {
+      $annotation = $('<span class="devtools__annotation"></span>');
+      $('.devtools__annotations').append($annotation);
+      $element.data('annotation', $annotation);
+      $annotation.data('annotating', $element);
+      $element.attr('data-annotated', true);
+      this.updateAnnotation($element, $annotation, allowText);
     },
 
-    removeAnnotation: function($img, $annotation) {
+    removeAnnotation: function($element, $annotation) {
       $annotation.remove();
-      $img.removeData('annotation');
+      $element.removeAttr('data-annotated');
+      $element.removeData('annotation');
     },
 
     removeAllAnnotations: function() {
-      $('img').each(_.bind(function(index, element) {
-        const $img = $(element);
-        const $annotation = $img.data('annotation');
-
-        if ($annotation) this.removeAnnotation($img, $annotation);
+      $('.devtools__annotation').each(_.bind(function(index, annotation) {
+        const $annotation = $(annotation);
+        const $element = $annotation.data('annotating');
+        if (!$element) return;
+        this.removeAnnotation($element, $annotation);
       }, this));
     },
 
-    updateAnnotation: function($img, $annotation) {
-      const position = $img.position();
-      position.left += parseInt($img.css('marginLeft'), 10) + parseInt($img.css('paddingLeft'), 10);
-      position.top += parseInt($img.css('marginTop'), 10) + parseInt($img.css('paddingTop'), 10);
-      $annotation.css(position);
+    clearUpAnnotations: function() {
+      $('.devtools__annotation').each(_.bind(function(index, annotation) {
+        const $annotation = $(annotation);
+        const $element = $annotation.data('annotating');
+        if (!$element) return;
+        if ($element.onscreen().onscreen) return;
+        this.removeAnnotation($element, $annotation);
+      }, this));
+    },
+
+    updateAnnotation: function($element, $annotation, allowText) {
+      const template = Handlebars.templates.devtoolsAnnotation;
+      const name = computeAccesibleName($element, allowText);
+      const description = computeAccessibleDescription($element);
+      $annotation.html(template({ name, description }));
+      if (!name) $annotation.addClass('has-annotation-warning');
+      $annotation.css(getAnnotationPosition($element, $annotation));
     },
 
     onDomMutation: function(mutations) {
+      if (this.mutated) return;
+      if (mutations instanceof Array) {
+        this.mutations.push.apply(this.mutations, mutations);
+      }
+      requestAnimationFrame(this.render);
       this.mutated = true;
     },
 
-    onTimer: function() {
+    render: function() {
       if (this.mutated === false) return;
-      if (this.observer) this.mutated = false;
 
-      // console.log('devtools::toggle-alt-text:run check');
+      this.clearUpAnnotations();
 
-      this.disconnectObserver();
+      const $labelled = $([
+        '.aria-label',
+        '[alt]',
+        '[aria-label]',
+        '[aria-labelledby]',
+        '[aria-describedby]',
+        '[aria-activedescendant]',
+        '[aria-valuetext]',
+        '[aria-valuenow]',
+        '[role=listbox]',
+        '[aria-hidden]'
+      ].join(','));
 
-      $('img').each(_.bind(function(index, element) {
-        const $img = $(element);
-        const $annotation = $img.data('annotation');
-        const isVisible = $img.is(':visible');
+      $labelled
+        .each(_.bind(function(index, element) {
+          const $element = $(element);
+          const $annotation = $element.data('annotation');
+          const isVisible = $element.onscreen().onscreen;
+          const isAriaHidden = Boolean($element.parents().add($element).filter('[aria-hidden=true]').length);
+          const isImg = $element.is('img');
+          const allowText = $element.is('.aria-label');
 
-        if (isVisible) {
-          if (!$annotation) this.addAnnotation($img, $annotation);
-          else this.updateAnnotation($img, $annotation);
-        } else if ($annotation) {
-          this.removeAnnotation($img, $annotation);
-        }
-      }, this));
+          if (isVisible && (!isAriaHidden || isImg)) {
+            if (!$annotation) this.addAnnotation($element, $annotation, allowText);
+            else this.updateAnnotation($element, $annotation, allowText);
+          } else if ($annotation) {
+            this.removeAnnotation($element, $annotation);
+          }
+        }, this));
 
-      this.connectObserver();
+      this.mutated = false;
     }
+
   }, Backbone.Events);
 
   Adapt.once('adapt:initialize devtools:enable', function() {

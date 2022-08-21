@@ -1,7 +1,14 @@
-<span class="devtools__annotation">
-  {{#if text}}
-  {{text}}
+<span class="devtools__annotation-inner">
+  <span class="name">
+  {{#if name}}
+  {{name}}
   {{else}}
-  No alt text/aria-label
+  No alt text
   {{/if}}
+  </span>
+  <span class="description">
+  {{#if description}}
+  {{description}}
+  {{/if}}
+  </span>
 </span>
