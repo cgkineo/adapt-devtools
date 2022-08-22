@@ -27,6 +27,7 @@
   &-order {
     display: flex;
     column-gap: @item-padding / 4;
+    align-items: flex-start;
   }
 
   .is-left &-order {
@@ -41,6 +42,10 @@
 
   .has-mouse-over &-inner {
     opacity: 1;
+  }
+
+  &.has-mouse-over {
+    z-index: 101;
   }
 
   .button {

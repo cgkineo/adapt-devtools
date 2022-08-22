@@ -22,7 +22,6 @@ define([
       this.allowText = options.allowText;
       this.$el.data('annotating', this.$parent);
       this.$el.data('view', this);
-      this.render();
     },
 
     render: function() {
@@ -206,10 +205,11 @@ define([
           const isVisible = $element.onscreen().onscreen;
           const isParentAriaHidden = Boolean($element.parents().filter('[aria-hidden=true]').length);
           const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
+          const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
           const isImg = $element.is('img');
           const allowText = $element.is('.aria-label');
 
-          if (isVisible && ((!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
+          if (isVisible && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
             if (!annotation) this.addAnnotation($element, allowText);
             else this.updateAnnotation($element, annotation, allowText);
           } else if (annotation) {

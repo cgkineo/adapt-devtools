@@ -68,7 +68,7 @@ define([], function(require) {
     const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
     const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
     const canAlignBottomRight = canAlignBottom && canAlignRight;
-    const canBeContained = (elementHeight >= tooltipsHeight && elementWidth >= tooltipsWidth) || $element.is('.aria-label, img');
+    const canBeContained = (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
 
     const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
     const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
@@ -79,8 +79,9 @@ define([], function(require) {
         return {
           className: 'is-contained',
           css: {
-            left: `${targetBoundingRect.left + scrollOffsetLeft}px`,
-            top: `${targetBoundingRect.top + scrollOffsetTop}px`
+            left: targetBoundingRect.left + scrollOffsetLeft,
+            top: targetBoundingRect.top + scrollOffsetTop,
+            'max-width': elementWidth
           }
         };
       }
@@ -93,8 +94,9 @@ define([], function(require) {
           return {
             className: 'is-left is-top',
             css: {
-              left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
-              top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+              left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
+              top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+              'max-width': ''
             }
           };
         }
@@ -103,8 +105,9 @@ define([], function(require) {
           return {
             className: 'is-right is-top',
             css: {
-              left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
-              top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+              left: targetBoundingRect.right + scrollOffsetLeft,
+              top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+              'max-width': ''
             }
           };
         }
@@ -113,8 +116,9 @@ define([], function(require) {
           return {
             className: 'is-left is-bottom',
             css: {
-              left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
-              top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+              left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
+              top: targetBoundingRect.bottom + scrollOffsetTop,
+              'max-width': ''
             }
           };
         }
@@ -123,13 +127,18 @@ define([], function(require) {
       return {
         className: 'is-right, is-bottom',
         css: {
-          left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
-          top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+          left: targetBoundingRect.right + scrollOffsetLeft,
+          top: targetBoundingRect.bottom + scrollOffsetTop,
+          'max-width': ''
         }
       };
     }
     const position = getPosition();
     position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+    if (position.css.left < 0) position.css.left = 0;
+    position.css.left += 'px';
+    position.css.top += 'px';
+    if (position.css['max-width']) position.css['max-width'] += 'px';
     return position;
   }
 
