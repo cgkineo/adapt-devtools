@@ -40,7 +40,14 @@
     opacity: 0;
   }
 
-  .has-mouse-over &-inner {
+  &-inner .description {
+    background-color: darken(@validation-success, 50%);
+    color: @validation-success-inverted;
+    opacity: 0;
+  }
+
+  .has-mouse-over &-inner,
+  .has-mouse-over &-inner .description {
     opacity: 1;
   }
 
@@ -65,6 +72,7 @@
     background-color: @validation-error;
     color: @validation-error-inverted;
   }
+
 
   &.has-annotation-warning .button {
     background-color: @validation-error;
