@@ -165,7 +165,8 @@ define([
         const $element = $annotation.data('annotating');
         const annotation = $annotation.data('view');
         if (!$element) return;
-        if ($element.onscreen().onscreen) return;
+        const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
+        if ($element.onscreen().onscreen || isHeadingHeightZero) return;
         this.removeAnnotation($element, annotation);
       }, this));
     },
@@ -185,6 +186,8 @@ define([
 
       this.clearUpAnnotations();
 
+      const $headings = $('h1,h2,h3,h4,h5,h6,h7,[role=heading]');
+
       const $labelled = $([
         '.aria-label',
         '[alt]',
@@ -199,6 +202,10 @@ define([
       ].join(','));
 
       $labelled
+        .filter(function (index, element) {
+          return !$(element).parents().filter($headings).length;
+        })
+        .add($headings)
         .each(_.bind(function(index, element) {
           const $element = $(element);
           const annotation = $element.data('annotation');
@@ -207,9 +214,9 @@ define([
           const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
           const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
           const isImg = $element.is('img');
-          const allowText = $element.is('.aria-label');
-
-          if (isVisible && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
+          const allowText = $element.is('.aria-label,h1,h2,h3,h4,h5,h6,h7,[role=heading]');
+          const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
+          if ((isVisible || isHeadingHeightZero) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
             if (!annotation) this.addAnnotation($element, allowText);
             else this.updateAnnotation($element, annotation, allowText);
           } else if (annotation) {
@@ -225,7 +232,6 @@ define([
 
   Adapt.once('adapt:initialize devtools:enable', function() {
     if (!Adapt.devtools.get('_isEnabled')) return;
-
     AltText.initialize();
   });
 

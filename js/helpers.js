@@ -47,7 +47,14 @@ define([], function(require) {
     const valueNow = $element.attr('aria-valuenow');
     if (valueNow) return valueNow;
     if (!allowText) return '';
-    return getText($element[0]);
+    return computeHeadingLevel($element) + getText($element[0]);
+  }
+
+  function computeHeadingLevel($element) {
+    const $heading = $element.parents().add($element).filter('h1, h2, h3, h4, h5, h6, h7, [role=heading]');
+    if (!$heading.length) return '';
+    const headingLevel = parseInt($heading[0].tagName) || $heading.attr('aria-level');
+    return `h${headingLevel}: `;
   }
 
   function computeAccessibleDescription($element) {
@@ -69,7 +76,7 @@ define([], function(require) {
     const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
     const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
     const canAlignBottomRight = canAlignBottom && canAlignRight;
-    const canBeContained = (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
+    const canBeContained = elementHeight === 0 || (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
 
     const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
     const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
@@ -82,7 +89,7 @@ define([], function(require) {
           css: {
             left: targetBoundingRect.left + scrollOffsetLeft,
             top: targetBoundingRect.top + scrollOffsetTop,
-            'max-width': elementWidth
+            'max-width': (elementHeight === 0) ? '' : elementWidth
           }
         };
       }
@@ -146,6 +153,7 @@ define([], function(require) {
   return {
     computeAccesibleName,
     computeAccessibleDescription,
+    computeHeadingLevel,
     getAnnotationPosition
   };
 });
