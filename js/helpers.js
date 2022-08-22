@@ -33,7 +33,7 @@ define([], function(require) {
   }
 
   function computeAccesibleName($element, allowText = false) {
-    if ($element.is('input, select, [role=range], textarea') && $element.val()) return $element.val();
+    if ($element.is('input[type=text], select, [role=range], textarea') && $element.val()) return $element.val();
     const labelledByText = followId($element, 'aria-labelledby');
     if (labelledByText) return labelledByText;
     const activeDescendantText = followId($element, 'aria-activedescendant');
