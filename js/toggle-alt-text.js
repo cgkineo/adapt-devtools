@@ -114,7 +114,7 @@ define([
     },
 
     disconnectObserver: function() {
-      if (!this.observer) {
+      if (this.observer) {
         this.observer.disconnect();
       }
       this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
