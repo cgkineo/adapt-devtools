@@ -62,16 +62,25 @@ define([], function(require) {
     const availableHeight = $('html')[0].clientHeight;
     const tooltipsWidth = $annotation.width();
     const tooltipsHeight = $annotation.height();
+    const elementWidth = $element.width();
+    const elementHeight = $element.height();
 
     const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
     const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
     const canAlignBottomRight = canAlignBottom && canAlignRight;
+    const canBeContained = (elementHeight >= tooltipsHeight && elementWidth >= tooltipsWidth) || $element.is('.aria-label, img');
 
     const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
     const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
     const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
 
     function getPosition() {
+      if (canBeContained) {
+        return {
+          left: `${targetBoundingRect.left + scrollOffsetLeft}px`,
+          top: `${targetBoundingRect.top + scrollOffsetTop}px`
+        };
+      }
       if (!canAlignBottomRight) {
         // Find the 'corner' with the most space from the viewport edge
         const isTopPreferred = availableHeight - (targetBoundingRect.bottom + tooltipsHeight) < targetBoundingRect.top - tooltipsHeight;
