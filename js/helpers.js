@@ -77,8 +77,11 @@ define([], function(require) {
     function getPosition() {
       if (canBeContained) {
         return {
-          left: `${targetBoundingRect.left + scrollOffsetLeft}px`,
-          top: `${targetBoundingRect.top + scrollOffsetTop}px`
+          className: 'is-contained',
+          css: {
+            left: `${targetBoundingRect.left + scrollOffsetLeft}px`,
+            top: `${targetBoundingRect.top + scrollOffsetTop}px`
+          }
         };
       }
       if (!canAlignBottomRight) {
@@ -88,32 +91,46 @@ define([], function(require) {
         if (isTopPreferred && isLeftPreferred) {
           // Top left
           return {
-            left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
-            top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+            className: 'is-left is-top',
+            css: {
+              left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
+              top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+            }
           };
         }
         if (isTopPreferred) {
           // Top right
           return {
-            left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
-            top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+            className: 'is-right is-top',
+            css: {
+              left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
+              top: `${targetBoundingRect.top - tooltipsHeight + scrollOffsetTop}px`
+            }
           };
         }
         if (isLeftPreferred) {
           // Bottom left
           return {
-            left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
-            top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+            className: 'is-left is-bottom',
+            css: {
+              left: `${targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft}px`,
+              top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+            }
           };
         }
       }
       // Bottom right, default
       return {
-        left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
-        top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+        className: 'is-right, is-bottom',
+        css: {
+          left: `${targetBoundingRect.right + scrollOffsetLeft}px`,
+          top: `${targetBoundingRect.bottom + scrollOffsetTop}px`
+        }
       };
     }
-    return Object.assign(getPosition(), { position: isFixedPosition ? 'fixed' : 'absolute' });
+    const position = getPosition();
+    position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+    return position;
   }
 
   return {

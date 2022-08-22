@@ -31,7 +31,10 @@ define([
       const description = computeAccessibleDescription(this.$parent);
       this.$el.html(template({ name, description }));
       if (!name) this.$el.addClass('has-annotation-warning');
-      this.$el.css(getAnnotationPosition(this.$parent, this.$el));
+      const position = getAnnotationPosition(this.$parent, this.$el);
+      this.$el.css(position.css);
+      this.$el.removeClass('is-top is-left is-right is-bottom is-contained');
+      this.$el.addClass(position.className);
     },
 
     showOutline: function() {
@@ -201,11 +204,12 @@ define([
           const $element = $(element);
           const annotation = $element.data('annotation');
           const isVisible = $element.onscreen().onscreen;
-          const isAriaHidden = Boolean($element.parents().add($element).filter('[aria-hidden=true]').length);
+          const isParentAriaHidden = Boolean($element.parents().filter('[aria-hidden=true]').length);
+          const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
           const isImg = $element.is('img');
           const allowText = $element.is('.aria-label');
 
-          if (isVisible && (!isAriaHidden || isImg)) {
+          if (isVisible && ((!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
             if (!annotation) this.addAnnotation($element, allowText);
             else this.updateAnnotation($element, annotation, allowText);
           } else if (annotation) {

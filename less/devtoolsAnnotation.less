@@ -4,9 +4,14 @@
   }
 }
 
+// Styling fixes
 .js-heading,
 .resources__filter-btn {
   position: relative;
+}
+
+.js-indicator-aria-label {
+  top: 0;
 }
 
 // --------------------------------------------------
@@ -14,43 +19,51 @@
 // THEME
 // --------------------------------------------------
 // --------------------------------------------------
-.devtools {
-  &__annotation {
-    font-size: 0.875rem;
-    pointer-events: none;
-    z-index: 100;
+.devtools__annotation {
+  font-size: 0.875rem;
+  pointer-events: none;
+  z-index: 100;
 
-    &-inner {
-      background-color: @validation-success;
-      color: @validation-success-inverted;
-      opacity: 0;
-    }
+  &-order {
+    display: flex;
+    column-gap: @item-padding / 4;
+  }
 
-    .has-mouse-over &-inner {
-      opacity: 1;
-    }
+  .is-left &-order {
+    flex-direction: row-reverse;
+  }
 
-    .button {
-      padding: @item-padding / 8;
-      background-color: @validation-success;
-      color: @validation-success-inverted;
-      border-radius: 0.25rem;
-      pointer-events: all;
-      cursor: pointer;
-    }
+  &-inner {
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+    opacity: 0;
+  }
 
-    &-outline {
-      outline: 3px solid orange;
-    }
+  .has-mouse-over &-inner {
+    opacity: 1;
+  }
 
-    .has-annotation-warning &-inner {
-      background-color: @validation-error;
-      color: @validation-error-inverted;
-    }
+  .button {
+    padding: @item-padding / 8;
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+    border-radius: 0.25rem;
+    pointer-events: all;
+    cursor: pointer;
+  }
 
-    &.has-annotation-warning .button {
-      background-color: @validation-error;
-      color: @validation-error-inverted;
-    }
+  &-outline {
+    outline: 3px solid orange;
+  }
+
+  .has-annotation-warning &-inner {
+    background-color: @validation-error;
+    color: @validation-error-inverted;
+  }
+
+  &.has-annotation-warning .button {
+    background-color: @validation-error;
+    color: @validation-error-inverted;
   }
 }
+
