@@ -119,6 +119,7 @@ define([
       }
       this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
       $(window).off('scroll', this.onDomMutation);
+      $(document).off('mouseover', '*', this.onMouseOver);
     },
 
     toggleAltText: function() {
