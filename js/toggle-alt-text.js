@@ -136,7 +136,7 @@ define([
     },
 
     addAnnotation: function($element, allowText) {
-      const annotation = new Annotation({ $parent: $element, allowText });
+      const annotation = new Annotation({ $parent: $element, allowText: allowText });
       $('.devtools__annotations').append(annotation.$el);
       $element.data('annotation', annotation);
       $element.attr('data-annotated', true);
