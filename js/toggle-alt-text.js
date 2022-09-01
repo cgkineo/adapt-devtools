@@ -136,7 +136,7 @@ define([
     },
 
     addAnnotation: function($element, allowText) {
-      const annotation = new Annotation({ $parent: $element, allowText: allowText });
+      const annotation = new Annotation({ $parent: $element, allowText });
       $('.devtools__annotations').append(annotation.$el);
       $element.data('annotation', annotation);
       $element.attr('data-annotated', true);
@@ -165,8 +165,9 @@ define([
         const $element = $annotation.data('annotating');
         const annotation = $annotation.data('view');
         if (!$element) return;
+        const isOutOfDom = ($element.parents('html').length === 0);
         const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-        if ($element.onscreen().onscreen || isHeadingHeightZero) return;
+        if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero)) return;
         this.removeAnnotation($element, annotation);
       }, this));
     },
@@ -215,8 +216,9 @@ define([
           const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
           const isImg = $element.is('img');
           const allowText = $element.is('.aria-label,h1,h2,h3,h4,h5,h6,h7,[role=heading]');
+          const isOutOfDom = ($element.parents('html').length === 0);
           const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-          if ((isVisible || isHeadingHeightZero) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
+          if (!isOutOfDom && (isVisible || isHeadingHeightZero) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
             if (!annotation) this.addAnnotation($element, allowText);
             else this.updateAnnotation($element, annotation, allowText);
           } else if (annotation) {
