@@ -4,21 +4,79 @@
   }
 }
 
+// Styling fixes
+.js-heading,
+.resources__filter-btn {
+  position: relative;
+}
+
+.js-indicator-aria-label {
+  top: 0;
+}
+
 // --------------------------------------------------
 // --------------------------------------------------
 // THEME
 // --------------------------------------------------
 // --------------------------------------------------
-.devtools {
-  &__annotation {
-    padding: @item-padding / 2;
-    font-size: 0.875rem;
-    background-color: @validation-success;
-    color: @validation-success-inverted;
+.devtools__annotation {
+  font-size: 0.875rem;
+  pointer-events: none;
+  z-index: 100;
+
+  &-order {
+    display: flex;
+    column-gap: @item-padding / 4;
+    align-items: flex-start;
   }
 
-  &__annotation.has-annotation-warning {
+  .is-left &-order {
+    flex-direction: row-reverse;
+  }
+
+  &-inner {
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+    opacity: 0;
+  }
+
+  &-inner .description {
+    background-color: darken(@validation-success, 50%);
+    color: @validation-success-inverted;
+    opacity: 0;
+  }
+
+  .has-mouse-over &-inner,
+  .has-mouse-over &-inner .description {
+    opacity: 1;
+  }
+
+  &.has-mouse-over {
+    z-index: 101;
+  }
+
+  .button {
+    padding: @item-padding / 8;
+    background-color: @validation-success;
+    color: @validation-success-inverted;
+    border-radius: 0.25rem;
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  &-outline {
+    outline: 3px solid orange;
+  }
+
+  .has-annotation-warning &-inner {
+    background-color: @validation-error;
+    color: @validation-error-inverted;
+  }
+
+
+  &.has-annotation-warning .button {
     background-color: @validation-error;
     color: @validation-error-inverted;
   }
 }
+
