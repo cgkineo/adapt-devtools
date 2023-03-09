@@ -1,4 +1,6 @@
 import Adapt from 'core/js/adapt';
+import data from 'core/js/data';
+import location from 'core/js/location';
 
 class Hinting extends Backbone.Controller {
 
@@ -12,13 +14,13 @@ class Hinting extends Backbone.Controller {
   }
 
   toggleHints () {
-    const contentObject = Adapt.findById(Adapt.location._currentId);
+    const contentObject = data.findById(location._currentId);
     const components = contentObject.findDescendantModels('components');
-    const renderedQuestions = _.filter(components, function(m) {
+    const renderedQuestions = components.filter(m => {
       return m.get('_isQuestionType') === true && m.get('_isReady') === true;
     });
 
-    _.each(renderedQuestions, function(model) {
+    renderedQuestions.forEach((model) => {
       this.setHinting($('.' + model.get('_id')), model, Adapt.devtools.get('_hintingEnabled'));
     }, this);
 
@@ -44,30 +46,30 @@ class Hinting extends Backbone.Controller {
 
   setMcqHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
-      _.each(model.get('_items'), function(item, index) {
+      model.get('_items').forEach((item, index) => {
         $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
       });
-    } else {
-      $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
+      return;
     }
+    $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
   }
 
   setGmcqHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
-      _.each(model.get('_items'), function(item, index) {
+      model.get('_items').forEach((item, index) => {
         $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
       });
-    } else {
-      $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
+      return;
     }
+    $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
   }
 
   setMatchingHinting ($el, model, hintingEnabled) {
-    if (hintingEnabled) {
-      _.each(model.get('_items'), function(item, itemIndex) {
+    if (!hintingEnabled) {
+      model.get('_items').forEach((item, itemIndex) => {
         const $item = $el.find('.item').eq(itemIndex);
         const $options = $item.find('.js-dropdown-list-item');
-        _.each(item._options, function(option, optionIndex) {
+        item._options.forEach((option, optionIndex) => {
           /* if (Modernizr.touch) { */
           if (option._isCorrect) $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner').append('<span class="hint"> (correct)</span>');
           /* }
@@ -76,11 +78,11 @@ class Hinting extends Backbone.Controller {
           } */
         });
       });
-    } else {
-      /* if (Modernizr.touch) */
-      $el.find('.js-dropdown-list-item-inner .hint').remove();
-      /* else $el.find('option').removeClass('hintCorrect hintIncorrect'); */
+      return;
     }
+    /* if (Modernizr.touch) */
+    $el.find('.js-dropdown-list-item-inner .hint').remove();
+    /* else $el.find('option').removeClass('hintCorrect hintIncorrect'); */
   }
 
   setSliderHinting ($el, model, hintingEnabled) {
@@ -95,14 +97,14 @@ class Hinting extends Backbone.Controller {
         const top = model.get('_correctRange')._top;
         for (let i = bottom; i <= top; i++) { $el.find('.js-slider-number[data-id="' + i + '"]').removeClass('hint-is-incorrect').addClass('hint-is-correct'); }
       }
-    } else {
-      $el.find('.js-slider-number').removeClass('hint-is-correct hint-is-incorrect');
+      return;
     }
+    $el.find('.js-slider-number').removeClass('hint-is-correct hint-is-incorrect');
   }
 
   setTextInputHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
-      _.each(model.get('_items'), function(item, index) {
+      model.get('_items').forEach((item, index) => {
         if (model.get('_answers')) {
           // generic answers
           $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', model.get('_answers')[index][0]);
@@ -111,13 +113,13 @@ class Hinting extends Backbone.Controller {
           $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item._answers[0]);
         }
       });
-    } else {
-      _.each(model.get('_items'), function(item, index) {
-        if (model.get('_answers')) {
-          $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item.placeholder);
-        }
-      });
+      return;
     }
+    model.get('_items').forEach((item, index) => {
+      if (model.get('_answers')) {
+        $el.find('.js-textinput-item').eq(index).find('input').attr('placeholder', item.placeholder);
+      }
+    });
   }
 
   // --------------------------------------------------
@@ -127,24 +129,23 @@ class Hinting extends Backbone.Controller {
   // --------------------------------------------------
   setQuestionStripHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
-      _.each(model.get('_items'), function(item, itemIndex) {
+      model.get('_items').forEach((item, itemIndex) => {
         const $item = $el.find('.component-item').eq(itemIndex);
         const $subItems = $item.find('.qs-strapline-header-inner:not(.qs-noop) .qs-strapline-title-inner');
-        _.each(item._subItems, function(subItem, subItemIndex) {
+        item._subItems.forEach((subItem, subItemIndex) => {
           if (subItem._isCorrect) $subItems.eq(subItemIndex).append('<span class="hint"> (correct)</span>');
         });
       });
-    } else {
-      $el.find('.qs-strapline-title-inner .hint').remove();
+      return;
     }
+    $el.find('.qs-strapline-title-inner .hint').remove();
   }
 
   setPpqHinting ($el, model, hintingEnabled) {
     console.log('setPpqHinting', hintingEnabled);
-    if (!model.get('_developerMode')) {
-      $el.find('.ppq-correct-zone').toggleClass('display-none', !hintingEnabled);
-      $el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);
-    }
+    if (model.get('_developerMode')) return;
+    $el.find('.ppq-correct-zone').toggleClass('display-none', !hintingEnabled);
+    $el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);
   }
   // --------------------------------------------------
   // --------------------------------------------------

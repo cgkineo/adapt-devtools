@@ -4,7 +4,7 @@ export default class DevtoolsModel extends Backbone.Model {
 
   initialize() {
     const config = Adapt.config.has('_devtools') ? Adapt.config.get('_devtools') : this.getDefaultConfig();
-    this.set(_.extend({
+    this.set({
       _trickleEnabled: false,
       _hintingAvailable: true,
       _hintingEnabled: false,
@@ -20,8 +20,9 @@ export default class DevtoolsModel extends Backbone.Model {
       _toggleBankingAvailable: true,
       _traceFocusAvailable: true,
       _traceFocusEnabled: false,
-      _extended: true
-    }, config));
+      _extended: true,
+      ...config
+    });
   }
 
   getDefaultConfig() {

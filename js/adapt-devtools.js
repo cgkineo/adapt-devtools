@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import wait from 'core/js/wait';
+import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
 import DevtoolsModel from './devtools-model';
 import PassHalfFail from './pass-half-fail';
@@ -80,7 +81,8 @@ class DevtoolsView extends Backbone.View {
   }
 
   _checkForLocks () {
-    if (typeof AdaptModel.prototype.checkLocking !== 'function') return Adapt.location._contentType === 'menu';
+    const hasCheckLocking = (typeof AdaptModel.prototype.checkLocking !== 'function');
+    if (hasCheckLocking) return location._contentType === 'menu';
 
     const hasLock = function(model) { return model.has('_lockType'); };
 
@@ -122,7 +124,7 @@ class DevtoolsView extends Backbone.View {
       Adapt.spoor.scorm.showDebugWindow();
       return;
     }
-    require('extensions/adapt-contrib-spoor/js/scorm').showDebugWindow();
+    require('extensions/adapt-contrib-spoor/js/scorm')?.showDebugWindow();
   }
 
   /*************************************************/
@@ -149,11 +151,12 @@ class DevtoolsView extends Backbone.View {
     }
 
     const bankedAssessments = ToggleBanking.getBankedAssessmentsInCurrentPage();
-    const isBankingEnabled = function(m) { return m.get('_assessment')._banks._isEnabled; };
+    const isBankingEnabled = m => m.get('_assessment')._banks._isEnabled;
 
-    if (bankedAssessments.length > 0) {
+    const hasBankedAssessments = (bankedAssessments.length > 0);
+    if (hasBankedAssessments) {
       this.$('.banking').removeClass('u-display-none');
-      this.$('.banking label').toggleClass('is-selected', _.some(bankedAssessments, isBankingEnabled));
+      this.$('.banking label').toggleClass('is-selected', bankedAssessments.some(isBankingEnabled));
       return;
     }
     this.$('.banking').addClass('u-display-none');
@@ -243,27 +246,20 @@ class DevtoolsView extends Backbone.View {
   /*************************************************/
 
   _checkCompletePageVisibility () {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
-
+    const currentModel = data.findById(Adapt.location._currentId);
     if (currentModel.get('_type') !== 'page') {
       this.$('.complete-page').addClass('u-display-none');
       return;
     }
-
     const incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
-
     this.$('.complete-page').toggleClass('u-display-none', incomplete.length === 0);
-
   }
 
   onCompletePage (e) {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
-
+    const currentModel = data.findById(Adapt.location._currentId);
     if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
-
     const incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
-
-    incomplete.forEach(function(component) {
+    incomplete.forEach(component => {
       if (component.get('_isQuestionType')) {
         component.set({
           _isCorrect: true,
@@ -272,11 +268,9 @@ class DevtoolsView extends Backbone.View {
         });
         component.set('_attemptsLeft', Math.max(0, component.set('_attempts') - 1));
       }
-
       component.set('_isComplete', true);
       component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
     });
-
     Adapt.trigger('drawer:closeDrawer');
   }
 
@@ -285,27 +279,20 @@ class DevtoolsView extends Backbone.View {
   /*************************************************/
 
   _checkCompleteMenuVisibility () {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
-
+    const currentModel = data.findById(Adapt.location._currentId);
     if (currentModel.get('_type') !== 'menu' && currentModel.get('_type') !== 'course') {
       this.$('.complete-menu').addClass('u-display-none');
       return;
     }
-
     const incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
-
     this.$('.complete-menu').toggleClass('u-display-none', incomplete.length === 0);
-
   }
 
   onCompleteMenu (e) {
     const currentModel = Adapt.findById(Adapt.location._currentId);
-
     if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
-
     const incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
     _.invoke(incomplete, 'set', '_isComplete', true);
-
     Adapt.trigger('drawer:closeDrawer');
   }
 
@@ -314,44 +301,33 @@ class DevtoolsView extends Backbone.View {
   /************************************************************/
 
   _checkPassHalfFailVisibility () {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
-
+    const currentModel = data.findById(Adapt.location._currentId);
     if (currentModel.get('_type') !== 'page') {
       this.$('.pass, .half, .fail').addClass('u-display-none');
       return;
     }
-
     const unanswered = currentModel.findDescendantModels('components', { where: { _isQuestionType: true, _isSubmitted: false } });
-
     if (unanswered.length === 0) this.$('.tip.pass-half-fail').html('');
     else this.$('.is-tip.pass-half-fail').html('With the ' + unanswered.length + ' unanswered question(s) in this page do the following:');
-
     this.$('.pass, .half, .fail').toggleClass('u-display-none', unanswered.length === 0);
 
   }
 
   onPassHalfFail (e) {
     if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
-
     // potentially large operation so show some feedback
     $('.js-loading').show();
-
     const tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
-
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
-
     if ($(e.currentTarget).hasClass('pass')) PassHalfFail.pass(this.onPassHalfFailComplete.bind(this, tutorEnabled));
     else if ($(e.currentTarget).hasClass('half')) PassHalfFail.half(this.onPassHalfFailComplete.bind(this, tutorEnabled));
     else PassHalfFail.fail(this.onPassHalfFailComplete.bind(this, tutorEnabled));
-
     Adapt.trigger('drawer:closeDrawer');
   }
 
   onPassHalfFailComplete (tutorEnabled) {
     console.log('onPassHalfFailComplete');
-
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
-
     $('.js-loading').hide();
   }
 
@@ -377,15 +353,12 @@ class DevtoolsView extends Backbone.View {
 class DevtoolsNavigationView extends Backbone.View {
 
   initialize () {
+    this.render = this.render.bind(this);
     const template = Handlebars.templates.devtoolsNavigation;
-
     this.$el = $(template());
-
     $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
-
     if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', this.onDevtoolsClicked.bind(this));
     else this.$el.find('a, button').on('click', this.onDevtoolsClicked.bind(this));
-
     // keep drawer item to left of PLP, resources, close button etc
     this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
     // ensure render occurs at least once (_isReady will not change to true on menus that exclude content objects)
@@ -404,7 +377,7 @@ class DevtoolsNavigationView extends Backbone.View {
   }
 
   deferredRender () {
-    _.defer(this.render.bind(this));
+    _.defer(this.render);
   }
 
   onContentRendered (view) {
@@ -421,19 +394,17 @@ class DevtoolsNavigationView extends Backbone.View {
 
 }
 
-Adapt.once('courseModel:dataLoaded', function() {
+Adapt.once('courseModel:dataLoaded', () => {
   Adapt.devtools = new DevtoolsModel();
 });
 
 function initNavigationView() {
   if (!Adapt.devtools.get('_isEnabled')) return;
-
   if (navigationView) navigationView.remove();
-
   navigationView = new DevtoolsNavigationView();
 }
 
-Adapt.once('adapt:initialize devtools:enable', function() {
+Adapt.once('adapt:initialize devtools:enable', () => {
   initNavigationView();
   Adapt.on('app:languageChanged', initNavigationView);
 });
@@ -442,9 +413,7 @@ data.on('loaded', async () => {
   const isDescendant = (model, ancestor) => {
     let parent;
     while ((parent = data._byAdaptID[model.get('_parentId')])) {
-      if (parent === ancestor) {
-        return true;
-      }
+      if (parent === ancestor) return true;
       model = parent;
     }
     return false;
@@ -454,9 +423,8 @@ data.on('loaded', async () => {
     const prunable = [];
     for (const id in data._byAdaptID) {
       const model = data._byAdaptID[id];
-      if (isDescendant(model, ancestor)) {
-        prunable.push(model);
-      }
+      if (!isDescendant(model, ancestor)) continue;
+      prunable.push(model);
     }
     prunable.forEach(model => data.remove(model));
   };
@@ -469,10 +437,8 @@ data.on('loaded', async () => {
 
   const processConfig = (cfg) => {
     if (!cfg || cfg._isEnabled === false) return;
-
     if (Array.isArray(cfg._modelsToRemove)) {
       cfg._modelsToRemove.forEach(id => removeModel(id));
-
       // things like AdaptSubsetCollection instances need to update
       data.trigger('reset');
     }

@@ -28,7 +28,7 @@ function remove() {
   }
 }
 
-Adapt.once('adapt:initialize devtools:enable', function() {
+Adapt.once('adapt:initialize devtools:enable', () => {
   if (!Adapt.devtools.get('_isEnabled')) return;
 
   Adapt.on('trickle:interactionInitialize trickle:started', onTrickleBegun);

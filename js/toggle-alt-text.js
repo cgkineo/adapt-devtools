@@ -50,6 +50,7 @@ class Annotation extends Backbone.View {
 class AltText extends Backbone.Controller {
 
   initialize() {
+    this.onDomMutation = this.onDomMutation.bind(this);
     this.listenToOnce(Adapt, 'adapt:initialize devtools:enable', this.onEnabled);
   }
 
@@ -62,7 +63,7 @@ class AltText extends Backbone.Controller {
     $('body').append($('<div class="devtools__annotations" aria-hidden="true"></div>'));
     // if available we can use to avoid unnecessary checks
     if (typeof MutationObserver === 'function') {
-      this.observer = new MutationObserver(_.bind(this.onDomMutation, this));
+      this.observer = new MutationObserver(this.onDomMutation);
     }
   }
 
@@ -107,11 +108,11 @@ class AltText extends Backbone.Controller {
   }
 
   hideOutline() {
-    $('.devtools__annotation').each(_.bind(function(index, element) {
+    $('.devtools__annotation').each((index, element) => {
       const $annotation = $(element);
       const annotation = $annotation.data('view');
       annotation.hideOutline();
-    }, this));
+    });
   }
 
   showOutline($mouseoverEl) {
@@ -154,17 +155,17 @@ class AltText extends Backbone.Controller {
   }
 
   removeAllAnnotations() {
-    $('.devtools__annotation').each(_.bind(function(index, element) {
+    $('.devtools__annotation').each((index, element) => {
       const $annotation = $(element);
       const $element = $annotation.data('annotating');
       const annotation = $annotation.data('view');
       if (!$element) return;
       this.removeAnnotation($element, annotation);
-    }, this));
+    });
   }
 
   clearUpAnnotations() {
-    $('.devtools__annotation').each(_.bind(function(index, element) {
+    $('.devtools__annotation').each((index, element) => {
       const $annotation = $(element);
       const $element = $annotation.data('annotating');
       const annotation = $annotation.data('view');
@@ -173,7 +174,7 @@ class AltText extends Backbone.Controller {
       const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
       if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero)) return;
       this.removeAnnotation($element, annotation);
-    }, this));
+    });
   }
 
   updateAnnotation($element, annotation, allowText) {
@@ -188,11 +189,8 @@ class AltText extends Backbone.Controller {
 
   render() {
     if (this.mutated === false) return;
-
     this.clearUpAnnotations();
-
     const $headings = $('h1,h2,h3,h4,h5,h6,h7,[role=heading]');
-
     const $labelled = $([
       '.aria-label',
       '[alt]',
@@ -205,13 +203,10 @@ class AltText extends Backbone.Controller {
       '[role=listbox]',
       '[aria-hidden]'
     ].join(','));
-
     $labelled
-      .filter(function (index, element) {
-        return !$(element).parents().filter($headings).length;
-      })
+      .filter((index, element) => !$(element).parents().filter($headings).length)
       .add($headings)
-      .each(_.bind(function(index, element) {
+      .each((index, element) => {
         const $element = $(element);
         const annotation = $element.data('annotation');
         const isVisible = $element.onscreen().onscreen;
@@ -228,7 +223,7 @@ class AltText extends Backbone.Controller {
         } else if (annotation) {
           this.removeAnnotation($element, annotation);
         }
-      }, this));
+      });
 
     if (this.observer) this.observer.takeRecords();
     this.mutated = false;

@@ -1,4 +1,5 @@
 import Adapt from 'core/js/adapt';
+import device from 'core/js/device';
 import Hinting from './hinting';
 import isQuestionSupported from './is-question-supported';
 let ItemsQuestionModel;
@@ -19,24 +20,22 @@ class AutoAnswer extends Backbone.Controller {
   }
 
   componentRendered (view) {
-    if (isQuestionSupported(view.model)) {
-      if (view.buttonsView) {
-        const handler = _.bind(this.onQuestionMouseDown, this, view);
-        view.$el.on('mousedown', handler);
-        this.mousedownHandlers.push({
-          element: view.$el,
-          handler
-        });
-      } else if (Adapt.devtools.get('_debug')) {
-        console.warn('adapt-devtools: could not find submit button on ' + view.model.get('_id'));
-      }
+    if (!isQuestionSupported(view.model)) return;
+    if (!view.buttonsView && Adapt.devtools.get('_debug')) {
+      console.warn('adapt-devtools: could not find submit button on ' + view.model.get('_id'));
+      return;
     }
+    const handler = this.onQuestionMouseDown.bind(this, view);
+    view.$el.on('mousedown', handler);
+    this.mousedownHandlers.push({
+      element: view.$el,
+      handler
+    });
   }
 
   onQuestionMouseDown (view, e) {
     // remove hinting if enabled
     if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
-
     if ((e.ctrlKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
       this.answer(view);
     } else if (e.ctrlKey && e.shiftKey) {
@@ -45,28 +44,22 @@ class AutoAnswer extends Backbone.Controller {
   }
 
   isItemsQuestionModel (model) {
-    if (ItemsQuestionModel) {
-      return model instanceof ItemsQuestionModel;
-    } else if (ItemsQuestionModel === null) {
-      return false;
-    }
-
-    if (require.defined('core/js/models/' + 'itemsQuestionModel')) {
+    if (ItemsQuestionModel) return model instanceof ItemsQuestionModel;
+    if (ItemsQuestionModel === null) return false;
+    const hasItemsQuestionModel = require.defined('core/js/models/' + 'itemsQuestionModel');
+    if (hasItemsQuestionModel) {
       ItemsQuestionModel = require('core/js/models/' + 'itemsQuestionModel');
       return model instanceof ItemsQuestionModel;
-    } else {
-      ItemsQuestionModel = null;
-      return false;
     }
+    ItemsQuestionModel = null;
+    return false;
   }
 
   answer (view, incorrectly) {
     if (view.model.get('_isSubmitted')) return;
-
     if (Adapt.devtools.get('_debug')) {
       console.log('adapt-devtools: answer ' + view.model.get('_id') + (incorrectly === true ? ' incorrectly' : ''));
     }
-
     if (incorrectly === true) {
       switch (view.model.get('_component')) {
         case 'mcq':this.answerMultipleChoiceIncorrectly(view); break;
@@ -90,14 +83,12 @@ class AutoAnswer extends Backbone.Controller {
         default:this.answerUnsupported(view);
       }
     }
-
     view.$('.js-btn-action').trigger('click');
   }
 
   answerMultipleChoice (view, isGraphical) {
     const items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
     const noCorrectOptions = _.where(items, { _shouldBeSelected: true }).length === 0;
-
     if (this.isItemsQuestionModel(view.model)) {
       if (noCorrectOptions) {
         view.model.getItem(_.random(items.length - 1)).set('_isActive', true);
@@ -110,25 +101,24 @@ class AutoAnswer extends Backbone.Controller {
       }
       return;
     }
-
     if (noCorrectOptions) {
       if (_.where(items, { _isSelected: true }).length === 0) {
         view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(_.random(items.length - 1)).trigger('change');
       }
-    } else {
-      _.each(items, function(item, index) {
-        if ((item._shouldBeSelected && !item._isSelected) || (!item._shouldBeSelected && item._isSelected)) {
-          view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(index).trigger('change');
-        }
-      });
+      return;
     }
+    items.forEach((item, index) => {
+      const isIncorrect = (item._shouldBeSelected && !item._isSelected) || (!item._shouldBeSelected && item._isSelected);
+      if (!isIncorrect) return;
+      view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(index).trigger('change');
+    });
   }
 
   answerMultipleChoiceIncorrectly (view, isGraphical) {
     const model = view.model;
     const items = this.isItemsQuestionModel(model) ? model.getChildren().toJSON() : model.get('_items');
     const itemCount = items.length;
-    const selectionStates = _.times(itemCount, function() { return false; });
+    const selectionStates = _.times(itemCount, () => false);
     // number of items that should be selected
     const nShould = _.where(items, { _shouldBeSelected: true }).length;
     // and number that should not
@@ -139,12 +129,10 @@ class AutoAnswer extends Backbone.Controller {
     const nIncorrect = nShouldNot === 0 ? 0 : _.random(nShould === 1 ? 1 : 0, Math.min(nShouldNot, nSelect));
     // and how many should be correct
     const nCorrect = nIncorrect === 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
-
     if (itemCount === 1 || nSelect === 0) {
       console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
       return;
     }
-
     for (let j = 0; j < nIncorrect; j++) {
       // start at a random position in items to avoid bias (err is contingency for bad data)
       for (let k = _.random(itemCount), err = itemCount, found = false; !found && err >= 0; k++, err--) {
@@ -163,7 +151,6 @@ class AutoAnswer extends Backbone.Controller {
         }
       }
     }
-
     if (this.isItemsQuestionModel(view.model)) {
       view.model.getChildren().forEach((item, index) => {
         if ((selectionStates[index] && !item.get('_isActive')) || (!selectionStates[index] && item.get('_isActive'))) {
@@ -172,18 +159,16 @@ class AutoAnswer extends Backbone.Controller {
       });
       return;
     }
-
-    _.each(items, function(item, index) {
-      if ((selectionStates[index] && !item._isSelected) || (!selectionStates[index] && item._isSelected)) {
-        view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(index).trigger('change');
-      }
+    items.forEach((item, index) => {
+      const hasChanged = (selectionStates[index] && !item._isSelected) || (!selectionStates[index] && item._isSelected);
+      if (!hasChanged) return;
+      view.$(isGraphical ? '.js-item-input' : '.js-item-input').eq(index).trigger('change');
     });
   }
 
   answerMatching (view) {
-    _.each(view.model.get('_items'), function(item, itemIndex) {
+    view.model.get('_items').forEach((item, itemIndex) => {
       const noCorrectOptions = _.where(item._options, { _isCorrect: true }).length === 0;
-
       if (noCorrectOptions) {
         if (!view.dropdowns[itemIndex].getFirstSelectedItem()) {
           const i = _.random(item._options.length - 1);
@@ -193,26 +178,25 @@ class AutoAnswer extends Backbone.Controller {
             view.selectValue(itemIndex, i);
           }
         }
-      } else {
-        _.each(item._options, function(option, optionIndex) {
-          if (option._isCorrect) {
-            if (view.model.setActiveOption) {
-              view.model.setActiveOption(option._index);
-            } else {
-              view.selectValue(itemIndex, option._index);
-            }
-          }
-        });
+        return;
       }
+      item._options.forEach((option) => {
+        if (!option._isCorrect) return;
+        if (view.model.setActiveOption) {
+          view.model.setActiveOption(option._index);
+          return;
+        }
+        view.selectValue(itemIndex, option._index);
+      });
     });
   }
 
   answerMatchingIncorrectly (view) {
     const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
     // decide which items to answer incorrectly (minimum one)
-    const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
+    const selectionStates = _.shuffle(_.times(itemCount, i => i < nIncorrect));
 
-    _.each(items, function(item, itemIndex) {
+    items.forEach((item, itemIndex) => {
       const $select = view.$('select').eq(itemIndex);
       const $options = $select.find('option');
       // check if this item is to be answered incorrectly
@@ -223,35 +207,41 @@ class AutoAnswer extends Backbone.Controller {
             const option = item._options[i % count];
             if (view.model.setActiveOption) {
               view.model.setActiveOption(option._index);
-            } else if (view.selectValue) {
+              continue;
+            }
+            if (view.selectValue) {
               view.selectValue(itemIndex, option._index);
-            } else if (view.model.setOptionSelected) {
+              continue;
+            }
+            if (view.model.setOptionSelected) {
               $select.val(option.text);
               $select.trigger('change');
               view.model.setOptionSelected(itemIndex, i % count, true);
-            } else {
-              $options.eq((i % count) + 1).prop('selected', true);
+              continue;
             }
-            return;
+            $options.eq((i % count) + 1).prop('selected', true);
           }
         }
-      } else {
-        _.each(item._options, function(option, optionIndex) {
-          if (option._isCorrect) {
-            if (view.model.setActiveOption) {
-              view.model.setActiveOption(option._index);
-            } else if (view.selectValue) {
-              view.selectValue(itemIndex, option._index);
-            } else if (view.model.setOptionSelected) {
-              $select.val(option.text);
-              $select.trigger('change');
-              view.model.setOptionSelected(itemIndex, optionIndex, true);
-            } else {
-              $options.eq(optionIndex + 1).prop('selected', true);
-            }
-          }
-        });
+        return;
       }
+      item._options.forEach((option, optionIndex) => {
+        if (!option._isCorrect) return;
+        if (view.model.setActiveOption) {
+          view.model.setActiveOption(option._index);
+          return;
+        }
+        if (view.selectValue) {
+          view.selectValue(itemIndex, option._index);
+          return;
+        }
+        if (view.model.setOptionSelected) {
+          $select.val(option.text);
+          $select.trigger('change');
+          view.model.setOptionSelected(itemIndex, optionIndex, true);
+          return;
+        }
+        $options.eq(optionIndex + 1).prop('selected', true);
+      });
     });
   }
 
@@ -262,32 +252,33 @@ class AutoAnswer extends Backbone.Controller {
     const correctAnswer = view.model.get('_correctAnswer');
     if (correctAnswer) {
       view.$('.js-slider-number[data-id="' + correctAnswer + '"]').trigger('click');
-    } else {
-      const bottom = view.model.get('_correctRange')._bottom;
-      const top = view.model.get('_correctRange')._top;
-      const d = top - bottom;
-      // select from range at random
-      view.$('.js-slider-number[data-id="' + (bottom + Math.floor(Math.random() * (d + 1))) + '"]').trigger('click');
+      return;
     }
+    const bottom = view.model.get('_correctRange')._bottom;
+    const top = view.model.get('_correctRange')._top;
+    const d = top - bottom;
+    // select from range at random
+    view.$('.js-slider-number[data-id="' + (bottom + Math.floor(Math.random() * (d + 1))) + '"]').trigger('click');
   }
 
   answerSliderIncorrectly (view) {
     const correctAnswer = view.model.get('_correctAnswer');
     const start = view.model.get('_scaleStart'); const end = view.model.get('_scaleEnd');
-    const incorrect = _.times(end - start + 1, function(i) { return start + i; });
+    const incorrect = _.times(end - start + 1, i => start + i);
     if (correctAnswer) {
       incorrect.splice(correctAnswer - start, 1);
-    } else {
-      const bottom = view.model.get('_correctRange')._bottom;
-      const top = view.model.get('_correctRange')._top;
-      incorrect.splice(bottom - start, top - bottom + 1);
+      view.$('.js-slider-number[data-id="' + _.shuffle(incorrect)[0] + '"]').trigger('click');
+      return;
     }
+    const bottom = view.model.get('_correctRange')._bottom;
+    const top = view.model.get('_correctRange')._top;
+    incorrect.splice(bottom - start, top - bottom + 1);
     view.$('.js-slider-number[data-id="' + _.shuffle(incorrect)[0] + '"]').trigger('click');
   }
 
   answerTextInput (view) {
     const answers = view.model.get('_answers');
-    _.each(view.model.get('_items'), function(item, index) {
+    view.model.get('_items').forEach((item, index) => {
       if (answers) view.$('.js-textinput-textbox').eq(index).val(answers[index][0]).trigger('change'); // generic answers
       else view.$('.js-textinput-textbox').eq(index).val(item._answers[0]).trigger('change'); // specific answers
     });
@@ -296,15 +287,15 @@ class AutoAnswer extends Backbone.Controller {
   answerTextInputIncorrectly (view) {
     const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
     // decide which items to answer incorrectly (minimum one)
-    const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
+    const selectionStates = _.shuffle(_.times(itemCount, i => i < nIncorrect));
     const answers = view.model.get('_answers');
-    _.each(items, function(item, index) {
+    items.forEach((item, index) => {
       if (selectionStates[index]) {
         view.$('.js-textinput-textbox').eq(index).val('***4n 1nc0rr3ct 4nsw3r***').trigger('change'); // probably
-      } else {
-        if (answers) view.$('.js-textinput-textbox').eq(index).val(answers[index][0]).trigger('change');
-        else view.$('.js-textinput-textbox').eq(index).val(item._answers[0]).trigger('change');
+        return;
       }
+      if (answers) view.$('.js-textinput-textbox').eq(index).val(answers[index][0]).trigger('change');
+      else view.$('.js-textinput-textbox').eq(index).val(item._answers[0]).trigger('change');
     });
   }
 
@@ -314,9 +305,10 @@ class AutoAnswer extends Backbone.Controller {
   // --------------------------------------------------
   // --------------------------------------------------
   answerQuestionStrip (view) {
-    _.each(view.model.get('_items'), function(item, itemIndex) {
-      _.each(item._subItems, function(subItem, subItemIndex) {
-        if (subItem._isCorrect) view.setStage(itemIndex, subItemIndex, true);
+    view.model.get('_items').forEach((item, itemIndex) => {
+      item._subItems.forEach((subItem, subItemIndex) => {
+        if (!subItem._isCorrect) return;
+        view.setStage(itemIndex, subItemIndex, true);
       });
     });
   }
@@ -324,9 +316,9 @@ class AutoAnswer extends Backbone.Controller {
   answerQuestionStripIncorrectly (view) {
     const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
     // decide which items to answer incorrectly (minimum one)
-    const selectionStates = _.shuffle(_.times(itemCount, function(i) { return i < nIncorrect; }));
+    const selectionStates = _.shuffle(_.times(itemCount, i => i < nIncorrect));
 
-    _.each(items, function(item, itemIndex) {
+    items.forEach((item, itemIndex) => {
       // check if this item is to be answered incorrectly
       if (selectionStates[itemIndex]) {
         // start at a random position in subitems to avoid bias (err is contingency for bad data)
@@ -336,11 +328,12 @@ class AutoAnswer extends Backbone.Controller {
             return;
           }
         }
-      } else {
-        _.each(item._subItems, function(subItem, subItemIndex) {
-          if (subItem._isCorrect) view.setStage(itemIndex, subItemIndex, true);
-        });
+        return;
       }
+      item._subItems.forEach((subItem, subItemIndex) => {
+        if (!subItem._isCorrect) return;
+        view.setStage(itemIndex, subItemIndex, true);
+      });
     });
   }
 
@@ -349,24 +342,19 @@ class AutoAnswer extends Backbone.Controller {
     let items = model.get('_items');
     const itemCount = items.length;
     // determine screen size
-    const isDesktop = Adapt.device.screenSize !== 'small';
+    const isDesktop = device.screenSize !== 'small';
     // select appropriate pinboard
     items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
-
     const $pinboard = view.$('.ppq-pinboard');
     const boardw = $pinboard.width();
     const boardh = $pinboard.height();
-
     for (let i = 0; i < itemCount; i++) {
       const zone = items[i];
       const pin = view.getNextUnusedPin();
       const x = zone.left + zone.width / 2;
       const y = zone.top + zone.height / 2;
-
       console.log('using correct position', x + ',' + y);
-
       pin.setPosition(x, y);
-
       pin.$el.css({
         left: boardw * x / 100 - pin.$el.width() / 2,
         top: boardh * y / 100 - pin.$el.height()
@@ -376,9 +364,10 @@ class AutoAnswer extends Backbone.Controller {
 
   answerPpqIncorrectly (view) {
     const model = view.model;
+    /** @type {Array} */
     let items = model.get('_items'); const itemCount = items.length;
     // determine screen size
-    const isDesktop = Adapt.device.screenSize !== 'small';
+    const isDesktop = device.screenSize !== 'small';
     // select appropriate pinboard
     items = _.pluck(model.get('_items'), isDesktop ? 'desktop' : 'mobile');
     // decide how many items to select
@@ -387,90 +376,64 @@ class AutoAnswer extends Backbone.Controller {
     const nIncorrect = _.random(1, nSelect);
     // and how many should be correct
     const nCorrect = nSelect - nIncorrect;
-
     const $pinboard = view.$('.ppq-pinboard');
     const boardw = $pinboard.width();
     const boardh = $pinboard.height();
-
     console.log('nIncorrect=', nIncorrect, 'nCorrect=', nCorrect);
-
-    const maxSize = function(zone) {
-      return zone.left < 1 && zone.top < 1 && zone.width > 9999 && zone.height > 9999;
-    };
-
+    const maxSize = zone => zone.left < 1 && zone.top < 1 && zone.width > 9999 && zone.height > 9999;
     // work with integers for accuracy and simplicity
-    items = _.map(items, function(item) {
-      return {
-        left: Math.round(item.left * 100),
-        top: Math.round(item.top * 100),
-        width: Math.round(item.width * 100),
-        height: Math.round(item.height * 100)
-      };
-    });
-
-    if (_.some(items, maxSize) || nSelect === 0) {
+    items = items.map(item => ({
+      left: Math.round(item.left * 100),
+      top: Math.round(item.top * 100),
+      width: Math.round(item.width * 100),
+      height: Math.round(item.height * 100)
+    }));
+    if (items.some(maxSize) || nSelect === 0) {
       console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
       return;
     }
-
     view.resetPins();
-
     // simplified approach for readability; statistically probable that finding pin positions will be extremely quick
-
     for (let i = 0; i < nIncorrect; i++) {
       let ok = false;
       let x;
       let y;
-
       // find a suitable x-coordinate
       while (!ok) {
         x = _.random(1, 10000);
-        ok = !_.some(items, function(zone) {
+        ok = !items.some(zone => {
           return x >= zone.left && x < zone.left + zone.width && zone.top < 1 && zone.height > 9999;
         });
       }
-
       ok = false;
-
       // find a suitable y-coordinate
       while (!ok) {
         y = _.random(1, 10000);
-        ok = !_.some(items, function(zone) {
+        ok = !items.some(zone => {
           return x >= zone.left && x < zone.left + zone.width && y >= zone.top && y < zone.top + zone.height;
         });
       }
-
       x = x / 100;
       y = y / 100;
-
       console.log('using incorrect position', x + ',' + y);
-
       const pin = view.getNextUnusedPin();
-
       pin.setPosition(x, y);
-
       pin.$el.css({
         left: boardw * x / 100 - pin.$el.width() / 2,
         top: boardh * y / 100 - pin.$el.height()
       });
     }
-
     // decide in which zones to place a pin
-    const correct = _.shuffle(_.times(itemCount, function(i) { return i; }));
-
+    const correct = _.shuffle(_.times(itemCount, i => i));
     for (let i = 0; i < nCorrect; i++) {
       const zone = items[correct[i]];
       const pin = view.getNextUnusedPin();
       let x = zone.left + zone.width / 2;
       let y = zone.top + zone.height / 2;
-
       x = x / 100;
       y = y / 100;
-
       console.log('using correct position', x + ',' + y);
-
       pin.setPosition(x, y);
-
       pin.$el.css({
         left: boardw * x / 100 - pin.$el.width() / 2,
         top: boardh * y / 100 - pin.$el.height()
@@ -490,7 +453,6 @@ class AutoAnswer extends Backbone.Controller {
 
   answerUnsupportedIncorrectly (view) {
     const model = view.model;
-
     model.set({ _isComplete: true, _isInteractionComplete: true, _isCorrect: false, _isSubmitted: true, _score: 0 });
     model.set('_attemptsLeft', Math.max(0, model.get('_attempts') - 1));
   }

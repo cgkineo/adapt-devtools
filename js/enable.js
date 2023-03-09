@@ -51,12 +51,12 @@ function addHooks() {
   $(window).on('mousedown', onMouseDown);
   $(window).on('mouseup', onMouseUp);
 
-  window.kcheat = function() {
+  window.kcheat = () => {
     buffer = 'kcheat';
     processBuffer();
   };
 
-  Router.route('kcheat', 'kcheat', function() {
+  Router.route('kcheat', 'kcheat', () => {
     if (window.kcheat) window.kcheat();
   });
 
@@ -89,12 +89,9 @@ function removeTouchHook() {
 
 function onTouchStart(event) {
   const touches = event.originalEvent.touches;
-
   if (touches.length !== 1) return;
-
   coords.x = touches[0].pageX;
   coords.y = touches[0].pageY;
-
   if (coords.x >= 0 && coords.x < hitArea && coords.y >= 0 && coords.y < hitArea) {
     listenType = 1;
   } else if (coords.x >= $(window).width() - hitArea && coords.x < $(window).width() && coords.y >= 0 && coords.y < hitArea) {
@@ -102,20 +99,17 @@ function onTouchStart(event) {
   } else {
     listenType = topLeftTapHold = topRightTapHold = false;
   }
+  if (!listenType) return;
+  timeoutId = setTimeout(() => {
+    // if finger still held
+    if (!listenType) return;
+    if (listenType === 1) topLeftTapHold = true;
+    else if (listenType === 2) topRightTapHold = true;
 
-  if (listenType) {
-    timeoutId = setTimeout(function() {
-      // if finger still held
-      if (listenType) {
-        if (listenType === 1) topLeftTapHold = true;
-        else if (listenType === 2) topRightTapHold = true;
-
-        if (topLeftTapHold && topRightTapHold) {
-          if (window.kcheat) window.kcheat();
-        }
-      }
-    }, 200);
-  }
+    if (topLeftTapHold && topRightTapHold) {
+      if (window.kcheat) window.kcheat();
+    }
+  }, 200);
 }
 
 function onTouchEnd(event) {
@@ -123,9 +117,8 @@ function onTouchEnd(event) {
   clearTimeout(timeoutId);
 }
 
-Adapt.once('adapt:initialize', function() {
+Adapt.once('adapt:initialize', () => {
   if (Adapt.devtools.get('_isEnabled')) return;
-
   // some plugins (e.g. bookmarking) will manipulate the router so defer the call
-  _.defer(function () { addHooks(); });
+  _.defer(() => addHooks());
 });

@@ -14,19 +14,14 @@ function onMouseUp(e) {
 
 function onKeypress(e) {
   const char = String.fromCharCode(e.which).toLowerCase();
-
-  if (mouseTarget) {
-    if (char === 'm') {
-      const model = Utils.getModelForElement(mouseTarget);
-
-      if (model) {
-        const id = model.get('_id').replace(/-/g, '');
-        window[id] = model;
-        console.log('devtools: add property window.' + id + ':');
-        console.log(model.attributes);
-      }
-    }
-  }
+  if (!mouseTarget) return;
+  if (char !== 'm') return;
+  const model = Utils.getModelForElement(mouseTarget);
+  if (!model) return;
+  const id = model.get('_id').replace(/-/g, '');
+  window[id] = model;
+  console.log('devtools: add property window.' + id + ':');
+  console.log(model.attributes);
 }
 
 function getAdaptCoreVersion() {
@@ -49,23 +44,18 @@ function getAdaptCoreVersion() {
 }
 
 const Utils = {
-  getModelForElement: function(element) {
+  getModelForElement: element => {
     const $target = $(element);
-
     if ($target.length === 0) return false;
-
     const id = $target.parents('[data-adapt-id]').data('adapt-id');
-
     return !id ? false : Adapt.findById(id);
   }
 };
 
-Adapt.once('adapt:initialize', function() {
+Adapt.once('adapt:initialize', () => {
   const str = 'Version of Adapt core detected: ' + getAdaptCoreVersion();
   const horz = getHorzLine();
-
   console.log(horz + '\nVersion of Adapt core detected: ' + getAdaptCoreVersion() + '\n' + horz);
-
   function getHorzLine() {
     let s;
     let i;
@@ -75,13 +65,11 @@ Adapt.once('adapt:initialize', function() {
   }
 });
 
-Adapt.once('adapt:initialize devtools:enable', function() {
+Adapt.once('adapt:initialize devtools:enable', () => {
   if (!Adapt.devtools.get('_isEnabled')) return;
-
   $(window).on('keypress', onKeypress);
   $(window).on('mousedown', onMouseDown);
   $(window).on('mouseup', onMouseUp);
-
   // useful for command-line debugging
   if (!window.Adapt) window.Adapt = Adapt;
 });

@@ -63,23 +63,19 @@ function computeAccessibleDescription($element) {
 
 function getAnnotationPosition($element, $annotation) {
   const targetBoundingRect = $element[0].getBoundingClientRect();
-
   const availableWidth = $('html')[0].clientWidth;
   const availableHeight = $('html')[0].clientHeight;
   const tooltipsWidth = $annotation.width();
   const tooltipsHeight = $annotation.height();
   const elementWidth = $element.width();
   const elementHeight = $element.height();
-
   const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
   const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
   const canAlignBottomRight = canAlignBottom && canAlignRight;
   const canBeContained = elementHeight === 0 || (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
-
   const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
   const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
   const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
-
   function getPosition() {
     if (canBeContained) {
       return {

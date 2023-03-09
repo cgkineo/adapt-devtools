@@ -1,5 +1,7 @@
 import Adapt from 'core/js/adapt';
 import AutoAnswer from './auto-answer';
+import data from 'core/js/data';
+import location from 'core/js/location';
 
 class PassHalfFail extends Backbone.Controller {
 
@@ -25,20 +27,19 @@ class PassHalfFail extends Backbone.Controller {
   }
 
   _completeNonQuestions () {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
-    const nonQuestions = _.filter(currentModel.findDescendantModels('components'), function(m) { return m.get('_isQuestionType') !== true; });
-
-    _.each(nonQuestions, function(item) {
+    const currentModel = data.findById(location._currentId);
+    const nonQuestions = currentModel.findDescendantModels('components').filter(m => (m.get('_isQuestionType') !== true));
+    nonQuestions.forEach(item => {
       item.set('_isComplete', true);
       item.set('_isInteractionComplete', true);
     });
   }
 
   pass (callback) {
-    let i = 0; const qs = this._questionViews; const len = qs.length;
-
+    let i = 0;
+    const qs = this._questionViews;
+    const len = qs.length;
     // this._completeNonQuestions();
-
     // async to avoid locking up the interface
     function step() {
       for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
@@ -47,17 +48,14 @@ class PassHalfFail extends Backbone.Controller {
       }
       i === len ? callback() : setTimeout(step);
     }
-
     step();
   }
 
   half (callback) {
-    const notSubmitted = function(view) { return !view.model.get('_isSubmitted'); };
-    const qs = _.shuffle(_.filter(this._questionViews, notSubmitted));
+    const notSubmitted = view => !view.model.get('_isSubmitted');
+    const qs = _.shuffle(this._questionViews.filter(notSubmitted));
     let i = 0; const len = qs.length;
-
     // this._completeNonQuestions();
-
     // async to avoid locking up the interface
     function step() {
       for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
@@ -66,15 +64,14 @@ class PassHalfFail extends Backbone.Controller {
       }
       i === len ? callback() : setTimeout(step);
     }
-
     step();
   }
 
   fail (callback) {
-    let i = 0; const qs = this._questionViews; const len = qs.length;
-
+    let i = 0;
+    const qs = this._questionViews;
+    const len = qs.length;
     // this._completeNonQuestions();
-
     // async to avoid locking up the interface
     function step() {
       for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
@@ -83,7 +80,6 @@ class PassHalfFail extends Backbone.Controller {
       }
       i === len ? callback() : setTimeout(step);
     }
-
     step();
   }
 
@@ -99,11 +95,10 @@ class PassHalfFail extends Backbone.Controller {
 
   onComponentRendered (view) {
     // check component is part of current page
-    if (view.model.has('_parentId') && view.model.findAncestor('contentObjects').get('_id') === this._currentPageId) {
-      if (view.model.get('_isQuestionType')) {
-        this._questionViews.push(view);
-      }
-    }
+    const isInPage = view.model.has('_parentId') && view.model.findAncestor('contentObjects').get('_id') === this._currentPageId;
+    const isQuestion = view.model.get('_isQuestionType');
+    if (!isInPage || !isQuestion) return;
+    this._questionViews.push(view);
   }
 
   onMouseDown (e) {
@@ -116,21 +111,15 @@ class PassHalfFail extends Backbone.Controller {
 
   onKeypress (e) {
     const char = String.fromCharCode(e.which).toLowerCase();
-
-    const perform = function(type) {
+    const perform = type => {
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
-
       const tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
-
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
-
       if (type === 'pass') this.pass(_.partial(this.onPassHalfFailComplete, tutorEnabled));
       else if (type === 'half') this.half(_.partial(this.onPassHalfFailComplete, tutorEnabled));
       else this.fail(_.partial(this.onPassHalfFailComplete, tutorEnabled));
-
       Adapt.trigger('drawer:closeDrawer');
-    }.bind(this);
-
+    };
     if (this.mouseTarget) {
       switch (char) {
         case 'p': return perform('pass');
@@ -148,7 +137,6 @@ class PassHalfFail extends Backbone.Controller {
 
   onPassHalfFailComplete (tutorEnabled) {
     console.log('onPassHalfFailComplete');
-
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
   }
 }
