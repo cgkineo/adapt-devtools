@@ -3,7 +3,7 @@ import Adapt from 'core/js/adapt';
 class TraceFocus extends Backbone.Controller {
 
   initialize () {
-    Adapt.once('adapt:initialize devtools:enable', this.onEnabled);
+    this.listenToOnce(Adapt, 'adapt:initialize devtools:enable', this.onEnabled);
   }
 
   onEnabled () {

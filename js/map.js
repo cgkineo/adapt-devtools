@@ -11,10 +11,6 @@ class MapView extends Backbone.View {
   }
 
   initialize () {
-    this.listenToOnce(Adapt, 'adapt:initialize devtools:enable', this.onEnabled);
-  }
-
-  onEnabled() {
     if (!Adapt.devtools.get('_isEnabled')) return;
     this.$('html').addClass('has-devtools-map');
     this._renderIntervalId = setInterval(this._checkRenderInterval.bind(this), 500);
@@ -232,6 +228,10 @@ class MapView extends Backbone.View {
 
 class CourseMap extends Backbone.Controller {
   initialize () {
+    this.listenToOnce(Adapt, 'adapt:initialize devtools:enable', this.onEnabled);
+  }
+
+  onEnabled() {
     const courseId = Adapt.course.get('_id');
     // a long alphanumeric identifier is likely to be Authoring Tool
     this.truncateIds = courseId.length >= 6 && /[a-z]+[0-9]+|[0-9]+[a-z]+/.test(courseId);
