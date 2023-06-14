@@ -35,6 +35,7 @@ class DevtoolsView extends Backbone.View {
       'change .auto-correct input': 'onToggleAutoCorrect',
       'change .alt-text input': 'onToggleAltText',
       'click .unlock': 'onUnlock',
+      'click .unlock-menu': 'onUnlockMenu',
       'click .open-map': 'onOpenMap',
       'click .open-spoor-log': 'onOpenSpoorLog',
       'click .complete-page': 'onCompletePage',
@@ -76,8 +77,15 @@ class DevtoolsView extends Backbone.View {
 
   _checkUnlockVisibility () {
     // check if function available and not already activated
-    if (!Adapt.devtools.get('_unlockAvailable') || Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('u-display-none');
+    if (!Adapt.devtools.get('_unlockAvailable')) {
+      return this.$('.unlock, .unlock-menu').addClass('u-display-none');
+    }
+
+    if (Adapt.devtools.get('_unlocked')) this.$('.unlock').addClass('u-display-none');
     else this.$('.unlock').toggleClass('u-display-none', !this._checkForLocks());
+
+    if (Adapt.devtools.get('_unlockedMenu')) this.$('.unlock-menu').addClass('u-display-none');
+    else this.$('.unlock-menu').toggleClass('u-display-none', !this._checkForMenuLocks());
   }
 
   _checkForLocks () {
@@ -94,8 +102,25 @@ class DevtoolsView extends Backbone.View {
     return false;
   }
 
+  _checkForMenuLocks () {
+    const hasCheckLocking = (typeof AdaptModel.prototype.checkLocking !== 'function');
+    if (hasCheckLocking) return location._contentType === 'menu';
+
+    const hasLock = function(model) { return model.has('_lockType'); };
+
+    if (hasLock(Adapt.course)) return true;
+    if (Adapt.contentObjects.some(hasLock)) return true;
+
+    return false;
+  }
+
   onUnlock () {
     Adapt.devtools.set('_unlocked', true);
+    this._checkUnlockVisibility();
+  }
+
+  onUnlockMenu () {
+    Adapt.devtools.set('_unlockedMenu', true);
     this._checkUnlockVisibility();
   }
 
