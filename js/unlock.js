@@ -2,22 +2,35 @@ import Adapt from 'core/js/adapt';
 import Router from 'core/js/router';
 import location from 'core/js/location';
 
-function breakCoreLocking() {
+function breakLocks(collection) {
+  collection.each(model => {
+    model.unset('_lockType');
+    model.unset('_isLocked');
+  });
+}
+
+function breakCoreMenuLocking() {
   Adapt.course.unset('_lockType');
   breakLocks(Adapt.contentObjects);
+}
+
+function breakCoreLocking() {
+  breakCoreMenuLocking();
   breakLocks(Adapt.articles);
   breakLocks(Adapt.blocks);
-  function breakLocks(collection) {
-    collection.each(model => {
-      model.unset('_lockType');
-      model.unset('_isLocked');
-    });
-  }
 }
 
 function onUnlocked() {
   if (!Adapt.devtools.get('_unlocked')) return;
   breakCoreLocking();
+  // reload the page/menu
+  if (location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
+  else Router.handleId(location._currentId);
+}
+
+function onUnlockedMenu() {
+  if (!Adapt.devtools.get('_unlockedMenu')) return;
+  breakCoreMenuLocking();
   // reload the page/menu
   if (location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
   else Router.handleId(location._currentId);
@@ -48,5 +61,6 @@ Adapt.once('adapt:initialize devtools:enable', () => {
   if (!Adapt.devtools.get('_isEnabled')) return;
   if (!Adapt.devtools.get('_unlockAvailable')) return;
   Adapt.devtools.on('change:_unlocked', onUnlocked);
+  Adapt.devtools.on('change:_unlockedMenu', onUnlockedMenu);
   Adapt.on('menuView:preRender', onMenuPreRender);
 });
