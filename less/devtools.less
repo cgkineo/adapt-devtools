@@ -37,17 +37,17 @@
     .icon-checkbox-unchecked;
   }
 
-  &__item-label.is-selected {
-    .devtools__item-icon .icon {
-      .icon-checkbox-checked;
-    }
+  &__item-label.is-selected &__item-icon .icon {
+    .icon-checkbox-checked;
+  }
+
+  &__item-title {
+    display: block;
   }
 }
 
 // --------------------------------------------------
-// --------------------------------------------------
 // THEME
-// --------------------------------------------------
 // --------------------------------------------------
 .devtools {
   color: @drawer-inverted;
