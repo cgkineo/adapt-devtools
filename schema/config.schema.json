@@ -1,0 +1,34 @@
+{
+  "$anchor": "devTools-config",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$patch": {
+    "source": {
+      "$ref": "config"
+    },
+    "with": {
+      "properties": {
+        "_devtools": {
+          "type": "object",
+          "title": "Dev tools",
+          "default": {},
+          "properties": {
+            "_isEnabled": {
+              "type": "boolean",
+              "title": "Enable dev tools",
+              "description": "Set to true to enable 'dev tools' features. Remember to disable/uninstall before going live!",
+              "default": false,
+              "_backboneForms": {
+                "type": "Boolean",
+                "options": [
+                  false,
+                  true
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
