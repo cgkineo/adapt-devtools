@@ -6,7 +6,7 @@ import location from 'core/js/location';
 class PassHalfFail extends Backbone.Controller {
 
   initialize () {
-    Adapt.on('app:dataReady devtools:enable', this.onEnabled);
+    this.listenTo(Adapt, 'app:dataReady devtools:enable', this.onEnabled);
   }
 
   onEnabled() {
