@@ -7,6 +7,7 @@ class PassHalfFail extends Backbone.Controller {
 
   initialize () {
     this.listenTo(Adapt, 'app:dataReady devtools:enable', this.onEnabled);
+    PassHalfFail.instance = this;
   }
 
   onEnabled() {
@@ -42,7 +43,7 @@ class PassHalfFail extends Backbone.Controller {
     // this._completeNonQuestions();
     // async to avoid locking up the interface
     function step() {
-      for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
+      for (let j = 0, count = Math.min(PassHalfFail.instance.syncIterations, len - i); j < count; i++, j++) {
         AutoAnswer.answer(qs[i]);
         if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
       }
@@ -58,7 +59,7 @@ class PassHalfFail extends Backbone.Controller {
     // this._completeNonQuestions();
     // async to avoid locking up the interface
     function step() {
-      for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
+      for (let j = 0, count = Math.min(PassHalfFail.instance.syncIterations, len - i); j < count; i++, j++) {
         AutoAnswer.answer(qs[i], i % 2 === 0);
         if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
       }
@@ -74,7 +75,7 @@ class PassHalfFail extends Backbone.Controller {
     // this._completeNonQuestions();
     // async to avoid locking up the interface
     function step() {
-      for (let j = 0, count = Math.min(PassHalfFail.syncIterations, len - i); j < count; i++, j++) {
+      for (let j = 0, count = Math.min(PassHalfFail.instance.syncIterations, len - i); j < count; i++, j++) {
         AutoAnswer.answer(qs[i], true);
         if (!qs[i].model.get('_isSubmitted')) qs[i].$('.js-btn-action').trigger('click');
       }
@@ -138,6 +139,14 @@ class PassHalfFail extends Backbone.Controller {
   onPassHalfFailComplete (tutorEnabled) {
     console.log('onPassHalfFailComplete');
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
+  }
+
+  static set instance(instance) {
+    this._instance = instance;
+  }
+
+  static get instance() {
+    return this._instance;
   }
 }
 
