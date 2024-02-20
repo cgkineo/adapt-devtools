@@ -248,9 +248,11 @@ class CourseMap extends Backbone.Controller {
       if (isStringEmpty(t)) t = this.get('_id');
       
       // Strip HTML tags
-      const title = document.createElement("div");
+      const title = document.createElement('div');
       title.innerHTML = t;
-      return title.textContent || title.innerText || "";
+      t = $(title).text();
+
+      return t;
     }
     function when(prop, options) {
       if (this.get(prop)) {
