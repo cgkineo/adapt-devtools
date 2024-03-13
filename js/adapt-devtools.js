@@ -384,7 +384,6 @@ class DevtoolsNavigationView extends Backbone.View {
     $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
     if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', this.onDevtoolsClicked.bind(this));
     else this.$el.find('a, button').on('click', this.onDevtoolsClicked.bind(this));
-    // keep drawer item to left of PLP, resources, close button etc
     this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
     // ensure render occurs at least once (_isReady will not change to true on menus that exclude content objects)
     this.listenToOnce(Adapt, 'pageView:postRender menuView:postRender', this.render);
