@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import wait from 'core/js/wait';
+import drawer from 'core/js/drawer';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
 import DevtoolsModel from './devtools-model';
@@ -413,7 +414,7 @@ class DevtoolsNavigationView extends Backbone.View {
 
   onDevtoolsClicked (event) {
     if (event && event.preventDefault) event.preventDefault();
-    Adapt.drawer.triggerCustomView(new DevtoolsView().$el, false);
+    drawer.triggerCustomView(new DevtoolsView().$el, false);
   }
 
 }
