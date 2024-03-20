@@ -1,6 +1,7 @@
 // to go in config.json
 "_devtools": {
-  "_isEnabled": true
+  "_isEnabled": true,
+  "_debugFile": ""
 }
 
 /*
