@@ -101,6 +101,5 @@ The core Adapt object can be reached via window.a for convenience.
 To display the underlying model for any content object, article, block or component, with the browser's console open: hold down the left mouse button on the relevant element then press <kbd>m</kbd>. Note that doing so also creates a global variable named according to the model's unique identifier.
 
 ----------------------------
-**Framework versions:** 5+ <br>
 **Author / maintainer:** Kineo <br>
 **Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, Safari 14 for macOS/iOS/iPadOS, Opera <br>
