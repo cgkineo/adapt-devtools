@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import AdaptModel from 'core/js/models/adaptModel';
 import QuestionView from 'core/js/views/questionView';
+import drawer from 'core/js/drawer';
 
 let mouseTarget = null;
 
@@ -22,6 +23,20 @@ function onKeypress(e) {
   window[id] = model;
   console.log('devtools: add property window.' + id + ':');
   console.log(model.attributes);
+}
+
+function onDrawerOpened() {
+  if (drawer?._drawerView?._customView?.get(0).className !== 'devtools') return;
+
+  // Useful for command-line debugging
+  if (!window.Adapt) {
+    window.Adapt = Adapt;
+  }
+}
+
+function onDrawerClosed() {
+  // Remove Adapt reference when drawer closes
+  window.Adapt = null;
 }
 
 function getAdaptCoreVersion() {
@@ -70,8 +85,10 @@ Adapt.once('adapt:initialize devtools:enable', () => {
   $(window).on('keypress', onKeypress);
   $(window).on('mousedown', onMouseDown);
   $(window).on('mouseup', onMouseUp);
-  // useful for command-line debugging
-  if (!window.Adapt) window.Adapt = Adapt;
+  Adapt.listenTo(Adapt, {
+    'drawer:opened': onDrawerOpened,
+    'drawer:closed': onDrawerClosed
+  });
 });
 
 export default Utils;
