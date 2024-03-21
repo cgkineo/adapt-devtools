@@ -29,9 +29,7 @@ function onDrawerOpened() {
   if (drawer?._drawerView?._customView?.get(0).className !== 'devtools') return;
 
   // Useful for command-line debugging
-  if (!window.Adapt) {
-    window.Adapt = Adapt;
-  }
+  if (!window.Adapt) { window.Adapt = Adapt; }
 }
 
 function onDrawerClosed() {
