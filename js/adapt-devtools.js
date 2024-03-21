@@ -1,5 +1,6 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
+import drawer from 'core/js/drawer';
 import wait from 'core/js/wait';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
@@ -405,7 +406,7 @@ class DevtoolsNavigationView extends Backbone.View {
   }
 
   onContentRendered (view) {
-    if (view.model.get('_id') === Adapt.location._currentId) {
+    if (view.model.get('_id') === location._currentId) {
       this.stopListening(view.model, 'change:_isReady', this.deferredRender);
       this.listenToOnce(view.model, 'change:_isReady', this.deferredRender);
     }
@@ -413,7 +414,7 @@ class DevtoolsNavigationView extends Backbone.View {
 
   onDevtoolsClicked (event) {
     if (event && event.preventDefault) event.preventDefault();
-    Adapt.drawer.triggerCustomView(new DevtoolsView().$el, false);
+    drawer.triggerCustomView(new DevtoolsView().$el, false);
   }
 
 }

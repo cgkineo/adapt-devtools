@@ -71,10 +71,6 @@
     background-color: @drawer;
   }
 
-  &__item {
-    margin-bottom: @item-margin / 2;
-  }
-
   &__item-label {
     background-color: @drawer-item;
     color: @drawer-item-inverted;
@@ -118,7 +114,17 @@
   &__item.is-tip {
     padding: @item-padding / 2;
     .drawer-item-body;
-    font-style: italic;
+
+    ul {
+      padding: 0.5rem 0 0 1rem;
+      margin: 0;
+    }
+
+    code, kbd {
+      font-style: normal;
+      background: rgba(0,0,0,0.6);
+      padding: 0.1rem;
+    }
   }
 
   .touch &__item.is-tip.auto-correct {
