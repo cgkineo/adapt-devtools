@@ -83,7 +83,7 @@ Adapt.once('adapt:initialize devtools:enable', () => {
   $(window).on('keypress', onKeypress);
   $(window).on('mousedown', onMouseDown);
   $(window).on('mouseup', onMouseUp);
-  Adapt.listenTo(Adapt, {
+  Adapt.on({
     'drawer:opened': onDrawerOpened,
     'drawer:closed': onDrawerClosed
   });
