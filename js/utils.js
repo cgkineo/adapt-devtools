@@ -28,7 +28,7 @@ function onKeypress(e) {
 function onDrawerOpened() {
   if (drawer?._drawerView?._customView?.get(0).className !== 'devtools') return;
 
-  // Useful for command-line debugging
+  // Useful for browser console debugging
   if (!window.Adapt) { window.Adapt = Adapt; }
 }
 
