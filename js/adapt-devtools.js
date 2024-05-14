@@ -1,6 +1,8 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import wait from 'core/js/wait';
+import drawer from 'core/js/drawer';
+import logging from 'core/js/logging';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
 import DevtoolsModel from './devtools-model';
@@ -413,7 +415,7 @@ class DevtoolsNavigationView extends Backbone.View {
 
   onDevtoolsClicked (event) {
     if (event && event.preventDefault) event.preventDefault();
-    Adapt.drawer.triggerCustomView(new DevtoolsView().$el, false);
+    drawer.triggerCustomView(new DevtoolsView().$el, false);
   }
 
 }
@@ -434,6 +436,8 @@ Adapt.once('adapt:initialize devtools:enable', () => {
 });
 
 data.on('loaded', async () => {
+  if (!Adapt.devtools.get('_debugFile')) return;
+
   const isDescendant = (model, ancestor) => {
     let parent;
     while ((parent = data._byAdaptID[model.get('_parentId')])) {
@@ -471,9 +475,11 @@ data.on('loaded', async () => {
   wait.begin();
 
   try {
-    const devConfig = await data.getJSON('dev.json');
+    const debugFile = Adapt.devtools.get('_debugFile');
+    const devConfig = await data.getJSON(debugFile);
     processConfig(devConfig);
   } catch (err) {
+    logging.warn(`Dev Tools error loading '_debugFile'. ${err}`);
   } finally {
     wait.end();
   }

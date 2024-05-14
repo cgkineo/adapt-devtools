@@ -16,6 +16,22 @@ Once installed, a button is added to the navigation bar. By default, this is a c
 
 **Important:** if using [adapt-contrib-trickle](https://github.com/adaptlearning/adapt-contrib-trickle), please ensure that you are using the latest version.
 
+## Attributes
+
+The attributes listed below are used in *config.json*.
+
+### **\_devtools** (object)
+
+The Dev Tools object contains the following settings:
+
+#### **\_isEnabled** (boolean)
+
+Controls whether the Dev Tools extension is enabled
+
+#### **\_debugFile** (string)
+
+Path to an optional JSON file used for debugging (e.g. *course/dev.json*). This file contains the property `_modelsToRemove` which represents the identifiers of models (and their descendants) to be completely removed from the course. See *example.json*.
+
 ## General options
 
 ### Question hinting
