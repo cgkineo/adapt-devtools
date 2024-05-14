@@ -32,11 +32,6 @@ function onDrawerOpened() {
   if (!window.Adapt) { window.Adapt = Adapt; }
 }
 
-function onDrawerClosed() {
-  // Remove Adapt reference when drawer closes
-  window.Adapt = null;
-}
-
 function getAdaptCoreVersion() {
   try {
     if (Adapt.build && Adapt.build.has('package')) return Adapt.build.get('package').version || '>=v3.0.0';
@@ -84,8 +79,7 @@ Adapt.once('adapt:initialize devtools:enable', () => {
   $(window).on('mousedown', onMouseDown);
   $(window).on('mouseup', onMouseUp);
   Adapt.on({
-    'drawer:opened': onDrawerOpened,
-    'drawer:closed': onDrawerClosed
+    'drawer:opened': onDrawerOpened
   });
 });
 
