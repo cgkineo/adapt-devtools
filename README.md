@@ -96,10 +96,10 @@ Toggles trace focus.
 
 ## Developer tools
 
-While the Dev Tools drawer is *open*, the core Adapt object can be reached via the `Adapt` reference for convenience.
+Once the Dev Tools drawer has been *opened* for the first time, the core Adapt object can be reached via the `Adapt` reference for the remainder of the session.
 
 To display the underlying model for any content object, article, block or component, with the browser's console open: hold down the left mouse button on the relevant element then press <kbd>m</kbd>. Note that doing so also creates a global variable named according to the model's unique identifier.
 
 ----------------------------
 **Author / maintainer:** Kineo <br>
-**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, Safari 14 for macOS/iOS/iPadOS, Opera <br>
+**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, Safari for macOS/iOS/iPadOS, Opera <br>
