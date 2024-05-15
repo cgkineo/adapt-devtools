@@ -2,7 +2,6 @@ import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import drawer from 'core/js/drawer';
 import wait from 'core/js/wait';
-import drawer from 'core/js/drawer';
 import logging from 'core/js/logging';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
