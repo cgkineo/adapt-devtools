@@ -34,22 +34,7 @@ function onDrawerOpened() {
 }
 
 function getAdaptCoreVersion() {
-  try {
-    if (Adapt.build && Adapt.build.has('package')) return Adapt.build.get('package').version || '>=v3.0.0';
-    // v2.2.4-v2.2.5 not possible to distinguish
-    if (typeof AdaptModel.prototype.checkCompletionStatusFor === 'function') return '>=v2.2.3';
-    if (typeof AdaptModel.prototype.setCompletionStatus === 'function') return '>=v2.0.10';
-    if (typeof AdaptModel.prototype.checkLocking === 'function') return 'v2.0.9';
-    if (typeof Adapt.checkingCompletion === 'function') return 'v2.0.8';
-    if (typeof AdaptModel.prototype.getParents === 'function') return 'v2.0.7';
-    if ($.a11y && Object.prototype.hasOwnProperty.call($.a11y.options, 'isIOSFixesEnabled')) return 'v2.0.5-v2.0.6';
-    if (Adapt instanceof Backbone.Model) return 'v2.0.4';
-    if (typeof QuestionView.prototype.recordInteraction === 'function') return 'v2.0.2-v2.0.3';
-    if (typeof data.findById === 'function') return 'v2.0.0-v2.0.1';
-    return 'v1.x';
-  } catch (e) {
-    return 'unknown version';
-  }
+  return Adapt.build?.get?.('package')?.version ?? 'unknown version';
 }
 
 const Utils = {
