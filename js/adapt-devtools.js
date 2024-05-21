@@ -415,7 +415,7 @@ class DevtoolsNavigationView extends Backbone.View {
 
   onDevtoolsClicked (event) {
     if (event && event.preventDefault) event.preventDefault();
-    drawer.triggerCustomView(new DevtoolsView().$el, false);
+    drawer.openCustomView(new DevtoolsView().$el, false);
   }
 
 }
