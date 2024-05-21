@@ -273,7 +273,7 @@ class DevtoolsView extends Backbone.View {
   /*************************************************/
 
   _checkCompletePageVisibility () {
-    const currentModel = data.findById(Adapt.location._currentId);
+    const currentModel = data.findById(location._currentId);
     if (currentModel.get('_type') !== 'page') {
       this.$('.complete-page').addClass('u-display-none');
       return;
@@ -283,7 +283,7 @@ class DevtoolsView extends Backbone.View {
   }
 
   onCompletePage (e) {
-    const currentModel = data.findById(Adapt.location._currentId);
+    const currentModel = data.findById(location._currentId);
     if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
     const incomplete = currentModel.findDescendantModels('components', { where: { _isInteractionComplete: false } });
     incomplete.forEach(component => {
@@ -306,7 +306,7 @@ class DevtoolsView extends Backbone.View {
   /*************************************************/
 
   _checkCompleteMenuVisibility () {
-    const currentModel = data.findById(Adapt.location._currentId);
+    const currentModel = data.findById(location._currentId);
     if (currentModel.get('_type') !== 'menu' && currentModel.get('_type') !== 'course') {
       this.$('.complete-menu').addClass('u-display-none');
       return;
@@ -316,7 +316,7 @@ class DevtoolsView extends Backbone.View {
   }
 
   onCompleteMenu (e) {
-    const currentModel = Adapt.findById(Adapt.location._currentId);
+    const currentModel = data.findById(location._currentId);
     if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
     const incomplete = currentModel.findDescendantModels('components', { where: { _isComplete: false } });
     _.invoke(incomplete, 'set', '_isComplete', true);
@@ -328,7 +328,7 @@ class DevtoolsView extends Backbone.View {
   /************************************************************/
 
   _checkPassHalfFailVisibility () {
-    const currentModel = data.findById(Adapt.location._currentId);
+    const currentModel = data.findById(location._currentId);
     if (currentModel.get('_type') !== 'page') {
       this.$('.pass, .half, .fail').addClass('u-display-none');
       return;

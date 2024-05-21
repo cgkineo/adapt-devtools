@@ -1,5 +1,6 @@
 import Adapt from 'core/js/adapt';
 import Router from 'core/js/router';
+import location from 'core/js/location';
 
 let buffer = '';
 let isMouseDown = false;
@@ -42,8 +43,8 @@ function enable() {
   Adapt.trigger('devtools:enable');
 
   // reload the menu/page
-  if (Adapt.location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
-  else Router.handleId(Adapt.location._currentId);
+  if (location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
+  else Router.handleId(location._currentId);
 }
 
 function addHooks() {

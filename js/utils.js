@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import AdaptModel from 'core/js/models/adaptModel';
 import QuestionView from 'core/js/views/questionView';
+import data from 'core/js/data';
 import drawer from 'core/js/drawer';
 
 let mouseTarget = null;
@@ -44,7 +45,7 @@ function getAdaptCoreVersion() {
     if ($.a11y && Object.prototype.hasOwnProperty.call($.a11y.options, 'isIOSFixesEnabled')) return 'v2.0.5-v2.0.6';
     if (Adapt instanceof Backbone.Model) return 'v2.0.4';
     if (typeof QuestionView.prototype.recordInteraction === 'function') return 'v2.0.2-v2.0.3';
-    if (typeof Adapt.findById === 'function') return 'v2.0.0-v2.0.1';
+    if (typeof data.findById === 'function') return 'v2.0.0-v2.0.1';
     return 'v1.x';
   } catch (e) {
     return 'unknown version';
@@ -56,7 +57,7 @@ const Utils = {
     const $target = $(element);
     if ($target.length === 0) return false;
     const id = $target.parents('[data-adapt-id]').data('adapt-id');
-    return !id ? false : Adapt.findById(id);
+    return !id ? false : data.findById(id);
   }
 };
 
