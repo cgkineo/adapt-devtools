@@ -25,7 +25,7 @@ class ToggleBanking extends Backbone.Controller {
   }
 
   getBankedAssessmentsInCurrentPage() {
-    const pageModel = data.findById(Adapt.location._currentId);
+    const pageModel = data.findById(location._currentId);
     const f = m => {
       const config = this.getConfig(m);
       if (!config._assessmentBankDisabled &&

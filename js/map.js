@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
+import location from 'core/js/location';
 import Router from 'core/js/router';
 
 class MapView extends Backbone.View {
@@ -105,8 +106,8 @@ class MapView extends Backbone.View {
   * affected article(s)|block(s).
   */
   navigateAndDisableTrickleUpTo (id) {
-    const model = Adapt.findById(id);
-    const pageModel = Adapt.findById(Adapt.location._currentId);
+    const model = data.findById(id);
+    const pageModel = data.findById(location._currentId);
     // first ensure page incomplete prompt won't activate
     this._disablePageIncompletePrompt(pageModel);
     // now navigate
@@ -133,8 +134,8 @@ class MapView extends Backbone.View {
             this.checkVisibility(id);
           });
         });
-        if (Adapt.location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
-        else Router.handleId(Adapt.location._currentId);
+        if (location._currentId === Adapt.course.get('_id')) Router.handleRoute ? Router.handleRoute() : Router.handleCourse();
+        else Router.handleId(location._currentId);
       } else {
         this.listenToOnce(Adapt, 'pageView:ready', () => {
           _.defer(() => {
@@ -196,7 +197,7 @@ class MapView extends Backbone.View {
   }
 
   checkVisibility (id) {
-    let model = Adapt.findById(id);
+    let model = data.findById(id);
     if ($('.' + id).is(':visible') || model === Adapt.course) return;
     while (!$('.' + id).is(':visible') && model !== Adapt.course) {
       model = model.getParent();
