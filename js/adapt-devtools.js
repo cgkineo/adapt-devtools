@@ -5,6 +5,7 @@ import wait from 'core/js/wait';
 import logging from 'core/js/logging';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
+import ItemsComponentModel from 'core/js/models/itemsComponentModel';
 import DevtoolsModel from './devtools-model';
 import PassHalfFail from './pass-half-fail';
 import ToggleBanking from './toggle-banking';
@@ -294,6 +295,11 @@ class DevtoolsView extends Backbone.View {
           _score: 1
         });
         component.set('_attemptsLeft', Math.max(0, component.set('_attempts') - 1));
+      }
+      // console.log(component);
+      const isPresentationComponentWithItems = (!component.isTypeGroup('question') && component instanceof ItemsComponentModel);
+      if (isPresentationComponentWithItems) {
+        component.getChildren().forEach(child => child.set('_isVisited', true));
       }
       component.set('_isComplete', true);
       component.set(currentModel.has('_isInteractionsComplete') ? '_isInteractionsComplete' : '_isInteractionComplete', true);
