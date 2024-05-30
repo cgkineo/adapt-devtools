@@ -296,7 +296,6 @@ class DevtoolsView extends Backbone.View {
         });
         component.set('_attemptsLeft', Math.max(0, component.set('_attempts') - 1));
       }
-      // console.log(component);
       const isPresentationComponentWithItems = (!component.isTypeGroup('question') && component instanceof ItemsComponentModel);
       if (isPresentationComponentWithItems) {
         component.getChildren().forEach(child => child.set('_isVisited', true));
