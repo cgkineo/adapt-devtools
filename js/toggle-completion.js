@@ -2,6 +2,7 @@ import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import location from 'core/js/location';
 import Utils from './utils';
+import ItemsComponentModel from 'core/js/models/itemsComponentModel';
 
 let mouseTarget = null;
 
@@ -24,6 +25,10 @@ function complete(element) {
   const model = Utils.getModelForElement(element) || data.findById(location._currentId);
   if (!model) return;
   function doCompletion(component) {
+    const isPresentationComponentWithItems = (!component.isTypeGroup('question') && component instanceof ItemsComponentModel);
+    if (isPresentationComponentWithItems) {
+      component.getChildren().forEach(child => child.set('_isVisited', true));
+    }
     component.set('_isComplete', true);
   }
   const descendantComponents = model.findDescendantModels('components');
