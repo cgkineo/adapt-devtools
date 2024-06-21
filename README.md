@@ -40,7 +40,7 @@ Allows the user to toggle visual indicators which reveal how to answer correctly
 
 ### Auto correct
 
-When enabled, automatically provides the correct answer when submit is selected. If not enabled, the user can control-click (or option-click for Mac users) the submit button to have the correct answer provided. Standard question components will be answered naturally; revealing the correct responses, feedback and marking if applicable. The plugin will not attempt to do this for bespoke questions or questions that do not have correct answers (e.g. confidence slider), but their models will still be modified to indicate that they are complete and correct.
+When enabled, automatically provides the correct answer when submit is selected. If not enabled, the user can Control+Click or Alt+Click on Windows / Option+Click for macOS the submit button to have the correct answer provided. Standard question components will be answered naturally; revealing the correct responses, feedback and marking if applicable. The plugin will not attempt to do this for bespoke questions or questions that do not have correct answers (e.g. confidence slider), but their models will still be modified to indicate that they are complete and correct.
 
 ### Tutor
 
@@ -56,7 +56,7 @@ Once selected adapt-devtools will disable Adapt core locking (>=v2.0.9) througho
 
 ### Course map
 
-Select this button to reveal an interactive diagram of the course structure. The diagram will reveal all structural elements (content objects, articles, blocks and components) arranged in an intuitive way, reflecting both the hierarchical relationship of the elements and the vertical arrangement of content within each page. The map can be used to navigate directly to any element in the course. Performing a control-click (or option-click for Mac users) will reveal the model of the selected course element in the browser console.
+Select this button to reveal an interactive diagram of the course structure. The diagram will reveal all structural elements (content objects, articles, blocks and components) arranged in an intuitive way, reflecting both the hierarchical relationship of the elements and the vertical arrangement of content within each page. The map can be used to navigate directly to any element in the course. Performing a Control+Click or Alt+Click on Windows / Option+Click for macOS will reveal the model of the selected course element in the browser console.
 
 The course map uses the following legend:
 
