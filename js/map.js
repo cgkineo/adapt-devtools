@@ -84,7 +84,7 @@ class MapView extends Backbone.View {
     let id = $target.attr('href').slice(1);
     const model = data.findById(id);
     e.preventDefault();
-    if (e.ctrlKey && this.el.defaultView) {
+    if ((e.ctrlKey || e.altKey) && this.el.defaultView) {
       id = id.replace(/-/g, '');
       this.el.defaultView[id] = model;
       this.el.defaultView.console.log('devtools: add property window.' + id + ':');

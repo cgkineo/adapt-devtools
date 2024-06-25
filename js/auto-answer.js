@@ -36,9 +36,9 @@ class AutoAnswer extends Backbone.Controller {
   onQuestionMouseDown (view, e) {
     // remove hinting if enabled
     if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
-    if ((e.ctrlKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
+    if ((e.ctrlKey && !e.shiftKey) || (e.altKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
       this.answer(view);
-    } else if (e.ctrlKey && e.shiftKey) {
+    } else if ((e.ctrlKey && e.shiftKey) || (e.altKey && e.shiftKey)) {
       this.answer(view, true);
     }
   }
