@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import location from 'core/js/location';
+import logging from 'core/js/logging';
 import Utils from './utils';
 
 let mouseTarget = null;
@@ -28,11 +29,11 @@ function complete(element) {
   }
   const descendantComponents = model.findDescendantModels('components');
   if (!descendantComponents || descendantComponents.length === 0) {
-    console.log('devtools: completing', model.get('_id'));
+    logging.debug('devtools: completing', model.get('_id'));
     doCompletion(model);
     return;
   }
-  console.log('devtools: completing all components in', model.get('_id'));
+  logging.debug('devtools: completing all components in', model.get('_id'));
   descendantComponents.forEach(model => doCompletion(model));
 }
 
@@ -42,11 +43,11 @@ function reset(element) {
 
   const descendantComponents = model.findDescendantModels('components');
   if (!descendantComponents || descendantComponents.length === 0) {
-    console.log('devtools: resetting', model.get('_id'));
+    logging.debug('devtools: resetting', model.get('_id'));
     model.reset(true, true);
     return;
   }
-  console.log('devtools: resetting all components in', model.get('_id'));
+  logging.debug('devtools: resetting all components in', model.get('_id'));
   descendantComponents.forEach(model => {
     model.reset(true, true);
   });

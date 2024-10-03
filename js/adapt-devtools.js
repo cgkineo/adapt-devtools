@@ -353,7 +353,7 @@ class DevtoolsView extends Backbone.View {
   }
 
   onPassHalfFailComplete (tutorEnabled) {
-    console.log('onPassHalfFailComplete');
+    logging.debug('onPassHalfFailComplete');
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
     $('.js-loading').hide();
   }

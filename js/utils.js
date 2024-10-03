@@ -1,8 +1,7 @@
 import Adapt from 'core/js/adapt';
-import AdaptModel from 'core/js/models/adaptModel';
-import QuestionView from 'core/js/views/questionView';
 import data from 'core/js/data';
 import drawer from 'core/js/drawer';
+import logging from 'core/js/logging';
 
 let mouseTarget = null;
 
@@ -22,8 +21,8 @@ function onKeypress(e) {
   if (!model) return;
   const id = model.get('_id').replace(/-/g, '');
   window[id] = model;
-  console.log('devtools: add property window.' + id + ':');
-  console.log(model.attributes);
+  logging.debug('devtools: add property window.' + id + ':');
+  logging.debug(model.attributes);
 }
 
 function onDrawerOpened() {
@@ -49,7 +48,7 @@ const Utils = {
 Adapt.once('adapt:initialize', () => {
   const str = 'Version of Adapt core detected: ' + getAdaptCoreVersion();
   const horz = getHorzLine();
-  console.log(horz + '\nVersion of Adapt core detected: ' + getAdaptCoreVersion() + '\n' + horz);
+  logging.debug('\n' + horz + '\nVersion of Adapt core detected: ' + getAdaptCoreVersion() + '\n' + horz);
   function getHorzLine() {
     let s;
     let i;

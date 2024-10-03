@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import location from 'core/js/location';
+import logging from 'core/js/logging';
 
 class Hinting extends Backbone.Controller {
 
@@ -142,7 +143,7 @@ class Hinting extends Backbone.Controller {
   }
 
   setPpqHinting ($el, model, hintingEnabled) {
-    console.log('setPpqHinting', hintingEnabled);
+    logging.debug('setPpqHinting', hintingEnabled);
     if (model.get('_developerMode')) return;
     $el.find('.ppq-correct-zone').toggleClass('display-none', !hintingEnabled);
     $el.find('.ppq-pinboard').toggleClass('developer-mode', hintingEnabled);

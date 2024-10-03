@@ -1,5 +1,6 @@
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
+import logging from 'core/js/logging';
 
 function onShowFeedback() {
   // trickle waits for tutor to close so pretend that this happens
@@ -42,7 +43,7 @@ function onFeedbackButtonClicked(e) {
     hushTutor();
     return;
   }
-  console.error('devtools:onFeedbackButtonClicked: malformed component class name');
+  logging.error('devtools:onFeedbackButtonClicked: malformed component class name');
 }
 
 Adapt.once('adapt:initialize devtools:enable', () => {
@@ -53,6 +54,6 @@ Adapt.once('adapt:initialize devtools:enable', () => {
     Adapt.devtools.on('change:_feedbackEnabled', onFeedbackToggled);
     return;
   }
-  console.warn('devtools: no tutor or multiple registrants of questionView:showFeedback so disabling ability to toggle feedback.');
+  logging.warn('devtools: no tutor or multiple registrants of questionView:showFeedback so disabling ability to toggle feedback.');
   Adapt.devtools.set('_toggleFeedbackAvailable', false);
 });

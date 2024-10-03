@@ -2,6 +2,7 @@ import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 import data from 'core/js/data';
 import location from 'core/js/location';
+import logging from 'core/js/logging';
 import Router from 'core/js/router';
 
 class MapView extends Backbone.View {
@@ -28,7 +29,7 @@ class MapView extends Backbone.View {
     // var startTime = new Date().getTime();
     const template = Handlebars.templates.devtoolsMap;
     this.$('body').html(template(data));
-    // console.log('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
+    // logging.debug('adapt-devtools: map rendered in ' + ((new Date().getTime())-startTime) + ' ms');
   }
 
   remove () {
@@ -87,8 +88,8 @@ class MapView extends Backbone.View {
     if ((e.ctrlKey || e.altKey) && this.el.defaultView) {
       id = id.replace(/-/g, '');
       this.el.defaultView[id] = model;
-      this.el.defaultView.console.log('devtools: add property window.' + id + ':');
-      this.el.defaultView.console.log(model);
+      this.el.defaultView.logging.debug('devtools: add property window.' + id + ':');
+      this.el.defaultView.logging.debug(model);
     } else if (e.shiftKey) {
       this.navigateAndDisableTrickle(id);
     } else {
@@ -119,7 +120,7 @@ class MapView extends Backbone.View {
       // disable trickle on all preceeding article(s)|block(s)
       for (let i = 0, count = siblings.indexOf(level); i < count; i++) {
         sibling = siblings.at(i);
-        console.log('disabling trickle on ' + sibling.get('_id'));
+        logging.debug('disabling trickle on ' + sibling.get('_id'));
         if (sibling.has('_trickle')) {
           sibling.get('_trickle')._isEnabled = false;
         } else {
@@ -203,7 +204,7 @@ class MapView extends Backbone.View {
       model = model.getParent();
       id = model.get('_id');
     }
-    console.log('adapt-devtools::checkVisibility scrolling to ancestor ' + id);
+    logging.debug('adapt-devtools::checkVisibility scrolling to ancestor ' + id);
     Router.navigateToElement($('.' + id));
   }
 }
@@ -247,7 +248,7 @@ class CourseMap extends Backbone.Controller {
       let t = this.get('displayTitle');
       if (isStringEmpty(t)) t = this.get('title');
       if (isStringEmpty(t)) t = this.get('_id');
-      
+
       // Strip HTML tags
       t = $(`<div>${t}</div>`).text();
 
@@ -291,12 +292,12 @@ class CourseMap extends Backbone.Controller {
   }
 
   onMapClosed () {
-    console.log('onMapClosed');
+    logging.debug('onMapClosed');
     this.mapWindow = null;
   }
 
   onMapLoaded (mapWindow) {
-    console.log('onMapLoaded');
+    logging.debug('onMapLoaded');
     this.mapWindow = mapWindow;
     this.mapWindow.focus();
     $('html', this.mapWindow.document).addClass($('html', window.document).attr('class'));

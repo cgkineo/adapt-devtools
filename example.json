@@ -1,11 +1,11 @@
-// to go in config.json
+// config.json
 "_devtools": {
   "_isEnabled": true,
   "_debugFile": ""
 }
 
 /*
-  optionally, define dev.json in dev folder
+  _debugFile example (e.g. dev.json)
 
   _modelsToRemove - the identifiers of models (and their descendants) to be completely removed from the course
 */
