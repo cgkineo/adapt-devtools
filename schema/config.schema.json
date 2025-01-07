@@ -15,8 +15,8 @@
           "properties": {
             "_isEnabled": {
               "type": "boolean",
-              "title": "Enable dev tools",
-              "description": "Set to true to enable 'dev tools' features. Remember to disable/uninstall before going live!",
+              "title": "Show dev tools in nav bar",
+              "description": "Set to true to show 'dev tools' in the navigation bar. Remember to disable/uninstall before going live!",
               "default": false,
               "_backboneForms": {
                 "type": "Boolean",
