@@ -1,8 +1,9 @@
 import Adapt from 'core/js/adapt';
+import logging from 'core/js/logging';
 
 function onTrickleBegun() {
   if (!Adapt.devtools.get('_trickleEnabled')) {
-    console.log('Trickle started');
+    logging.debug('Trickle started');
     Adapt.devtools.set('_trickleEnabled', true);
     // listen for user request to end trickle
     Adapt.devtools.once('change:_trickleEnabled', onTrickleChange);
@@ -10,7 +11,7 @@ function onTrickleBegun() {
 }
 
 function onTrickleEnded() {
-  console.log('Trickle ended');
+  logging.debug('Trickle ended');
   Adapt.devtools.off('change:_trickleEnabled', onTrickleChange);
   Adapt.devtools.set('_trickleEnabled', false);
 }

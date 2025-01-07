@@ -1,5 +1,6 @@
 import Adapt from 'core/js/adapt';
 import device from 'core/js/device';
+import logging from 'core/js/logging';
 import Hinting from './hinting';
 import isQuestionSupported from './is-question-supported';
 let ItemsQuestionModel;
@@ -22,7 +23,7 @@ class AutoAnswer extends Backbone.Controller {
   componentRendered (view) {
     if (!isQuestionSupported(view.model)) return;
     if (!view.buttonsView && Adapt.devtools.get('_debug')) {
-      console.warn('adapt-devtools: could not find submit button on ' + view.model.get('_id'));
+      logging.warn('adapt-devtools: could not find submit button on ' + view.model.get('_id'));
       return;
     }
     const handler = this.onQuestionMouseDown.bind(this, view);
@@ -58,7 +59,7 @@ class AutoAnswer extends Backbone.Controller {
   answer (view, incorrectly) {
     if (view.model.get('_isSubmitted')) return;
     if (Adapt.devtools.get('_debug')) {
-      console.log('adapt-devtools: answer ' + view.model.get('_id') + (incorrectly === true ? ' incorrectly' : ''));
+      logging.debug('adapt-devtools: answer ' + view.model.get('_id') + (incorrectly === true ? ' incorrectly' : ''));
     }
     if (incorrectly === true) {
       switch (view.model.get('_component')) {
@@ -130,7 +131,7 @@ class AutoAnswer extends Backbone.Controller {
     // and how many should be correct
     const nCorrect = nIncorrect === 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
     if (itemCount === 1 || nSelect === 0) {
-      console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
+      logging.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
       return;
     }
     for (let j = 0; j < nIncorrect; j++) {
@@ -353,7 +354,7 @@ class AutoAnswer extends Backbone.Controller {
       const pin = view.getNextUnusedPin();
       const x = zone.left + zone.width / 2;
       const y = zone.top + zone.height / 2;
-      console.log('using correct position', x + ',' + y);
+      logging.debug('using correct position', x + ',' + y);
       pin.setPosition(x, y);
       pin.$el.css({
         left: boardw * x / 100 - pin.$el.width() / 2,
@@ -379,7 +380,7 @@ class AutoAnswer extends Backbone.Controller {
     const $pinboard = view.$('.ppq-pinboard');
     const boardw = $pinboard.width();
     const boardh = $pinboard.height();
-    console.log('nIncorrect=', nIncorrect, 'nCorrect=', nCorrect);
+    logging.debug('nIncorrect=', nIncorrect, 'nCorrect=', nCorrect);
     const maxSize = zone => zone.left < 1 && zone.top < 1 && zone.width > 9999 && zone.height > 9999;
     // work with integers for accuracy and simplicity
     items = items.map(item => ({
@@ -389,7 +390,7 @@ class AutoAnswer extends Backbone.Controller {
       height: Math.round(item.height * 100)
     }));
     if (items.some(maxSize) || nSelect === 0) {
-      console.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
+      logging.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
       return;
     }
     view.resetPins();
@@ -415,7 +416,7 @@ class AutoAnswer extends Backbone.Controller {
       }
       x = x / 100;
       y = y / 100;
-      console.log('using incorrect position', x + ',' + y);
+      logging.debug('using incorrect position', x + ',' + y);
       const pin = view.getNextUnusedPin();
       pin.setPosition(x, y);
       pin.$el.css({
@@ -432,7 +433,7 @@ class AutoAnswer extends Backbone.Controller {
       let y = zone.top + zone.height / 2;
       x = x / 100;
       y = y / 100;
-      console.log('using correct position', x + ',' + y);
+      logging.debug('using correct position', x + ',' + y);
       pin.setPosition(x, y);
       pin.$el.css({
         left: boardw * x / 100 - pin.$el.width() / 2,

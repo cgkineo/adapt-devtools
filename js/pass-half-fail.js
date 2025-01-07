@@ -2,6 +2,7 @@ import Adapt from 'core/js/adapt';
 import AutoAnswer from './auto-answer';
 import data from 'core/js/data';
 import location from 'core/js/location';
+import logging from 'core/js/logging';
 
 class PassHalfFail extends Backbone.Controller {
 
@@ -137,7 +138,7 @@ class PassHalfFail extends Backbone.Controller {
   }
 
   onPassHalfFailComplete (tutorEnabled) {
-    console.log('onPassHalfFailComplete');
+    logging.debug('onPassHalfFailComplete');
     if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', true);
   }
 

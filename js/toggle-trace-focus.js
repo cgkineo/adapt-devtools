@@ -1,4 +1,5 @@
 import Adapt from 'core/js/adapt';
+import logging from 'core/js/logging';
 
 class TraceFocus extends Backbone.Controller {
 
@@ -24,12 +25,12 @@ class TraceFocus extends Backbone.Controller {
   }
 
   onFocusIn (e) {
-    if (!$('html').is('.ie, .Edge')) return console.log('%cfocussed', this.consoleStyle, e.target);
+    if (!$('html').is('.ie, .Edge')) return logging.debug('%cfocussed', this.consoleStyle, e.target);
     const $el = $(e.target);
-    if (!$el[0] || !$el[0].outerHTML) return console.log('focussed: ', e.target);
+    if (!$el[0] || !$el[0].outerHTML) return logging.debug('focussed: ', e.target);
     let openingTag = this.openingTags.exec($el[0].outerHTML)[0];
     if (!openingTag) {
-      console.log('focussed: ' + e.target);
+      logging.debug('focussed: ' + e.target);
       return;
     }
     // add some context if possible
@@ -37,10 +38,10 @@ class TraceFocus extends Backbone.Controller {
     const tokens = $el.text().replace(/[\s\xA0]*/, '').split(/\r\n|\r|\n/);
     if (tokens[0]) openingTag = openingTag.slice(0, 20) + '[...]';
     if ($('html').is('.ie8')) {
-      console.log('focussed: ', openingTag, tokens[0]);
+      logging.debug('focussed: ', openingTag, tokens[0]);
       return;
     }
-    console.log('focussed: ', openingTag, tokens[0], $el);
+    logging.debug('focussed: ', openingTag, tokens[0], $el);
   }
 }
 
