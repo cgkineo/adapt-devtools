@@ -26,7 +26,7 @@ The Dev Tools object contains the following settings:
 
 #### **\_isEnabled** (boolean)
 
-Controls whether the Dev Tools extension is enabled
+Controls whether the Dev Tools extension is shown in the navigation bar or not. Remember to disable/uninstall before going live!
 
 #### **\_debugFile** (string)
 
