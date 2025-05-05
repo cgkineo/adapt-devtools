@@ -44,6 +44,8 @@ function computeAccesibleName($element, allowText = false) {
   if (valueText) return valueText;
   const valueNow = $element.attr('aria-valuenow');
   if (valueNow) return valueNow;
+  const alt = $element.attr('alt');
+  if (alt) return alt;
   if (!allowText) return '';
   return computeHeadingLevel($element) + getText($element[0]);
 }
