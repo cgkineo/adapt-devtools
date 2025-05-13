@@ -32,6 +32,8 @@ function followId($element, property) {
 
 function computeAccesibleName($element, allowText = false) {
   if ($element.is('input:not([type=checkbox], [type=radio]), select, [role=range], textarea') && $element.val()) return $element.val();
+  const ariaHidden = $element.attr('aria-hidden');
+  if (ariaHidden === 'true') return '<span class="u-nobr">N/A (hidden from assistive technologies)</span>';
   const labelledByText = followId($element, 'aria-labelledby');
   if (labelledByText) return labelledByText;
   const activeDescendantText = followId($element, 'aria-activedescendant');
