@@ -70,6 +70,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSliderIncorrectly(view); break;
         case 'textinput':this.answerTextInputIncorrectly(view); break;
         case 'questionStrip':this.answerQuestionStripIncorrectly(view); break;
+        case 'quickQuestions': this.answerQuickQuestionsIncorrectly(view); break;
         default:this.answerUnsupportedIncorrectly(view);
       }
     } else {
@@ -81,6 +82,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSlider(view); break;
         case 'textinput':this.answerTextInput(view); break;
         case 'questionStrip':this.answerQuestionStrip(view); break;
+        case 'quickQuestions': this.answerQuickQuestions(view); break;
         default:this.answerUnsupported(view);
       }
     }
@@ -305,6 +307,39 @@ class AutoAnswer extends Backbone.Controller {
   // NEEDS UPDATING?
   // --------------------------------------------------
   // --------------------------------------------------
+  answerQuickQuestions(view) {
+    // view.model.get('_items').forEach((item, itemIndex) => {
+    //   item._subItems.forEach((subItem, subItemIndex) => {
+    //     if (!subItem._isCorrect) return;
+    //     view.setStage(itemIndex, subItemIndex, true);
+    //   });
+    // });
+  }
+
+  answerQuickQuestionsIncorrectly(view) {
+    // const items = view.model.get('_items'); const itemCount = items.length; const nIncorrect = _.random(1, itemCount);
+    // // decide which items to answer incorrectly (minimum one)
+    // const selectionStates = _.shuffle(_.times(itemCount, i => i < nIncorrect));
+
+    // items.forEach((item, itemIndex) => {
+    //   // check if this item is to be answered incorrectly
+    //   if (selectionStates[itemIndex]) {
+    //     // start at a random position in subitems to avoid bias (err is contingency for bad data)
+    //     for (let count = item._subItems.length, i = _.random(count), err = count; err >= 0; i++, err--) {
+    //       if (!item._subItems[i % count]._isCorrect) {
+    //         view.setStage(itemIndex, i % count, true);
+    //         return;
+    //       }
+    //     }
+    //     return;
+    //   }
+    //   item._subItems.forEach((subItem, subItemIndex) => {
+    //     if (!subItem._isCorrect) return;
+    //     view.setStage(itemIndex, subItemIndex, true);
+    //   });
+    // });
+  }
+
   answerQuestionStrip (view) {
     view.model.get('_items').forEach((item, itemIndex) => {
       item._subItems.forEach((subItem, subItemIndex) => {
