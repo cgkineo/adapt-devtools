@@ -74,6 +74,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSliderIncorrectly(view); break;
         case 'textinput':this.answerTextInputIncorrectly(view); break;
         case 'questionStrip':this.answerQuestionStripIncorrectly(view); break;
+        case 'quickQuestions': this.answerQuickQuestionsIncorrectly(view); break;
         default:this.answerUnsupportedIncorrectly(view);
       }
     } else {
@@ -85,6 +86,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSlider(view); break;
         case 'textinput':this.answerTextInput(view); break;
         case 'questionStrip':this.answerQuestionStrip(view); break;
+        case 'quickQuestions': this.answerQuickQuestions(view); break;
         default:this.answerUnsupported(view);
       }
     }
@@ -309,6 +311,86 @@ class AutoAnswer extends Backbone.Controller {
   // NEEDS UPDATING?
   // --------------------------------------------------
   // --------------------------------------------------
+  answerQuickQuestions(view) {
+    const items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
+    const noCorrectOptions = _.where(items, { _shouldBeSelected: true }).length === 0;
+    if (this.isItemsQuestionModel(view.model)) {
+      if (noCorrectOptions) {
+        view.model.getItem(_.random(items.length - 1)).set('_isActive', true);
+      } else {
+        view.model.getChildren().forEach(item => {
+          if ((item.get('_shouldBeSelected') && !item.get('_isActive')) || (!item.get('_shouldBeSelected') && item.get('_isActive'))) {
+            item.toggleActive();
+          }
+        });
+      }
+      return;
+    }
+    if (noCorrectOptions) {
+      if (_.where(items, { _isSelected: true }).length === 0) {
+        view.$('.js-item-input').eq(_.random(items.length - 1)).trigger('change');
+      }
+      return;
+    }
+    items.forEach((item, index) => {
+      const isIncorrect = (item._shouldBeSelected && !item._isSelected) || (!item._shouldBeSelected && item._isSelected);
+      if (!isIncorrect) return;
+      view.$('.js-item-input').eq(index).trigger('change');
+    });
+  }
+
+  answerQuickQuestionsIncorrectly(view) {
+    // const model = view.model;
+    // const items = this.isItemsQuestionModel(model) ? model.getChildren().toJSON() : model.get('_items');
+    // const itemCount = items.length;
+    // const selectionStates = _.times(itemCount, () => false);
+    // // number of items that should be selected
+    // const nShould = _.where(items, { _shouldBeSelected: true }).length;
+    // // and number that should not
+    // const nShouldNot = itemCount - nShould;
+    // // decide how many items to select
+    // const nSelect = model.get('_selectable');
+    // // decide how many of these should be incorrect
+    // const nIncorrect = nShouldNot === 0 ? 0 : _.random(nShould === 1 ? 1 : 0, Math.min(nShouldNot, nSelect));
+    // // and how many should be correct
+    // const nCorrect = nIncorrect === 0 ? _.random(1, Math.min(nShould - 1, nSelect)) : _.random(0, Math.min(nShould, nSelect - nIncorrect));
+    // if (itemCount === 1 || nSelect === 0) {
+    //   logging.warn('adapt-devtools: not possible to answer ' + model.get('_id') + ' incorrectly');
+    //   return;
+    // }
+    // for (let j = 0; j < nIncorrect; j++) {
+    //   // start at a random position in items to avoid bias (err is contingency for bad data)
+    //   for (let k = _.random(itemCount), err = itemCount, found = false; !found && err >= 0; k++, err--) {
+    //     const index = k % itemCount;
+    //     if (selectionStates[index] === false) {
+    //       if (!items[index]._shouldBeSelected) selectionStates[index] = (found = true);
+    //     }
+    //   }
+    // }
+    // for (let j = 0; j < nCorrect; j++) {
+    //   // start at a random position in items to avoid bias (err is contingency for bad data)
+    //   for (let k = _.random(itemCount), err = itemCount, found = false; !found && err >= 0; k++, err--) {
+    //     const index = k % itemCount;
+    //     if (selectionStates[index] === false) {
+    //       if (items[index]._shouldBeSelected) selectionStates[index] = (found = true);
+    //     }
+    //   }
+    // }
+    // if (this.isItemsQuestionModel(view.model)) {
+    //   view.model.getChildren().forEach((item, index) => {
+    //     if ((selectionStates[index] && !item.get('_isActive')) || (!selectionStates[index] && item.get('_isActive'))) {
+    //       item.toggleActive();
+    //     }
+    //   });
+    //   // return;
+    // }
+    // items.forEach((item, index) => {
+    //   const hasChanged = (selectionStates[index] && !item._isSelected) || (!selectionStates[index] && item._isSelected);
+    //   if (!hasChanged) return;
+    //   view.$('.js-item-input').eq(index).trigger('change');
+    // });
+  }
+
   answerQuestionStrip (view) {
     view.model.get('_items').forEach((item, itemIndex) => {
       item._subItems.forEach((subItem, subItemIndex) => {
