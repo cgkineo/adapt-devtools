@@ -35,13 +35,17 @@ class AutoAnswer extends Backbone.Controller {
   }
 
   onQuestionMouseDown (view, e) {
-    // remove hinting if enabled
-    if (Adapt.devtools.get('_hintingEnabled')) Hinting.setHinting(view.$el, view.model, false);
+    let answered = false;
     if ((e.ctrlKey && !e.shiftKey) || (e.altKey && !e.shiftKey) || Adapt.devtools.get('_autoCorrectEnabled')) {
       this.answer(view);
+      answered = true;
     } else if ((e.ctrlKey && e.shiftKey) || (e.altKey && e.shiftKey)) {
       this.answer(view, true);
+      answered = true;
     }
+    if (!answered || !Adapt.devtools.get('_hintingEnabled')) return;
+    // remove hinting if enabled
+    Hinting.setHinting(view.$el, view.model, false);
   }
 
   isItemsQuestionModel (model) {
