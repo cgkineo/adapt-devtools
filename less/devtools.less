@@ -189,15 +189,18 @@
 }
 
 .mcq,
-.gmcq,
-.matching {
-  &__widget:not(.is-complete) &__item.hint-is-correct {
+.gmcq {
+  &__widget:not(.is-complete) &-item.hint-is-correct {
     opacity: 1;
   }
 
-  &__widget:not(.is-complete) &__item.hint-is-incorrect {
+  &__widget:not(.is-complete) &-item.hint-is-incorrect {
     opacity: 0.3;
   }
+}
+
+.matching-item .hint {
+  font-weight: @font-weight-bold;
 }
 
 .slider {

@@ -37,7 +37,7 @@ class Hinting extends Backbone.Controller {
     switch (model.get('_component')) {
       case 'mcq':this.setMcqHinting($el, model, hintingEnabled !== false); break;
       case 'gmcq':this.setGmcqHinting($el, model, hintingEnabled !== false); break;
-      case 'matching':this.setMatchingHinting($el, model, hintingEnabled !== false); break;
+      case 'matching': this.setMatchingHinting($el, model, hintingEnabled !== false); break;
       case 'ppq':this.setPpqHinting($el, model, hintingEnabled !== false); break;
       case 'slider':this.setSliderHinting($el, model, hintingEnabled !== false); break;
       case 'textinput':this.setTextInputHinting($el, model, hintingEnabled !== false); break;
@@ -48,42 +48,40 @@ class Hinting extends Backbone.Controller {
   setMcqHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
       model.get('_items').forEach((item, index) => {
-        $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
+        $el.find('.mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
       });
       return;
     }
-    $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
+    $el.find('.mcq-item').removeClass('hint-is-correct hint-is-incorrect');
   }
 
   setGmcqHinting ($el, model, hintingEnabled) {
     if (hintingEnabled) {
       model.get('_items').forEach((item, index) => {
-        $el.find('.js-mcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
+        $el.find('.gmcq-item').eq(index).addClass(item._shouldBeSelected ? 'hint-is-correct' : 'hint-is-incorrect');
       });
       return;
     }
-    $el.find('.js-mcq-item').removeClass('hint-is-correct hint-is-incorrect');
+    $el.find('.gmcq-item').removeClass('hint-is-correct hint-is-incorrect');
   }
 
   setMatchingHinting ($el, model, hintingEnabled) {
-    if (!hintingEnabled) {
+    const ariaLabels = Adapt.course.get('_globals')._accessibility._ariaLabels;
+    if (hintingEnabled) {
       model.get('_items').forEach((item, itemIndex) => {
         const $item = $el.find('.item').eq(itemIndex);
         const $options = $item.find('.js-dropdown-list-item');
         item._options.forEach((option, optionIndex) => {
-          /* if (Modernizr.touch) { */
-          if (option._isCorrect) $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner').append('<span class="hint"> (correct)</span>');
-          /* }
-          else {
-            $options.eq(optionIndex+1).addClass(option._isCorrect ? 'hintCorrect' : 'hintIncorrect');
-          } */
+          if (option._isCorrect) {
+            const mcqInner = $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner');
+            mcqInner.find('.hint').remove();
+            mcqInner.append(`<span class="hint"> (${ariaLabels.correct})</span>`);
+          }
         });
       });
       return;
     }
-    /* if (Modernizr.touch) */
     $el.find('.js-dropdown-list-item-inner .hint').remove();
-    /* else $el.find('option').removeClass('hintCorrect hintIncorrect'); */
   }
 
   setSliderHinting ($el, model, hintingEnabled) {
