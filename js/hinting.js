@@ -72,11 +72,10 @@ class Hinting extends Backbone.Controller {
         const $item = $el.find('.item').eq(itemIndex);
         const $options = $item.find('.js-dropdown-list-item');
         item._options.forEach((option, optionIndex) => {
-          if (option._isCorrect) {
-            const mcqInner = $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner');
-            mcqInner.find('.hint').remove();
-            mcqInner.append(`<span class="hint"> (${ariaLabels.correct})</span>`);
-          }
+          if (!option._isCorrect) return;
+          const mcqInner = $options.eq(optionIndex + 1).find('.js-dropdown-list-item-inner');
+          mcqInner.find('.hint').remove();
+          mcqInner.append(`<span class="hint"> (${ariaLabels.correct})</span>`);
         });
       });
       return;
