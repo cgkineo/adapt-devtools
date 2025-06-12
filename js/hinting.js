@@ -37,7 +37,7 @@ class Hinting extends Backbone.Controller {
     switch (model.get('_component')) {
       case 'mcq':this.setMcqHinting($el, model, hintingEnabled !== false); break;
       case 'gmcq':this.setGmcqHinting($el, model, hintingEnabled !== false); break;
-      case 'matching': this.setMatchingHinting($el, model, hintingEnabled !== false); break;
+      case 'matching':this.setMatchingHinting($el, model, hintingEnabled !== false); break;
       case 'ppq':this.setPpqHinting($el, model, hintingEnabled !== false); break;
       case 'slider':this.setSliderHinting($el, model, hintingEnabled !== false); break;
       case 'textinput':this.setTextInputHinting($el, model, hintingEnabled !== false); break;
