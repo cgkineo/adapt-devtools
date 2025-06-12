@@ -44,6 +44,7 @@ class AutoAnswer extends Backbone.Controller {
       answered = true;
     }
     if (!answered || !Adapt.devtools.get('_hintingEnabled')) return;
+    // remove hinting if enabled
     Hinting.setHinting(view.$el, view.model, false);
   }
 
