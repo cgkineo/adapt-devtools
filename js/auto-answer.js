@@ -312,30 +312,10 @@ class AutoAnswer extends Backbone.Controller {
   // --------------------------------------------------
   // --------------------------------------------------
   answerQuickQuestions(view) {
-    const items = this.isItemsQuestionModel(view.model) ? view.model.getChildren().toJSON() : view.model.get('_items');
-    const noCorrectOptions = _.where(items, { _shouldBeSelected: true }).length === 0;
-    if (this.isItemsQuestionModel(view.model)) {
-      if (noCorrectOptions) {
-        view.model.getItem(_.random(items.length - 1)).set('_isActive', true);
-      } else {
-        view.model.getChildren().forEach(item => {
-          if ((item.get('_shouldBeSelected') && !item.get('_isActive')) || (!item.get('_shouldBeSelected') && item.get('_isActive'))) {
-            item.toggleActive();
-          }
-        });
-      }
-      return;
-    }
-    if (noCorrectOptions) {
-      if (_.where(items, { _isSelected: true }).length === 0) {
-        view.$('.js-item-input').eq(_.random(items.length - 1)).trigger('change');
-      }
-      return;
-    }
-    items.forEach((item, index) => {
-      const isIncorrect = (item._shouldBeSelected && !item._isSelected) || (!item._shouldBeSelected && item._isSelected);
-      if (!isIncorrect) return;
-      view.$('.js-item-input').eq(index).trigger('change');
+    const options = view.model.getChildren();
+    const correctOptions = options.filter(option => option.get('_shouldBeSelected'));
+    correctOptions.forEach((option) => {
+      option.toggleActive(true);
     });
   }
 
