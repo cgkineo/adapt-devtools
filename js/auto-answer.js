@@ -74,6 +74,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSliderIncorrectly(view); break;
         case 'textinput':this.answerTextInputIncorrectly(view); break;
         case 'questionStrip':this.answerQuestionStripIncorrectly(view); break;
+        case 'quickQuestions': this.answerQuickQuestionsIncorrectly(view); break;
         default:this.answerUnsupportedIncorrectly(view);
       }
     } else {
@@ -85,6 +86,7 @@ class AutoAnswer extends Backbone.Controller {
         case 'slider':this.answerSlider(view); break;
         case 'textinput':this.answerTextInput(view); break;
         case 'questionStrip':this.answerQuestionStrip(view); break;
+        case 'quickQuestions': this.answerQuickQuestions(view); break;
         default:this.answerUnsupported(view);
       }
     }
@@ -309,6 +311,22 @@ class AutoAnswer extends Backbone.Controller {
   // NEEDS UPDATING?
   // --------------------------------------------------
   // --------------------------------------------------
+  answerQuickQuestions(view) {
+    const options = view.model.getChildren();
+    const correctOptions = options.filter(option => option.get('_shouldBeSelected'));
+    correctOptions.forEach(option => option.toggleActive(true));
+  }
+
+  answerQuickQuestionsIncorrectly(view) {
+    const options = view.model.getChildren();
+    const incorrectOptions = options.filter(option => option.get('_shouldBeSelected') === false);
+    // Randomize which options are selected
+    const shuffledIncorrect = _.shuffle(incorrectOptions);
+    // Choose only one incorrect option for each item
+    const selectedIncorrect = _.uniq(shuffledIncorrect, option => option.get('_itemIndex'));
+    selectedIncorrect.forEach(option => option.toggleActive(true));
+  }
+
   answerQuestionStrip (view) {
     view.model.get('_items').forEach((item, itemIndex) => {
       item._subItems.forEach((subItem, subItemIndex) => {

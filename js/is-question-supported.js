@@ -6,6 +6,7 @@ export default function isQuestionSupported(model) {
     case 'ppq':
     case 'slider':
     case 'textinput':
+    case 'quickQuestions':
     case 'questionStrip':return true;
     default: return false;
   }
