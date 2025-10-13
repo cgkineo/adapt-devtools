@@ -128,7 +128,7 @@ class MapView extends Backbone.View {
         }
       }
       // check if already on page
-      if (location._currentId === model.findAncestor('contentObjects').get('_id')) {
+      if (location._currentId === model.findAncestor('contentobjects').get('_id')) {
         this.listenToOnce(Adapt, 'pageView:ready', () => {
           _.defer(() => {
             Router.navigateToElement($('.' + id));
@@ -164,13 +164,13 @@ class MapView extends Backbone.View {
       Backbone.history.navigate('#/id/' + id, { trigger: true });
     } else {
       // if already on page ensure trickle is disabled
-      if (location._currentId === model.findAncestor('contentObjects').get('_id')) {
+      if (location._currentId === model.findAncestor('contentobjects').get('_id')) {
         Adapt.devtools.set('_trickleEnabled', false);
         Router.navigateToElement($('.' + id));
         this.checkVisibility(id);
       } else {
         // pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
-        const targetModel = Adapt.trickle ? model.findAncestor('contentObjects') : Adapt.course;
+        const targetModel = Adapt.trickle ? model.findAncestor('contentobjects') : Adapt.course;
         // if necessary disable trickle (until page is ready)
         if (!targetModel.has('_trickle')) {
           targetModel.set('_trickle', { _isEnabled: false });
