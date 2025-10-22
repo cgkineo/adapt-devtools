@@ -128,7 +128,7 @@ class MapView extends Backbone.View {
         }
       }
       // check if already on page
-      if (location._currentId === model.findAncestor('contentobjects').get('_id')) {
+      if (location._currentId === model.findAncestor('contentobject').get('_id')) {
         this.listenToOnce(Adapt, 'pageView:ready', () => {
           _.defer(() => {
             Router.navigateToElement($('.' + id));
