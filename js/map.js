@@ -164,7 +164,7 @@ class MapView extends Backbone.View {
       Backbone.history.navigate('#/id/' + id, { trigger: true });
     } else {
       // if already on page ensure trickle is disabled
-      if (location._currentId === model.findAncestor('contentobjects').get('_id')) {
+      if (location._currentId === model.findAncestor('contentobject').get('_id')) {
         Adapt.devtools.set('_trickleEnabled', false);
         Router.navigateToElement($('.' + id));
         this.checkVisibility(id);
