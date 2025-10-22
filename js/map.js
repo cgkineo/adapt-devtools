@@ -170,7 +170,7 @@ class MapView extends Backbone.View {
         this.checkVisibility(id);
       } else {
         // pick target model to determine trickle config according to trickle version (2.1 or 2.0.x)
-        const targetModel = Adapt.trickle ? model.findAncestor('contentobjects') : Adapt.course;
+        const targetModel = Adapt.trickle ? model.findAncestor('contentobject') : Adapt.course;
         // if necessary disable trickle (until page is ready)
         if (!targetModel.has('_trickle')) {
           targetModel.set('_trickle', { _isEnabled: false });
