@@ -97,7 +97,7 @@ class PassHalfFail extends Backbone.Controller {
 
   onComponentRendered (view) {
     // check component is part of current page
-    const isInPage = view.model.has('_parentId') && view.model.findAncestor('contentobjects').get('_id') === this._currentPageId;
+    const isInPage = view.model.has('_parentId') && view.model.findAncestor('contentobject').get('_id') === this._currentPageId;
     const isQuestion = view.model.get('_isQuestionType');
     if (!isInPage || !isQuestion) return;
     this._questionViews.push(view);
