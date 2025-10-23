@@ -4,7 +4,7 @@
     "type": "git",
     "url": "git://github.com/cgkineo/adapt-devtools"
   },
-  "version": "3.10.0",
+  "version": "3.10.1",
   "framework": ">=5.46.4",
   "homepage": "https://github.com/cgkineo/adapt-devtools",
   "issues": "https://github.com/cgkineo/adapt-devtools/issues/",
