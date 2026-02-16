@@ -19,6 +19,7 @@ class Annotation extends Backbone.View {
   initialize(options) {
     this.$parent = options.$parent;
     this.allowText = options.allowText;
+    this.isInOverlay = options.isInOverlay || false;
     this.$el.data('annotating', this.$parent);
     this.$el.data('view', this);
   }
@@ -29,7 +30,7 @@ class Annotation extends Backbone.View {
     const description = computeAccessibleDescription(this.$parent);
     this.$el.html(template({ name, description }));
     if (!name) this.$el.addClass('has-annotation-warning');
-    const position = getAnnotationPosition(this.$parent, this.$el);
+    const position = getAnnotationPosition(this.$parent, this.$el, this.isInOverlay);
     this.$el.css(position.css);
     this.$el.removeClass('is-top is-left is-right is-bottom is-contained');
     this.$el.addClass(position.className);
@@ -89,6 +90,7 @@ class AltText extends Backbone.Controller {
       });
     }
     this.listenTo(Adapt, {
+      'notify:opened drawer:opened drawer:openedCustomView': this.onOverlayOpened,
       'popup:closed notify:closed drawer:closed': this.onDomMutation,
       remove: this.removeAllAnnotations
     });
@@ -124,6 +126,7 @@ class AltText extends Backbone.Controller {
     if (this.observer) {
       this.observer.disconnect();
     }
+    this.stopListening(Adapt, 'notify:opened drawer:opened drawer:openedCustomView', this.onOverlayOpened);
     this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
     $(window).off('scroll', this.onDomMutation);
     $(document).off('mouseover', '*', this.onMouseOver);
@@ -141,8 +144,24 @@ class AltText extends Backbone.Controller {
   }
 
   addAnnotation($element, allowText) {
-    const annotation = new Annotation({ $parent: $element, allowText });
-    $('.devtools__annotations').append(annotation.$el);
+    const $overlay = $element.closest('.notify, .drawer, dialog');
+    const isInOverlay = $overlay.length > 0;
+
+    const annotation = new Annotation({
+      $parent: $element,
+      allowText,
+      isInOverlay
+    });
+
+    // Check if element is inside an overlay (notify, drawer, dialog)
+    if (isInOverlay) {
+      // Append to overlay to be in same stacking context
+      $overlay.append(annotation.$el);
+    } else {
+      // Append to global container for main page content
+      $('.devtools__annotations').append(annotation.$el);
+    }
+
     $element.data('annotation', annotation);
     $element.attr('data-annotated', true);
     this.updateAnnotation($element, annotation, allowText);
@@ -172,7 +191,8 @@ class AltText extends Backbone.Controller {
       if (!$element) return;
       const isOutOfDom = ($element.parents('html').length === 0);
       const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero)) return;
+      const isInOverlay = $element.closest('.notify, .drawer, dialog').length > 0;
+      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero || isInOverlay)) return;
       this.removeAnnotation($element, annotation);
     });
   }
@@ -185,6 +205,14 @@ class AltText extends Backbone.Controller {
     if (this.mutated) return;
     requestAnimationFrame(this.render);
     this.mutated = true;
+  }
+
+  onOverlayOpened() {
+    // Wait for overlay DOM to fully render before annotating
+    setTimeout(() => {
+      this.mutated = false;
+      this.onDomMutation();
+    }, 100);
   }
 
   render() {
@@ -217,7 +245,8 @@ class AltText extends Backbone.Controller {
         const allowText = $element.is('.aria-label,h1,h2,h3,h4,h5,h6,h7,[role=heading]');
         const isOutOfDom = ($element.parents('html').length === 0);
         const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-        if (!isOutOfDom && (isVisible || isHeadingHeightZero) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
+        const isInOverlay = $element.closest('.notify, .drawer, dialog').length > 0;
+        if (!isOutOfDom && (isVisible || isHeadingHeightZero || isInOverlay) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
           if (!annotation) this.addAnnotation($element, allowText);
           else this.updateAnnotation($element, annotation, allowText);
         } else if (annotation) {

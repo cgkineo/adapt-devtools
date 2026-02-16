@@ -65,28 +65,44 @@ function computeAccessibleDescription($element) {
   return '';
 }
 
-function getAnnotationPosition($element, $annotation) {
+function getAnnotationPosition($element, $annotation, isInOverlay = false) {
   const targetBoundingRect = $element[0].getBoundingClientRect();
-  const availableWidth = $('html')[0].clientWidth;
-  const availableHeight = $('html')[0].clientHeight;
+  let availableWidth = $('html')[0].clientWidth;
+  let availableHeight = $('html')[0].clientHeight;
   const tooltipsWidth = $annotation.width();
   const tooltipsHeight = $annotation.height();
   const elementWidth = $element.width();
   const elementHeight = $element.height();
+  const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
+  const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
+  const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
+
+  // For overlay annotations, calculate position relative to overlay container
+  let overlayOffsetTop = 0;
+  let overlayOffsetLeft = 0;
+  if (isInOverlay) {
+    const $overlay = $element.closest('.notify, .drawer, dialog');
+    if ($overlay.length) {
+      const overlayRect = $overlay[0].getBoundingClientRect();
+      overlayOffsetTop = overlayRect.top;
+      overlayOffsetLeft = overlayRect.left;
+      // Use overlay dimensions instead of viewport for boundary checks
+      availableWidth = overlayRect.right;
+      availableHeight = overlayRect.bottom;
+    }
+  }
+
   const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
   const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
   const canAlignBottomRight = canAlignBottom && canAlignRight;
   const canBeContained = elementHeight === 0 || (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
-  const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
-  const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
-  const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
   function getPosition() {
     if (canBeContained) {
       return {
         className: 'is-contained',
         css: {
-          left: targetBoundingRect.left + scrollOffsetLeft,
-          top: targetBoundingRect.top + scrollOffsetTop,
+          left: targetBoundingRect.left + scrollOffsetLeft - overlayOffsetLeft,
+          top: targetBoundingRect.top + scrollOffsetTop - overlayOffsetTop,
           'max-width': (elementHeight === 0) ? '' : elementWidth
         }
       };
@@ -100,8 +116,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-left is-top',
           css: {
-            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
-            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -111,8 +127,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-right is-top',
           css: {
-            left: targetBoundingRect.right + scrollOffsetLeft,
-            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+            left: targetBoundingRect.right + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -122,8 +138,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-left is-bottom',
           css: {
-            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
-            top: targetBoundingRect.bottom + scrollOffsetTop,
+            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.bottom + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -133,14 +149,19 @@ function getAnnotationPosition($element, $annotation) {
     return {
       className: 'is-right, is-bottom',
       css: {
-        left: targetBoundingRect.right + scrollOffsetLeft,
-        top: targetBoundingRect.bottom + scrollOffsetTop,
+        left: targetBoundingRect.right + scrollOffsetLeft - overlayOffsetLeft,
+        top: targetBoundingRect.bottom + scrollOffsetTop - overlayOffsetTop,
         'max-width': ''
       }
     };
   }
   const position = getPosition();
-  position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+  // Use fixed for fixed-position elements, absolute for overlays and normal elements
+  if (isInOverlay) {
+    position.css.position = 'absolute';
+  } else {
+    position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+  }
   if (position.css.left < 0) position.css.left = 0;
   position.css.left += 'px';
   position.css.top += 'px';
