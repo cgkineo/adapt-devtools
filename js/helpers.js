@@ -1,3 +1,5 @@
+const OVERLAY_SELECTOR = '.notify, .drawer, dialog';
+
 function findLabel($element) {
   const id = $element.attr('id');
   if (!id) return false;
@@ -81,7 +83,7 @@ function getAnnotationPosition($element, $annotation, isInOverlay = false) {
   let overlayOffsetTop = 0;
   let overlayOffsetLeft = 0;
   if (isInOverlay) {
-    const $overlay = $element.closest('.notify, .drawer, dialog');
+    const $overlay = $element.closest(OVERLAY_SELECTOR);
     if ($overlay.length) {
       const overlayRect = $overlay[0].getBoundingClientRect();
       overlayOffsetTop = overlayRect.top;
@@ -147,7 +149,7 @@ function getAnnotationPosition($element, $annotation, isInOverlay = false) {
     }
     // Bottom right, default
     return {
-      className: 'is-right, is-bottom',
+      className: 'is-right is-bottom',
       css: {
         left: targetBoundingRect.right + scrollOffsetLeft - overlayOffsetLeft,
         top: targetBoundingRect.bottom + scrollOffsetTop - overlayOffsetTop,
@@ -170,6 +172,7 @@ function getAnnotationPosition($element, $annotation, isInOverlay = false) {
 }
 
 export default {
+  OVERLAY_SELECTOR,
   computeAccesibleName,
   computeAccessibleDescription,
   computeHeadingLevel,

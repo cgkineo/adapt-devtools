@@ -2,9 +2,7 @@ import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 import helpers from './helpers';
 
-const computeAccesibleName = helpers.computeAccesibleName;
-const computeAccessibleDescription = helpers.computeAccessibleDescription;
-const getAnnotationPosition = helpers.getAnnotationPosition;
+const { OVERLAY_SELECTOR, computeAccesibleName, computeAccessibleDescription, getAnnotationPosition } = helpers;
 
 class Annotation extends Backbone.View {
 
@@ -128,6 +126,7 @@ class AltText extends Backbone.Controller {
     }
     this.stopListening(Adapt, 'notify:opened drawer:opened drawer:openedCustomView', this.onOverlayOpened);
     this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
+    this.stopListening(Adapt, 'remove', this.removeAllAnnotations);
     $(window).off('scroll', this.onDomMutation);
     $(document).off('mouseover', '*', this.onMouseOver);
   }
@@ -143,22 +142,16 @@ class AltText extends Backbone.Controller {
     this.connectObserver();
   }
 
-  addAnnotation($element, allowText) {
-    const $overlay = $element.closest('.notify, .drawer, dialog');
-    const isInOverlay = $overlay.length > 0;
-
+  addAnnotation($element, allowText, isInOverlay) {
     const annotation = new Annotation({
       $parent: $element,
       allowText,
       isInOverlay
     });
 
-    // Check if element is inside an overlay (notify, drawer, dialog)
     if (isInOverlay) {
-      // Append to overlay to be in same stacking context
-      $overlay.append(annotation.$el);
+      $element.closest(OVERLAY_SELECTOR).append(annotation.$el);
     } else {
-      // Append to global container for main page content
       $('.devtools__annotations').append(annotation.$el);
     }
 
@@ -191,8 +184,7 @@ class AltText extends Backbone.Controller {
       if (!$element) return;
       const isOutOfDom = ($element.parents('html').length === 0);
       const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-      const isInOverlay = $element.closest('.notify, .drawer, dialog').length > 0;
-      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero || isInOverlay)) return;
+      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero || annotation.isInOverlay)) return;
       this.removeAnnotation($element, annotation);
     });
   }
@@ -208,11 +200,12 @@ class AltText extends Backbone.Controller {
   }
 
   onOverlayOpened() {
-    // Wait for overlay DOM to fully render before annotating
-    setTimeout(() => {
+    // Wait for next frame to ensure overlay DOM layout is complete
+    this.mutated = false;
+    requestAnimationFrame(() => {
       this.mutated = false;
       this.onDomMutation();
-    }, 100);
+    });
   }
 
   render() {
@@ -245,9 +238,9 @@ class AltText extends Backbone.Controller {
         const allowText = $element.is('.aria-label,h1,h2,h3,h4,h5,h6,h7,[role=heading]');
         const isOutOfDom = ($element.parents('html').length === 0);
         const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-        const isInOverlay = $element.closest('.notify, .drawer, dialog').length > 0;
+        const isInOverlay = $element.closest(OVERLAY_SELECTOR).length > 0;
         if (!isOutOfDom && (isVisible || isHeadingHeightZero || isInOverlay) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
-          if (!annotation) this.addAnnotation($element, allowText);
+          if (!annotation) this.addAnnotation($element, allowText, isInOverlay);
           else this.updateAnnotation($element, annotation, allowText);
         } else if (annotation) {
           this.removeAnnotation($element, annotation);
