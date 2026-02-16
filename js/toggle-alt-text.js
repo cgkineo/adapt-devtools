@@ -2,9 +2,7 @@ import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 import helpers from './helpers';
 
-const computeAccesibleName = helpers.computeAccesibleName;
-const computeAccessibleDescription = helpers.computeAccessibleDescription;
-const getAnnotationPosition = helpers.getAnnotationPosition;
+const { HEADING_SELECTOR, OVERLAY_SELECTOR, computeAccessibleName, computeAccessibleDescription, getAnnotationPosition } = helpers;
 
 class Annotation extends Backbone.View {
 
@@ -19,17 +17,18 @@ class Annotation extends Backbone.View {
   initialize(options) {
     this.$parent = options.$parent;
     this.allowText = options.allowText;
+    this.isInOverlay = options.isInOverlay || false;
     this.$el.data('annotating', this.$parent);
     this.$el.data('view', this);
   }
 
   render() {
     const template = Handlebars.templates.devtoolsAnnotation;
-    const name = computeAccesibleName(this.$parent, this.allowText);
+    const name = computeAccessibleName(this.$parent, this.allowText);
     const description = computeAccessibleDescription(this.$parent);
     this.$el.html(template({ name, description }));
     if (!name) this.$el.addClass('has-annotation-warning');
-    const position = getAnnotationPosition(this.$parent, this.$el);
+    const position = getAnnotationPosition(this.$parent, this.$el, this.isInOverlay);
     this.$el.css(position.css);
     this.$el.removeClass('is-top is-left is-right is-bottom is-contained');
     this.$el.addClass(position.className);
@@ -57,7 +56,6 @@ class AltText extends Backbone.Controller {
   onEnabled () {
     if (!Adapt.devtools.get('_isEnabled')) return;
     _.bindAll(this, 'onDomMutation', 'render', 'onMouseOver');
-    this.mutations = [];
     this.mutated = false;
     this.listenTo(Adapt.devtools, 'change:_altTextEnabled', this.toggleAltText);
     $('body').append($('<div class="devtools__annotations" aria-hidden="true"></div>'));
@@ -89,6 +87,7 @@ class AltText extends Backbone.Controller {
       });
     }
     this.listenTo(Adapt, {
+      'notify:opened drawer:opened drawer:openedCustomView': this.onOverlayOpened,
       'popup:closed notify:closed drawer:closed': this.onDomMutation,
       remove: this.removeAllAnnotations
     });
@@ -124,7 +123,9 @@ class AltText extends Backbone.Controller {
     if (this.observer) {
       this.observer.disconnect();
     }
+    this.stopListening(Adapt, 'notify:opened drawer:opened drawer:openedCustomView', this.onOverlayOpened);
     this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
+    this.stopListening(Adapt, 'remove', this.removeAllAnnotations);
     $(window).off('scroll', this.onDomMutation);
     $(document).off('mouseover', '*', this.onMouseOver);
   }
@@ -140,9 +141,19 @@ class AltText extends Backbone.Controller {
     this.connectObserver();
   }
 
-  addAnnotation($element, allowText) {
-    const annotation = new Annotation({ $parent: $element, allowText });
-    $('.devtools__annotations').append(annotation.$el);
+  addAnnotation($element, allowText, isInOverlay) {
+    const annotation = new Annotation({
+      $parent: $element,
+      allowText,
+      isInOverlay
+    });
+
+    if (isInOverlay) {
+      $element.closest(OVERLAY_SELECTOR).append(annotation.$el);
+    } else {
+      $('.devtools__annotations').append(annotation.$el);
+    }
+
     $element.data('annotation', annotation);
     $element.attr('data-annotated', true);
     this.updateAnnotation($element, annotation, allowText);
@@ -171,8 +182,8 @@ class AltText extends Backbone.Controller {
       const annotation = $annotation.data('view');
       if (!$element) return;
       const isOutOfDom = ($element.parents('html').length === 0);
-      const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero)) return;
+      const isHeadingHeightZero = $element.is(HEADING_SELECTOR) && $element.height() === 0;
+      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero || annotation.isInOverlay)) return;
       this.removeAnnotation($element, annotation);
     });
   }
@@ -187,10 +198,19 @@ class AltText extends Backbone.Controller {
     this.mutated = true;
   }
 
+  onOverlayOpened() {
+    // Wait for next frame to ensure overlay DOM layout is complete
+    this.mutated = false;
+    requestAnimationFrame(() => {
+      this.mutated = false;
+      this.onDomMutation();
+    });
+  }
+
   render() {
     if (this.mutated === false) return;
     this.clearUpAnnotations();
-    const $headings = $('h1,h2,h3,h4,h5,h6,h7,[role=heading]');
+    const $headings = $(HEADING_SELECTOR);
     const $labelled = $([
       '.aria-label',
       '[alt]',
@@ -214,11 +234,12 @@ class AltText extends Backbone.Controller {
         const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
         const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
         const isImg = $element.is('img');
-        const allowText = $element.is('.aria-label,h1,h2,h3,h4,h5,h6,h7,[role=heading]');
+        const allowText = $element.is(`.aria-label,${HEADING_SELECTOR}`);
         const isOutOfDom = ($element.parents('html').length === 0);
-        const isHeadingHeightZero = $element.is('h1,h2,h3,h4,h5,h6,h7,[role=heading]') && $element.height() === 0;
-        if (!isOutOfDom && (isVisible || isHeadingHeightZero) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
-          if (!annotation) this.addAnnotation($element, allowText);
+        const isHeadingHeightZero = $element.is(HEADING_SELECTOR) && $element.height() === 0;
+        const isInOverlay = $element.closest(OVERLAY_SELECTOR).length > 0;
+        if (!isOutOfDom && (isVisible || isHeadingHeightZero || isInOverlay) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
+          if (!annotation) this.addAnnotation($element, allowText, isInOverlay);
           else this.updateAnnotation($element, annotation, allowText);
         } else if (annotation) {
           this.removeAnnotation($element, annotation);

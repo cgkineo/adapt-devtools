@@ -1,9 +1,12 @@
+const OVERLAY_SELECTOR = '.notify, .drawer, dialog';
+const HEADING_SELECTOR = 'h1,h2,h3,h4,h5,h6,[role=heading]';
+
 function findLabel($element) {
   const id = $element.attr('id');
   if (!id) return false;
   const $label = $(`[for=${id}]`);
   if (!$label.length) return false;
-  return computeAccesibleName($label, true);
+  return computeAccessibleName($label, true);
 }
 
 function getText(domElement) {
@@ -27,10 +30,10 @@ function followId($element, property) {
   if (!id) return false;
   const $toElement = $(`#${id}`);
   if (!$toElement.length) return false;
-  return computeAccesibleName($toElement, true);
+  return computeAccessibleName($toElement, true);
 }
 
-function computeAccesibleName($element, allowText = false) {
+function computeAccessibleName($element, allowText = false) {
   if ($element.is('input:not([type=checkbox], [type=radio]), select, [role=range], textarea') && $element.val()) return $element.val();
   const ariaHidden = $element.attr('aria-hidden');
   if (ariaHidden === 'true') return '<span class="u-nobr">N/A (hidden from assistive technologies)</span>';
@@ -53,7 +56,7 @@ function computeAccesibleName($element, allowText = false) {
 }
 
 function computeHeadingLevel($element) {
-  const $heading = $element.parents().add($element).filter('h1, h2, h3, h4, h5, h6, h7, [role=heading]');
+  const $heading = $element.parents().add($element).filter(HEADING_SELECTOR);
   if (!$heading.length) return '';
   const headingLevel = parseInt($heading[0].tagName) || $heading.attr('aria-level');
   return `h${headingLevel}: `;
@@ -65,28 +68,44 @@ function computeAccessibleDescription($element) {
   return '';
 }
 
-function getAnnotationPosition($element, $annotation) {
+function getAnnotationPosition($element, $annotation, isInOverlay = false) {
   const targetBoundingRect = $element[0].getBoundingClientRect();
-  const availableWidth = $('html')[0].clientWidth;
-  const availableHeight = $('html')[0].clientHeight;
+  let availableWidth = $('html')[0].clientWidth;
+  let availableHeight = $('html')[0].clientHeight;
   const tooltipsWidth = $annotation.width();
   const tooltipsHeight = $annotation.height();
   const elementWidth = $element.width();
   const elementHeight = $element.height();
+  const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
+  const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
+  const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
+
+  // For overlay annotations, calculate position relative to overlay container
+  let overlayOffsetTop = 0;
+  let overlayOffsetLeft = 0;
+  if (isInOverlay) {
+    const $overlay = $element.closest(OVERLAY_SELECTOR);
+    if ($overlay.length) {
+      const overlayRect = $overlay[0].getBoundingClientRect();
+      overlayOffsetTop = overlayRect.top;
+      overlayOffsetLeft = overlayRect.left;
+      // Use overlay dimensions instead of viewport for boundary checks
+      availableWidth = overlayRect.right;
+      availableHeight = overlayRect.bottom;
+    }
+  }
+
   const canAlignBottom = targetBoundingRect.bottom + tooltipsHeight < availableHeight;
   const canAlignRight = targetBoundingRect.right + tooltipsWidth < availableWidth;
   const canAlignBottomRight = canAlignBottom && canAlignRight;
   const canBeContained = elementHeight === 0 || (elementHeight * elementWidth >= tooltipsHeight * tooltipsWidth) || $element.is('img');
-  const isFixedPosition = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
-  const scrollOffsetTop = isFixedPosition ? 0 : $(window).scrollTop();
-  const scrollOffsetLeft = isFixedPosition ? 0 : $(window).scrollLeft();
   function getPosition() {
     if (canBeContained) {
       return {
         className: 'is-contained',
         css: {
-          left: targetBoundingRect.left + scrollOffsetLeft,
-          top: targetBoundingRect.top + scrollOffsetTop,
+          left: targetBoundingRect.left + scrollOffsetLeft - overlayOffsetLeft,
+          top: targetBoundingRect.top + scrollOffsetTop - overlayOffsetTop,
           'max-width': (elementHeight === 0) ? '' : elementWidth
         }
       };
@@ -100,8 +119,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-left is-top',
           css: {
-            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
-            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -111,8 +130,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-right is-top',
           css: {
-            left: targetBoundingRect.right + scrollOffsetLeft,
-            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop,
+            left: targetBoundingRect.right + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.top - tooltipsHeight + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -122,8 +141,8 @@ function getAnnotationPosition($element, $annotation) {
         return {
           className: 'is-left is-bottom',
           css: {
-            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft,
-            top: targetBoundingRect.bottom + scrollOffsetTop,
+            left: targetBoundingRect.left - tooltipsWidth + scrollOffsetLeft - overlayOffsetLeft,
+            top: targetBoundingRect.bottom + scrollOffsetTop - overlayOffsetTop,
             'max-width': ''
           }
         };
@@ -131,16 +150,21 @@ function getAnnotationPosition($element, $annotation) {
     }
     // Bottom right, default
     return {
-      className: 'is-right, is-bottom',
+      className: 'is-right is-bottom',
       css: {
-        left: targetBoundingRect.right + scrollOffsetLeft,
-        top: targetBoundingRect.bottom + scrollOffsetTop,
+        left: targetBoundingRect.right + scrollOffsetLeft - overlayOffsetLeft,
+        top: targetBoundingRect.bottom + scrollOffsetTop - overlayOffsetTop,
         'max-width': ''
       }
     };
   }
   const position = getPosition();
-  position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+  // Use fixed for fixed-position elements, absolute for overlays and normal elements
+  if (isInOverlay) {
+    position.css.position = 'absolute';
+  } else {
+    position.css.position = isFixedPosition ? 'fixed' : 'absolute';
+  }
   if (position.css.left < 0) position.css.left = 0;
   position.css.left += 'px';
   position.css.top += 'px';
@@ -149,7 +173,9 @@ function getAnnotationPosition($element, $annotation) {
 }
 
 export default {
-  computeAccesibleName,
+  HEADING_SELECTOR,
+  OVERLAY_SELECTOR,
+  computeAccessibleName,
   computeAccessibleDescription,
   computeHeadingLevel,
   getAnnotationPosition

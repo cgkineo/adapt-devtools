@@ -25,7 +25,8 @@
 // --------------------------------------------------
 // --------------------------------------------------
 .devtools__annotation {
-  font-size: 0.875rem;
+  font-size: 1rem;
+  line-height: 1;
   pointer-events: none;
   z-index: 100;
 
@@ -40,9 +41,12 @@
   }
 
   &-inner {
+    font-size: 0.825rem;
     background-color: @validation-success;
     color: @validation-success-inverted;
     opacity: 0;
+    padding: 0.375rem;
+    border-radius: 0.125rem;
   }
 
   &-inner .description {
@@ -61,10 +65,14 @@
   }
 
   .button {
-    padding: @item-padding / 8;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: @validation-success;
     color: @validation-success-inverted;
-    border-radius: 0.25rem;
+    border-radius: 0.125rem;
     pointer-events: all;
     cursor: pointer;
   }
