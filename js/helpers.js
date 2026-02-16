@@ -1,11 +1,12 @@
 const OVERLAY_SELECTOR = '.notify, .drawer, dialog';
+const HEADING_SELECTOR = 'h1,h2,h3,h4,h5,h6,[role=heading]';
 
 function findLabel($element) {
   const id = $element.attr('id');
   if (!id) return false;
   const $label = $(`[for=${id}]`);
   if (!$label.length) return false;
-  return computeAccesibleName($label, true);
+  return computeAccessibleName($label, true);
 }
 
 function getText(domElement) {
@@ -29,10 +30,10 @@ function followId($element, property) {
   if (!id) return false;
   const $toElement = $(`#${id}`);
   if (!$toElement.length) return false;
-  return computeAccesibleName($toElement, true);
+  return computeAccessibleName($toElement, true);
 }
 
-function computeAccesibleName($element, allowText = false) {
+function computeAccessibleName($element, allowText = false) {
   if ($element.is('input:not([type=checkbox], [type=radio]), select, [role=range], textarea') && $element.val()) return $element.val();
   const ariaHidden = $element.attr('aria-hidden');
   if (ariaHidden === 'true') return '<span class="u-nobr">N/A (hidden from assistive technologies)</span>';
@@ -55,7 +56,7 @@ function computeAccesibleName($element, allowText = false) {
 }
 
 function computeHeadingLevel($element) {
-  const $heading = $element.parents().add($element).filter('h1, h2, h3, h4, h5, h6, h7, [role=heading]');
+  const $heading = $element.parents().add($element).filter(HEADING_SELECTOR);
   if (!$heading.length) return '';
   const headingLevel = parseInt($heading[0].tagName) || $heading.attr('aria-level');
   return `h${headingLevel}: `;
@@ -172,8 +173,9 @@ function getAnnotationPosition($element, $annotation, isInOverlay = false) {
 }
 
 export default {
+  HEADING_SELECTOR,
   OVERLAY_SELECTOR,
-  computeAccesibleName,
+  computeAccessibleName,
   computeAccessibleDescription,
   computeHeadingLevel,
   getAnnotationPosition
