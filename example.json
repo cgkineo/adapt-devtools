@@ -4,6 +4,18 @@
   "_debugFile": ""
 }
 
+// course.json - _globals._extensions
+"_devtools": {
+  "ariaLabel": "Developer tools",
+  "_navOrder": 9000,
+  "_showLabel": false,
+  "navLabel": "Dev Tools",
+  "_navTooltip": {
+    "_isEnabled": true,
+    "text": "Developer tools"
+  }
+}
+
 /*
   _debugFile example (e.g. dev.json)
 

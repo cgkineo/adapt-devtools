@@ -5,6 +5,10 @@ import wait from 'core/js/wait';
 import logging from 'core/js/logging';
 import location from 'core/js/location';
 import AdaptModel from 'core/js/models/adaptModel';
+import NavigationButtonModel from 'core/js/models/NavigationButtonModel';
+import NavigationButtonView from 'core/js/views/NavigationButtonView';
+import navigation from 'core/js/navigation';
+import tooltips from 'core/js/tooltips';
 import DevtoolsModel from './devtools-model';
 import PassHalfFail from './pass-half-fail';
 import ToggleBanking from './toggle-banking';
@@ -377,44 +381,40 @@ class DevtoolsView extends Backbone.View {
   }
 }
 
-class DevtoolsNavigationView extends Backbone.View {
+class DevtoolsNavigationButtonView extends NavigationButtonView {
 
-  initialize () {
-    this.render = this.render.bind(this);
-    const template = Handlebars.templates.devtoolsNavigation;
-    this.$el = $(template());
-    $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
-    if (this.$el.is('a') || this.$el.is('button')) this.$el.on('click', this.onDevtoolsClicked.bind(this));
-    else this.$el.find('a, button').on('click', this.onDevtoolsClicked.bind(this));
-    this.listenTo(Adapt, 'pageView:postRender menuView:postRender', this.onContentRendered);
-    // ensure render occurs at least once (_isReady will not change to true on menus that exclude content objects)
-    this.listenToOnce(Adapt, 'pageView:postRender menuView:postRender', this.render);
+  events () {
+    return {
+      click: 'onDevtoolsClicked'
+    };
   }
 
-  render () {
-    $('.nav__inner').append(this.$el);
-    return this;
+  static get template() {
+    return 'devtoolsNavigationButton.jsx';
   }
 
-  remove () {
-    this.$el.remove();
-    this.stopListening();
-    return this;
+  attributes () {
+    const attributes = this.model.toJSON();
+    return {
+      name: attributes._id,
+      role: attributes._role === 'button' ? undefined : attributes._role,
+      'data-order': attributes._order,
+      'data-tooltip-id': attributes._id,
+      'aria-haspopup': 'dialog'
+    };
   }
 
-  deferredRender () {
-    _.defer(this.render);
-  }
-
-  onContentRendered (view) {
-    if (view.model.get('_id') === location._currentId) {
-      this.stopListening(view.model, 'change:_isReady', this.deferredRender);
-      this.listenToOnce(view.model, 'change:_isReady', this.deferredRender);
-    }
+  initialize (options) {
+    super.initialize(options);
+    this.listenTo(Adapt, { remove: this.remove });
+    tooltips.register({
+      _id: this.model.get('_id'),
+      ...this.model.get('_navTooltip') || {}
+    });
   }
 
   onDevtoolsClicked (event) {
-    if (event && event.preventDefault) event.preventDefault();
+    event.preventDefault();
     drawer.openCustomView(new DevtoolsView().$el, false);
   }
 
@@ -426,13 +426,36 @@ Adapt.once('courseModel:dataLoaded', () => {
 
 function initNavigationView() {
   if (!Adapt.devtools.get('_isEnabled')) return;
-  if (navigationView) navigationView.remove();
-  navigationView = new DevtoolsNavigationView();
+  if (navigationView) navigation.removeButton(navigationView);
+  $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
+  const {
+    ariaLabel = 'Developer tools',
+    _navOrder = 9000,
+    _showLabel = false,
+    navLabel = 'Dev Tools',
+    _navTooltip = {}
+  } = Adapt.course.get('_globals')?._extensions?._devtools ?? {};
+  const model = new NavigationButtonModel({
+    _id: 'devtools',
+    _order: _navOrder,
+    _showLabel,
+    _classes: 'nav__devtools-btn devtools__nav-btn',
+    _iconClasses: 'icon-cog',
+    _role: 'button',
+    ariaLabel: ariaLabel || navLabel,
+    text: navLabel,
+    _navTooltip
+  });
+  navigationView = new DevtoolsNavigationButtonView({ model });
+  navigation.addButton(navigationView);
 }
 
 Adapt.once('adapt:initialize devtools:enable', () => {
+  Adapt.on({
+    'router:contentObject': initNavigationView,
+    'app:languageChanged': initNavigationView
+  });
   initNavigationView();
-  Adapt.on('app:languageChanged', initNavigationView);
 });
 
 data.on('loaded', async () => {

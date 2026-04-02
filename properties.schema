@@ -1,26 +1,82 @@
 {
-  "type":"object",
+  "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "required":false,
-  "properties":{
+  "required": false,
+  "globals": {
+    "ariaLabel": {
+      "type": "string",
+      "required": false,
+      "default": "Developer tools",
+      "title": "Navigation button aria label",
+      "inputType": "Text",
+      "validators": [],
+      "translatable": true
+    },
+    "_navOrder": {
+      "type": "number",
+      "required": false,
+      "title": "Navigation bar order",
+      "help": "Determines the order in which the button is displayed in the navigation bar. Negative numbers (e.g. -100) are left-aligned. Positive numbers (e.g. 100) are right-aligned.",
+      "default": 9000,
+      "inputType": "Text"
+    },
+    "_showLabel": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "title": "Enable navigation bar button label",
+      "inputType": "Checkbox"
+    },
+    "navLabel": {
+      "type": "string",
+      "required": false,
+      "default": "Dev Tools",
+      "title": "Navigation bar button label",
+      "inputType": "Text",
+      "translatable": true
+    },
+    "_navTooltip": {
+      "type": "object",
+      "title": "Navigation tooltip",
+      "properties": {
+        "_isEnabled": {
+          "type": "boolean",
+          "default": true,
+          "title": "Enable tooltip for navigation button",
+          "inputType": "Checkbox",
+          "validators": []
+        },
+        "text": {
+          "type": "string",
+          "title": "",
+          "default": "Developer tools",
+          "help": "The tooltip text to display on hover over this item",
+          "inputType": "Text",
+          "validators": [],
+          "translatable": true
+        }
+      }
+    }
+  },
+  "properties": {
     "pluginLocations": {
-      "type":"object",
-      "required":true,
-      "properties":{
+      "type": "object",
+      "required": true,
+      "properties": {
         "config": {
-          "type":"object",
+          "type": "object",
           "properties": {
             "_devtools": {
-              "type":"object",
-              "required":false,
+              "type": "object",
+              "required": false,
               "legend": "Dev tools",
-              "properties":{
+              "properties": {
                 "_isEnabled": {
-                  "type":"boolean",
-                  "required":false,
+                  "type": "boolean",
+                  "required": false,
                   "title": "Show dev tools in nav bar",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": { "type": "Boolean", "options": [false, true] },
                   "validators": [],
                   "help": "Set to true to show 'dev tools' in the navigation bar. Remember to disable/uninstall before going live!"
                 }
@@ -29,19 +85,19 @@
           }
         },
         "course": {
-          "type":"object"
+          "type": "object"
         },
         "contentobject": {
-          "type":"object"
+          "type": "object"
         },
         "article": {
-          "type":"object"
+          "type": "object"
         },
         "block": {
-          "type":"object"
+          "type": "object"
         },
         "component": {
-          "type":"object"
+          "type": "object"
         }
       }
     }
