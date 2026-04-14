@@ -68,7 +68,7 @@ class Annotation extends Backbone.View {
 class AltText extends Backbone.Controller {
 
   initialize() {
-    this.onDomMutation = this.onDomMutation.bind(this); // _.debounce(this.onDomMutation.bind(this), 250);
+    this.onDomMutation = this.onDomMutation.bind(this);
     this.listenToOnce(Adapt, 'adapt:initialize devtools:enable', this.onEnabled);
   }
 
@@ -209,7 +209,6 @@ class AltText extends Backbone.Controller {
 
   render() {
     if (this.mutated === false) return;
-    console.log('Rendering annotations');
     this.clearUpAnnotations();
     const $headings = $(HEADING_SELECTOR);
     const $labelled = $([
