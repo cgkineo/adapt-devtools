@@ -201,7 +201,7 @@ class AltText extends Backbone.Controller {
     annotation.render();
   }
 
-  onDomMutation(mutations) {
+  onDomMutation() {
     if (this.mutated) return;
     requestAnimationFrame(this.render);
     this.mutated = true;

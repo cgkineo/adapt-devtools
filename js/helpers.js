@@ -50,6 +50,8 @@ export function computeAccessibleName($element, allowText = false) {
   if (valueNow) return valueNow;
   const alt = $element.attr('alt');
   if (alt) return alt;
+  const childAriaLabel = $element.find('.aria-label').first().text();
+  if (childAriaLabel) return childAriaLabel;
   if (!allowText) return '';
   return computeHeadingLevel($element) + getText($element[0]);
 }
@@ -73,7 +75,8 @@ export function getContainer($element) {
 }
 
 export function shouldAnnotate($element) {
-  return isVisible($element) && isReadable($element);
+  const shouldAnnotate = isVisible($element) && isReadable($element);
+  return shouldAnnotate;
 }
 
 function isVisible($element) {
@@ -87,13 +90,19 @@ function isReadable($element) {
   const isAncestorAriaHidden = Boolean($element.parents().filter('[aria-hidden=true]').length);
   const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
   const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
-  const isReadable = (isNotAriaHidden || (!isAriaHidden && !isAncestorAriaHidden) || (isImg && !isAncestorAriaHidden));
+  const hasAccessibleName = Boolean(computeAccessibleName($element) || computeAccessibleDescription($element));
+  const isReadable = !isAncestorAriaHidden && (isNotAriaHidden || !isAriaHidden || isImg || (hasAccessibleName && !isAriaHidden));
   return isReadable;
 }
 
 function isInDom($element) {
   const isInDom = $element.parents('html').length > 0;
   return isInDom;
+}
+
+function isFixed($element) {
+  const isFixed = Boolean($element.parents().add($element).filter((index, el) => $(el).css('position') === 'fixed').length);
+  return isFixed;
 }
 
 export function getAnnotationPosition($element, $annotation) {
@@ -126,7 +135,8 @@ export function getAnnotationPosition($element, $annotation) {
     }
     if (!canAlignBottomRight) {
       // Find the 'corner' with the most space from the viewport edge
-      const isTopPreferred = availableHeight - (targetBoundingRect.bottom + tooltipsHeight) < targetBoundingRect.top - tooltipsHeight;
+      const isHardTop = isFixed($annotationContainer) && (containerBoundingRect.top < tooltipsHeight && targetBoundingRect.top < tooltipsHeight);
+      const isTopPreferred = !isHardTop && (availableHeight - (targetBoundingRect.bottom + tooltipsHeight) < targetBoundingRect.top - tooltipsHeight);
       const isLeftPreferred = availableWidth - (targetBoundingRect.right + tooltipsWidth) < targetBoundingRect.left - tooltipsWidth;
       if (isTopPreferred && isLeftPreferred) {
         // Top left
