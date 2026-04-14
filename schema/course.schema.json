@@ -21,31 +21,38 @@
                   "title": "Dev Tools",
                   "default": {},
                   "properties": {
-                    "ariaLabel": {
-                      "type": "string",
-                      "title": "Navigation button aria label",
-                      "default": "Developer tools",
-                      "_adapt": {
-                        "translatable": true
-                      }
-                    },
-                    "_navOrder": {
-                      "type": "number",
-                      "title": "Navigation bar order",
-                      "description": "Determines the order in which the button is displayed in the navigation bar. Negative numbers (e.g. -100) are left-aligned. Positive numbers (e.g. 100) are right-aligned.",
-                      "default": 9000
-                    },
-                    "_showLabel": {
-                      "type": "boolean",
-                      "title": "Enable navigation bar button label",
-                      "default": false
-                    },
-                    "navLabel": {
-                      "type": "string",
-                      "title": "Navigation bar button label",
-                      "default": "Dev Tools",
-                      "_adapt": {
-                        "translatable": true
+                    "_navButton": {
+                      "type": "object",
+                      "title": "Navigation button",
+                      "default": {},
+                      "properties": {
+                        "ariaLabel": {
+                          "type": "string",
+                          "title": "Navigation button aria label",
+                          "default": "Developer tools",
+                          "_adapt": {
+                            "translatable": true
+                          }
+                        },
+                        "_navOrder": {
+                          "type": "number",
+                          "title": "Navigation bar order",
+                          "description": "Determines the order in which the button is displayed in the navigation bar. Negative numbers (e.g. -100) are left-aligned. Positive numbers (e.g. 100) are right-aligned.",
+                          "default": 9000
+                        },
+                        "_showLabel": {
+                          "type": "boolean",
+                          "title": "Enable navigation bar button label",
+                          "default": true
+                        },
+                        "navLabel": {
+                          "type": "string",
+                          "title": "Navigation bar button label",
+                          "default": "Dev Tools",
+                          "_adapt": {
+                            "translatable": true
+                          }
+                        }
                       }
                     },
                     "_navTooltip": {

@@ -428,13 +428,14 @@ function initNavigationView() {
   if (!Adapt.devtools.get('_isEnabled')) return;
   if (navigationView) navigation.removeButton(navigationView);
   $('html').addClass('devtools-enabled').toggleClass('devtools-extended', Adapt.devtools.get('_extended'));
+  const devtoolsGlobals = Adapt.course.get('_globals')?._extensions?._devtools ?? {};
   const {
     ariaLabel = 'Developer tools',
     _navOrder = 9000,
-    _showLabel = false,
-    navLabel = 'Dev Tools',
-    _navTooltip = {}
-  } = Adapt.course.get('_globals')?._extensions?._devtools ?? {};
+    _showLabel = true,
+    navLabel = 'Dev Tools'
+  } = devtoolsGlobals._navButton ?? {};
+  const { _navTooltip = {} } = devtoolsGlobals;
   const model = new NavigationButtonModel({
     _id: 'devtools',
     _order: _navOrder,

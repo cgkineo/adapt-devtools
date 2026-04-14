@@ -3,62 +3,6 @@
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
   "required": false,
-  "globals": {
-    "ariaLabel": {
-      "type": "string",
-      "required": false,
-      "default": "Developer tools",
-      "title": "Navigation button aria label",
-      "inputType": "Text",
-      "validators": [],
-      "translatable": true
-    },
-    "_navOrder": {
-      "type": "number",
-      "required": false,
-      "title": "Navigation bar order",
-      "help": "Determines the order in which the button is displayed in the navigation bar. Negative numbers (e.g. -100) are left-aligned. Positive numbers (e.g. 100) are right-aligned.",
-      "default": 9000,
-      "inputType": "Text"
-    },
-    "_showLabel": {
-      "type": "boolean",
-      "required": false,
-      "default": false,
-      "title": "Enable navigation bar button label",
-      "inputType": "Checkbox"
-    },
-    "navLabel": {
-      "type": "string",
-      "required": false,
-      "default": "Dev Tools",
-      "title": "Navigation bar button label",
-      "inputType": "Text",
-      "translatable": true
-    },
-    "_navTooltip": {
-      "type": "object",
-      "title": "Navigation tooltip",
-      "properties": {
-        "_isEnabled": {
-          "type": "boolean",
-          "default": true,
-          "title": "Enable tooltip for navigation button",
-          "inputType": "Checkbox",
-          "validators": []
-        },
-        "text": {
-          "type": "string",
-          "title": "",
-          "default": "Developer tools",
-          "help": "The tooltip text to display on hover over this item",
-          "inputType": "Text",
-          "validators": [],
-          "translatable": true
-        }
-      }
-    }
-  },
   "properties": {
     "pluginLocations": {
       "type": "object",

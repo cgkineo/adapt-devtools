@@ -6,10 +6,12 @@
 
 // course.json - _globals._extensions
 "_devtools": {
-  "ariaLabel": "Developer tools",
-  "_navOrder": 9000,
-  "_showLabel": false,
-  "navLabel": "Dev Tools",
+  "_navButton": {
+    "ariaLabel": "Developer tools",
+    "_navOrder": 9000,
+    "_showLabel": true,
+    "navLabel": "Dev Tools"
+  },
   "_navTooltip": {
     "_isEnabled": true,
     "text": "Developer tools"
