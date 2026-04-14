@@ -50,7 +50,8 @@ export function computeAccessibleName($element, allowText = false) {
   if (valueNow) return valueNow;
   const alt = $element.attr('alt');
   if (alt) return alt;
-  const childAriaLabel = $element.find('.aria-label').first().text();
+  const childAriaLabel = !$element.is(HEADING_SELECTOR) &&
+    $element.find('.aria-label').first().text();
   if (childAriaLabel) return childAriaLabel;
   if (!allowText) return '';
   return computeHeadingLevel($element) + getText($element[0]);
