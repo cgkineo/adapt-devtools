@@ -6,8 +6,9 @@ export default function DevtoolsNavigationButton(props) {
     text,
     _iconClasses
   } = props;
+
   return (
-    <React.Fragment>
+    <>
       <span
         className={classes([
           'icon',
@@ -15,7 +16,11 @@ export default function DevtoolsNavigationButton(props) {
         ])}
         aria-hidden="true"
       />
-      <span className="nav__btn-label" aria-hidden="true">{compile(text, props)}</span>
-    </React.Fragment>
+      <span
+        className="nav__btn-label"
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: compile(text, props) }}
+      />
+    </>
   );
 }
