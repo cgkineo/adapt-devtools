@@ -1,10 +1,25 @@
 import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
-import helpers from './helpers';
-
-const { HEADING_SELECTOR, OVERLAY_SELECTOR, computeAccessibleName, computeAccessibleDescription, getAnnotationPosition } = helpers;
+import {
+  HEADING_SELECTOR,
+  computeAccessibleName,
+  computeAccessibleDescription,
+  getAnnotationPosition,
+  getContainer,
+  shouldAnnotate
+} from './helpers';
 
 class Annotation extends Backbone.View {
+
+  events() {
+    return {
+      click: 'onClick'
+    };
+  }
+
+  onClick(event) {
+    console.log('Annotation clicked for', this.$parent[0]);
+  }
 
   className() {
     return 'devtools__annotation';
@@ -16,22 +31,27 @@ class Annotation extends Backbone.View {
 
   initialize(options) {
     this.$parent = options.$parent;
+    this.$container = getContainer(this.$parent);
     this.allowText = options.allowText;
-    this.isInOverlay = options.isInOverlay || false;
     this.$el.data('annotating', this.$parent);
     this.$el.data('view', this);
   }
 
   render() {
+    function hash(name, description, position) {
+      return name + description + position.className + position.css.top + position.css.left;
+    }
     const template = Handlebars.templates.devtoolsAnnotation;
     const name = computeAccessibleName(this.$parent, this.allowText);
     const description = computeAccessibleDescription(this.$parent);
+    const position = getAnnotationPosition(this.$parent, this.$el);
+    if (this._last === hash(name, description, position)) return;
     this.$el.html(template({ name, description }));
-    if (!name) this.$el.addClass('has-annotation-warning');
-    const position = getAnnotationPosition(this.$parent, this.$el, this.isInOverlay);
+    this.$el.toggleClass('has-annotation-warning', !name);
     this.$el.css(position.css);
     this.$el.removeClass('is-top is-left is-right is-bottom is-contained');
     this.$el.addClass(position.className);
+    this._last = hash(name, description, position);
   }
 
   showOutline() {
@@ -43,7 +63,6 @@ class Annotation extends Backbone.View {
     this.$parent.removeClass('devtools__annotation-outline');
     this.$el.removeClass('has-mouse-over');
   }
-
 }
 
 class AltText extends Backbone.Controller {
@@ -59,10 +78,7 @@ class AltText extends Backbone.Controller {
     this.mutated = false;
     this.listenTo(Adapt.devtools, 'change:_altTextEnabled', this.toggleAltText);
     $('body').append($('<div class="devtools__annotations" aria-hidden="true"></div>'));
-    // if available we can use to avoid unnecessary checks
-    if (typeof MutationObserver === 'function') {
-      this.observer = new MutationObserver(this.onDomMutation);
-    }
+    this.observer = new MutationObserver(this.onDomMutation);
   }
 
   connectObserver() {
@@ -87,11 +103,11 @@ class AltText extends Backbone.Controller {
       });
     }
     this.listenTo(Adapt, {
-      'notify:opened drawer:opened drawer:openedCustomView': this.onOverlayOpened,
-      'popup:closed notify:closed drawer:closed': this.onDomMutation,
       remove: this.removeAllAnnotations
     });
     $(window).on('scroll', this.onDomMutation);
+    $(document).on('transitionend', this.onDomMutation);
+    $(document).on('animationend', this.onDomMutation);
     $(document).on('mouseover', '*', this.onMouseOver);
   }
 
@@ -123,10 +139,10 @@ class AltText extends Backbone.Controller {
     if (this.observer) {
       this.observer.disconnect();
     }
-    this.stopListening(Adapt, 'notify:opened drawer:opened drawer:openedCustomView', this.onOverlayOpened);
-    this.stopListening(Adapt, 'popup:closed notify:closed drawer:closed', this.onDomMutation);
     this.stopListening(Adapt, 'remove', this.removeAllAnnotations);
     $(window).off('scroll', this.onDomMutation);
+    $(document).off('transitionend', this.onDomMutation);
+    $(document).off('animationend', this.onDomMutation);
     $(document).off('mouseover', '*', this.onMouseOver);
   }
 
@@ -141,18 +157,13 @@ class AltText extends Backbone.Controller {
     this.connectObserver();
   }
 
-  addAnnotation($element, allowText, isInOverlay) {
+  addAnnotation($element, allowText) {
     const annotation = new Annotation({
       $parent: $element,
-      allowText,
-      isInOverlay
+      allowText
     });
 
-    if (isInOverlay) {
-      $element.closest(OVERLAY_SELECTOR).append(annotation.$el);
-    } else {
-      $('.devtools__annotations').append(annotation.$el);
-    }
+    annotation.$container.append(annotation.$el);
 
     $element.data('annotation', annotation);
     $element.attr('data-annotated', true);
@@ -181,9 +192,7 @@ class AltText extends Backbone.Controller {
       const $element = $annotation.data('annotating');
       const annotation = $annotation.data('view');
       if (!$element) return;
-      const isOutOfDom = ($element.parents('html').length === 0);
-      const isHeadingHeightZero = $element.is(HEADING_SELECTOR) && $element.height() === 0;
-      if (!isOutOfDom && ($element.onscreen().onscreen || isHeadingHeightZero || annotation.isInOverlay)) return;
+      if (shouldAnnotate($element)) return;
       this.removeAnnotation($element, annotation);
     });
   }
@@ -192,19 +201,10 @@ class AltText extends Backbone.Controller {
     annotation.render();
   }
 
-  onDomMutation(mutations) {
+  onDomMutation() {
     if (this.mutated) return;
     requestAnimationFrame(this.render);
     this.mutated = true;
-  }
-
-  onOverlayOpened() {
-    // Wait for next frame to ensure overlay DOM layout is complete
-    this.mutated = false;
-    requestAnimationFrame(() => {
-      this.mutated = false;
-      this.onDomMutation();
-    });
   }
 
   render() {
@@ -229,17 +229,9 @@ class AltText extends Backbone.Controller {
       .each((index, element) => {
         const $element = $(element);
         const annotation = $element.data('annotation');
-        const isVisible = $element.onscreen().onscreen;
-        const isParentAriaHidden = Boolean($element.parents().filter('[aria-hidden=true]').length);
-        const isAriaHidden = Boolean($element.filter('[aria-hidden=true]').length);
-        const isNotAriaHidden = Boolean($element.filter('[aria-hidden=false]').length);
-        const isImg = $element.is('img');
         const allowText = $element.is(`.aria-label,${HEADING_SELECTOR}`);
-        const isOutOfDom = ($element.parents('html').length === 0);
-        const isHeadingHeightZero = $element.is(HEADING_SELECTOR) && $element.height() === 0;
-        const isInOverlay = $element.closest(OVERLAY_SELECTOR).length > 0;
-        if (!isOutOfDom && (isVisible || isHeadingHeightZero || isInOverlay) && (isNotAriaHidden || (!isAriaHidden && !isParentAriaHidden) || (isImg && !isParentAriaHidden))) {
-          if (!annotation) this.addAnnotation($element, allowText, isInOverlay);
+        if (shouldAnnotate($element)) {
+          if (!annotation) this.addAnnotation($element, allowText);
           else this.updateAnnotation($element, annotation, allowText);
         } else if (annotation) {
           this.removeAnnotation($element, annotation);
