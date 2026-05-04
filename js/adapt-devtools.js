@@ -394,12 +394,9 @@ class DevtoolsNavigationButtonView extends NavigationButtonView {
   }
 
   attributes () {
-    const attributes = this.model.toJSON();
     return {
-      name: attributes._id,
-      role: attributes._role === 'button' ? undefined : attributes._role,
-      'data-order': attributes._order,
-      'data-tooltip-id': attributes._id,
+      ...super.attributes(),
+      'data-tooltip-id': this.model.get('_id'),
       'aria-haspopup': 'dialog'
     };
   }
