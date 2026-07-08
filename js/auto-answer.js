@@ -90,6 +90,9 @@ class AutoAnswer extends Backbone.Controller {
         default:this.answerUnsupported(view);
       }
     }
+    // force final incorrect state in one action: the submit decrements _attemptsLeft to 0, so the
+    // question is marked complete/incorrect immediately rather than consuming one attempt at a time
+    if (incorrectly === true) view.model.set('_attemptsLeft', 1);
     view.$('.js-btn-action').trigger('click');
   }
 
