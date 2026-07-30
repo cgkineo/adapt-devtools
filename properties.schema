@@ -1,26 +1,26 @@
 {
-  "type":"object",
+  "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "required":false,
-  "properties":{
+  "required": false,
+  "properties": {
     "pluginLocations": {
-      "type":"object",
-      "required":true,
-      "properties":{
+      "type": "object",
+      "required": true,
+      "properties": {
         "config": {
-          "type":"object",
+          "type": "object",
           "properties": {
             "_devtools": {
-              "type":"object",
-              "required":false,
+              "type": "object",
+              "required": false,
               "legend": "Dev tools",
-              "properties":{
+              "properties": {
                 "_isEnabled": {
-                  "type":"boolean",
-                  "required":false,
+                  "type": "boolean",
+                  "required": false,
                   "title": "Show dev tools in nav bar",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": { "type": "Boolean", "options": [false, true] },
                   "validators": [],
                   "help": "Set to true to show 'dev tools' in the navigation bar. Remember to disable/uninstall before going live!"
                 }
@@ -29,19 +29,19 @@
           }
         },
         "course": {
-          "type":"object"
+          "type": "object"
         },
         "contentobject": {
-          "type":"object"
+          "type": "object"
         },
         "article": {
-          "type":"object"
+          "type": "object"
         },
         "block": {
-          "type":"object"
+          "type": "object"
         },
         "component": {
-          "type":"object"
+          "type": "object"
         }
       }
     }

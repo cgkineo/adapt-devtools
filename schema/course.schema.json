@@ -1,0 +1,87 @@
+{
+  "$anchor": "devtools-course",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$patch": {
+    "source": {
+      "$ref": "course"
+    },
+    "with": {
+      "properties": {
+        "_globals": {
+          "type": "object",
+          "default": {},
+          "properties": {
+            "_extensions": {
+              "type": "object",
+              "default": {},
+              "properties": {
+                "_devtools": {
+                  "type": "object",
+                  "title": "Dev Tools",
+                  "default": {},
+                  "properties": {
+                    "_navButton": {
+                      "type": "object",
+                      "title": "Navigation button",
+                      "default": {},
+                      "properties": {
+                        "ariaLabel": {
+                          "type": "string",
+                          "title": "Navigation button aria label",
+                          "default": "Developer tools",
+                          "_adapt": {
+                            "translatable": true
+                          }
+                        },
+                        "_navOrder": {
+                          "type": "number",
+                          "title": "Navigation bar order",
+                          "description": "Determines the order in which the button is displayed in the navigation bar. Negative numbers (e.g. -100) are left-aligned. Positive numbers (e.g. 100) are right-aligned.",
+                          "default": 9000
+                        },
+                        "_showLabel": {
+                          "type": "boolean",
+                          "title": "Enable navigation bar button label",
+                          "default": true
+                        },
+                        "navLabel": {
+                          "type": "string",
+                          "title": "Navigation bar button label",
+                          "default": "Dev Tools",
+                          "_adapt": {
+                            "translatable": true
+                          }
+                        }
+                      }
+                    },
+                    "_navTooltip": {
+                      "type": "object",
+                      "title": "Navigation tooltip",
+                      "default": {},
+                      "properties": {
+                        "_isEnabled": {
+                          "type": "boolean",
+                          "title": "Enable tooltip for navigation button",
+                          "default": true
+                        },
+                        "text": {
+                          "type": "string",
+                          "title": "Tooltip text",
+                          "default": "Developer tools",
+                          "_adapt": {
+                            "translatable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
