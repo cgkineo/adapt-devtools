@@ -1,6 +1,7 @@
 import Adapt from 'core/js/adapt';
 import AutoAnswer from './auto-answer';
 import data from 'core/js/data';
+import drawer from 'core/js/drawer';
 import location from 'core/js/location';
 import logging from 'core/js/logging';
 
@@ -113,10 +114,15 @@ class PassHalfFail extends Backbone.Controller {
 
   onKeypress (e) {
     const char = String.fromCharCode(e.which).toLowerCase();
-    const perform = type => {
+    const perform = async type => {
       if (Adapt.devtools.get('_trickleEnabled')) Adapt.trigger('trickle:kill');
       const tutorEnabled = Adapt.devtools.get('_feedbackEnabled');
       if (tutorEnabled) Adapt.devtools.set('_feedbackEnabled', false);
+      // Close the drawer and let the a11y popup stack unwind before answering.
+      // The batch can complete an assessment and open a notify dialog; a popup
+      // opening while the drawer close is still in flight interleaves the stack
+      // and a11y closes the wrong layer.
+      await this.closeDrawer();
       if (type === 'pass') this.pass(_.partial(this.onPassHalfFailComplete, tutorEnabled));
       else if (type === 'half') this.half(_.partial(this.onPassHalfFailComplete, tutorEnabled));
       else this.fail(_.partial(this.onPassHalfFailComplete, tutorEnabled));
@@ -135,6 +141,22 @@ class PassHalfFail extends Backbone.Controller {
         case 'f': return perform('fail');
       }
     }
+  }
+
+  /**
+   * Close the drawer, resolving once a11y has removed the drawer's popup layer.
+   *
+   * `drawer:closed` is not usable: `hideDrawer` calls `a11y.popupClosed()` without
+   * awaiting it, and with `force: true` fires `drawer:closed` before `a11y.closed()`
+   * has resumed past its internal `wait.queue()`. `drawer.isOpen` is not usable either:
+   * it returns false whenever a custom view (such as this one) is showing.
+   * @returns {Promise}
+   */
+  closeDrawer () {
+    if (!drawer._drawerView?._isVisible) return Promise.resolve();
+    const closed = new Promise(resolve => Adapt.once('popup:closed', resolve));
+    drawer.close();
+    return closed;
   }
 
   onPassHalfFailComplete (tutorEnabled) {
